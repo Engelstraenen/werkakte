@@ -4,17 +4,16 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
-import { useColorScheme } from 'react-native';
 
 import { SessionProvider, useSession } from '@/features/auth/session';
-import { fontFiles, useColors } from '@/theme';
+import { fontFiles, useColors, useScheme } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const scheme = useColorScheme();
+  const scheme = useScheme();
   const colors = useColors();
   const base = scheme === 'light' ? DefaultTheme : DarkTheme;
   // Navigations-Hintergründe in Bauplan-Farben, damit beim Wechseln nichts weiß aufblitzt.

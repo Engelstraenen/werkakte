@@ -29,9 +29,9 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 
 ### Marke & Design „Bauplan“ (verbindlich)
 - Name **Werkakte**, Claim „Eine Akte pro Auftrag.“ Logo: aufgeklappter Zollstock als „W“ in Warngelb auf Blaupausen-Blau (`src/components/Logo.tsx`, App-Icon in `assets/images`).
-- Farben/Schriften nur über `src/theme` (Tokens). Dunkel = Blaupause (#0D1F3C, Raster, Warngelb #F6C445), Hell = Blaupausen-Papier für Sonne (helles Raster, dunkelblaue Schrift, blaue Hauptaktion). Das Handy wählt automatisch.
+- Farben/Schriften nur über `src/theme` (Tokens). **Standard = Hell:** weißer Grund, hellblaues Blaupausen-Raster, mittelblaue Linien als Umrandung, blaue Hauptaktion. **Dunkel** (Blaupause mit Warngelb) per Einstellung unter Mehr › Darstellung (Hell / Dunkel / Wie Handy).
 - Schriften (in der App gebündelt, offline): IBM Plex Sans (Text), IBM Plex Sans Condensed (Überschriften, Buttons), IBM Plex Mono (Beschriftungen wie Datum/Uhrzeit, Großbuchstaben).
-- Eher eckige Kanten (4–12 px), Karten mit feiner Linie, Plus-Button als gelbe Raute.
+- Eher eckige Kanten (4–12 px), Karten mit blauer Umrandung, Abschnitte mit farbigem Balken, Plus-Button als Raute (hell: blau, dunkel: gelb).
 
 ### Navigation (Bottom Tabs, max. 5)
 `Heute` · `Projekte` · `+ (Schnellaktion)` · `Kalender` · `Mehr`

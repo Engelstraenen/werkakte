@@ -5,9 +5,10 @@ import {
   IBMPlexSansCondensed_700Bold,
 } from '@expo-google-fonts/ibm-plex-sans-condensed';
 import { useColorScheme } from 'react-native';
+import { create } from 'zustand';
 
 // Design „Bauplan“ (siehe docs/ENTSCHEIDUNGEN.md): Blaupausen-Blau mit Raster, Warngelb als Akzent.
-// Dunkel = Original-Blaupause. Hell = Blaupausen-Papier für pralle Sonne.
+// Hell (Standard) = weißes Blaupausen-Papier. Dunkel = Original-Blaupause.
 // Kontrast: Text mind. 7:1, Primär- und Statusfarben mind. 4.5:1 zur Karte.
 
 const dark = {
@@ -37,27 +38,28 @@ const dark = {
   shadow: '0px 6px 16px rgba(0, 0, 0, 0.45)',
 };
 
+// Hell = Standard: weißer Grund, hellblaues Blaupausen-Raster, mittelblaue Linien als Umrandung.
 const light: typeof dark = {
-  background: '#DDE6F3',
-  grid: 'rgba(29, 78, 216, 0.06)',
+  background: '#FFFFFF',
+  grid: 'rgba(59, 130, 246, 0.16)',
   card: '#FFFFFF',
-  surface: '#DCE6F5',
-  text: '#0D1F3C',
-  textMuted: '#3B5276',
-  border: '#8FA5C9',
+  surface: '#EAF2FF',
+  text: '#0B1F44',
+  textMuted: '#3A5382',
+  border: '#3B76E0',
   primary: '#1D4ED8',
-  primarySoft: '#DCE6FF',
+  primarySoft: '#DBE8FF',
   onPrimary: '#FFFFFF',
-  accent: '#F6C445',
-  onAccent: '#0D1F3C',
+  accent: '#2563EB',
+  onAccent: '#FFFFFF',
   danger: '#B42318',
   success: '#15803D',
   warning: '#9A5B00',
   info: '#1D4ED8',
-  neutral: '#3B5276',
+  neutral: '#3A5382',
   onTone: '#FFFFFF',
   tabBar: '#FFFFFF',
-  shadow: '0px 3px 10px rgba(13, 31, 60, 0.14)',
+  shadow: '0px 2px 8px rgba(29, 78, 216, 0.10)',
 };
 
 export type Colors = typeof dark;
@@ -93,8 +95,22 @@ export const fontFiles = {
   IBMPlexMono_500Medium,
 };
 
+export type Appearance = 'hell' | 'dunkel' | 'automatisch';
+
+/** Darstellung (Mehr › Darstellung). Standard: hell. */
+export const useAppearance = create<{ mode: Appearance; setMode: (mode: Appearance) => void }>(
+  (set) => ({ mode: 'hell', setMode: (mode) => set({ mode }) }),
+);
+
+export function useScheme(): 'light' | 'dark' {
+  const system = useColorScheme();
+  const mode = useAppearance((s) => s.mode);
+  if (mode === 'automatisch') return system === 'dark' ? 'dark' : 'light';
+  return mode === 'dunkel' ? 'dark' : 'light';
+}
+
 export function useColors(): Colors {
-  return useColorScheme() === 'light' ? light : dark;
+  return useScheme() === 'dark' ? dark : light;
 }
 
 /** Hintergrund mit 15 % Deckkraft für Badges und Icon-Kreise. */

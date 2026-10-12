@@ -1,14 +1,14 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useEffect, useState, type ComponentProps } from 'react';
-import { Platform, View, useColorScheme } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { useEnabledProviders } from './useEnabledProviders';
 import { useSocialLogin, type OAuthProvider } from './useSocialLogin';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { de } from '@/i18n/de';
-import { radius, spacing, touch, useColors } from '@/theme';
+import { radius, spacing, touch, useColors, useScheme } from '@/theme';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 const browserProviders: { id: OAuthProvider; label: string; icon: IconName }[] = [
@@ -19,7 +19,7 @@ const browserProviders: { id: OAuthProvider; label: string; icon: IconName }[] =
 
 export function SocialLogin() {
   const colors = useColors();
-  const scheme = useColorScheme();
+  const scheme = useScheme();
   const { busy, error, signInWithBrowser, signInWithApple } = useSocialLogin();
   const [nativeApple, setNativeApple] = useState(false);
   // Offline oder Fehler → keine Anbieter-Buttons, E-Mail geht immer.

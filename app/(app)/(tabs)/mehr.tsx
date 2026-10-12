@@ -4,6 +4,7 @@ import { AppText } from '@/components/AppText';
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { Chips } from '@/components/Chips';
 import { IconCircle, type IconName } from '@/components/IconCircle';
 import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
@@ -11,7 +12,7 @@ import { useSession } from '@/features/auth/session';
 import { company, customers, catalog, members, suppliers } from '@/features/demo/data';
 import { de } from '@/i18n/de';
 import { supabase } from '@/lib/supabase';
-import type { Tone } from '@/theme';
+import { useAppearance, type Tone } from '@/theme';
 
 const t = de.mehr;
 const entries: { href: Href; title: string; subtitle: string; icon: IconName; tone: Tone }[] = [
@@ -69,6 +70,7 @@ const entries: { href: Href; title: string; subtitle: string; icon: IconName; to
 
 export default function MehrScreen() {
   const { session, devMode, setDevMode } = useSession();
+  const appearance = useAppearance();
   return (
     <Screen title={t.titel}>
       <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -88,6 +90,19 @@ export default function MehrScreen() {
             onPress={() => router.push(e.href)}
           />
         ))}
+      </Card>
+      <Card>
+        <AppText variant="mono">{t.darstellung}</AppText>
+        <Chips
+          segmented
+          options={[
+            { value: 'hell', label: t.hell },
+            { value: 'dunkel', label: t.dunkel },
+            { value: 'automatisch', label: t.automatisch },
+          ]}
+          value={appearance.mode}
+          onChange={appearance.setMode}
+        />
       </Card>
       <AppText muted>{session ? `${t.angemeldetAls} ${session.user.email}` : t.testmodus}</AppText>
       <Button
