@@ -18,7 +18,7 @@ import type {
   Reminders,
   SendSettings,
   SupplierPrice,
-  Timer,
+  RunningTimer,
 } from './types';
 
 const now = () => new Date().toISOString();
@@ -30,7 +30,10 @@ type DemoState = {
   notes: Note[];
   quotes: Quote[];
   invoices: Invoice[];
-  timer: Timer;
+  /** Laufende Zeiten je Mitarbeiter-ID. */
+  timers: Record<string, RunningTimer>;
+  /** Wer im Projekt mitarbeitet (= wer dort Zeit erfassen darf). */
+  setTeam: (projectId: string, memberIds: string[]) => void;
   sending: SendSettings;
   reminders: Reminders;
   setSending: (patch: Partial<SendSettings>) => void;
@@ -60,10 +63,13 @@ type DemoState = {
   addQuote: (projectId: string) => string;
   duplicateQuote: (fromQuoteId: string, projectId: string) => string;
   setQuoteItems: (quoteId: string, items: DocItem[]) => void;
-  /** Startet die Zeit für ein Projekt; läuft schon eine andere, wird sie vorher gestoppt und gespeichert. */
-  startTimer: (projectId: string) => void;
-  /** Stoppt die laufende Zeit und speichert sie als Stunden im Projekt. */
-  stopTimer: () => void;
+  /**
+   * Startet die Zeit einer Person in einem Projekt – nur wenn sie zum Projekt-Team gehört.
+   * Läuft ihre Zeit schon woanders, wird die vorher gestoppt und gespeichert.
+   */
+  startTimer: (projectId: string, memberId?: string) => boolean;
+  /** Stoppt die Zeit einer Person und speichert sie als Stunden im Projekt. */
+  stopTimer: (memberId?: string) => void;
 };
 
 const in30Days = () => new Date(Date.now() + 30 * 86400000).toISOString();
@@ -89,7 +95,12 @@ export const useDemo = create<DemoState>((set, get) => {
     notes: seed.notes,
     quotes: seed.quotes,
     invoices: seed.invoices,
-    timer: null,
+    timers: {
+      m2: { projectId: 'p1', startedAt: new Date(Date.now() - 65 * 60000).toISOString() },
+      m3: { projectId: 'p7', startedAt: new Date(Date.now() - 95 * 60000).toISOString() },
+    },
+    setTeam: (projectId, memberIds) =>
+      set((s) => ({ projects: touch(s.projects, projectId, { memberIds }) })),
     sending: {
       copyToMe: true,
       myEmail: seed.company.email,
@@ -285,19 +296,25 @@ export const useDemo = create<DemoState>((set, get) => {
     },
     setQuoteItems: (quoteId, items) =>
       set((s) => ({ quotes: s.quotes.map((q) => (q.id === quoteId ? { ...q, items } : q)) })),
-    startTimer: (projectId) => {
-      if (get().timer) get().stopTimer();
-      set({ timer: { projectId, startedAt: now() } });
+    startTimer: (projectId, memberId = seed.CURRENT_MEMBER_ID) => {
+      const project = get().projects.find((p) => p.id === projectId);
+      if (!project?.memberIds.includes(memberId)) return false;
+      if (get().timers[memberId]) get().stopTimer(memberId);
+      set((s) => ({ timers: { ...s.timers, [memberId]: { projectId, startedAt: now() } } }));
+      return true;
     },
-    stopTimer: () => {
-      const timer = get().timer;
+    stopTimer: (memberId = seed.CURRENT_MEMBER_ID) => {
+      const timer = get().timers[memberId];
       if (!timer) return;
       const minutes = Math.max(
         1,
         Math.round((Date.now() - new Date(timer.startedAt).getTime()) / 60000),
       );
-      set({ timer: null });
-      get().addHours(timer.projectId, seed.CURRENT_MEMBER_ID, minutes);
+      set((s) => {
+        const { [memberId]: _stopped, ...rest } = s.timers;
+        return { timers: rest };
+      });
+      get().addHours(timer.projectId, memberId, minutes);
     },
   };
 });

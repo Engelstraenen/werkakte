@@ -67,7 +67,7 @@ export default function NeuScreen() {
       ) : !projectId ? (
         <>
           <AppText variant="title">{t.welchesProjekt}</AppText>
-          <ProjectPicker onPick={setProjectId} />
+          <ProjectPicker onPick={setProjectId} onlyMine={art === 'zeit'} />
         </>
       ) : art === 'notiz' || art === 'foto' ? (
         <>

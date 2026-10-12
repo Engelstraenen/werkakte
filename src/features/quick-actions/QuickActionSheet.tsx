@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { IconCircle, type IconName } from '@/components/IconCircle';
+import { CURRENT_MEMBER_ID } from '@/features/demo/data';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { radius, spacing, useColors, type Tone } from '@/theme';
@@ -21,9 +22,11 @@ const tiles: { art: Art; label: string; icon: IconName; tone: Tone }[] = [
 export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const timer = useDemo((s) => s.timer);
+  const timer = useDemo((s) => s.timers[CURRENT_MEMBER_ID]);
   const stopTimer = useDemo((s) => s.stopTimer);
-  const running = useDemo((s) => s.projects.find((p) => p.id === s.timer?.projectId));
+  const running = useDemo((s) =>
+    s.projects.find((p) => p.id === s.timers[CURRENT_MEMBER_ID]?.projectId),
+  );
 
   const open = (art: Art) => {
     onClose();

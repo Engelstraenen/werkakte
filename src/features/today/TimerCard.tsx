@@ -1,43 +1,79 @@
-import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
-import { Button } from '@/components/Button';
+import { Avatar } from '@/components/Avatar';
 import { Card } from '@/components/Card';
-import { IconCircle } from '@/components/IconCircle';
+import { CURRENT_MEMBER_ID } from '@/features/demo/data';
+import { isOwner, memberById } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
+import { useNow } from '@/features/time/useNow';
 import { de } from '@/i18n/de';
 import { formatDuration } from '@/lib/date';
-import { spacing } from '@/theme';
+import { radius, spacing, touch, useColors } from '@/theme';
 
-/** Laufende Arbeitszeit; nur sichtbar, wenn eine Zeit gestartet wurde. */
+/** "Gerade im Einsatz": wer arbeitet wo und wie lange schon. Inhaber sieht alle, sonst nur sich. */
 export function TimerCard() {
-  const timer = useDemo((s) => s.timer);
-  const stop = useDemo((s) => s.stopTimer);
-  const project = useDemo((s) => s.projects.find((p) => p.id === timer?.projectId));
-  const [now, setNow] = useState(() => Date.now());
+  const colors = useColors();
+  const { timers, projects, stopTimer } = useDemo();
+  const now = useNow(true);
+  const running = Object.entries(timers).filter(([id]) => isOwner() || id === CURRENT_MEMBER_ID);
+  if (running.length === 0) return null;
 
-  useEffect(() => {
-    if (!timer) return;
-    const id = setInterval(() => setNow(Date.now()), 15000);
-    return () => clearInterval(id);
-  }, [timer]);
-
-  if (!timer || !project) return null;
   return (
     <Card>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-        <IconCircle name="timer" tone="success" />
-        <View style={{ flex: 1 }}>
-          <AppText variant="small" muted>
-            {de.heute.zeitLaeuft} · {project.title}
-          </AppText>
-          <AppText variant="heading">
-            {formatDuration(now - new Date(timer.startedAt).getTime())}
-          </AppText>
-        </View>
-      </View>
-      <Button title={de.heute.stoppen} variant="secondary" onPress={stop} />
+      <AppText variant="small" muted>
+        ● {de.zeit.imEinsatz}
+      </AppText>
+      {running.map(([memberId, timer]) => {
+        const project = projects.find((p) => p.id === timer.projectId)!;
+        const member = memberById(memberId);
+        return (
+          <View
+            key={memberId}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}
+          >
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push({ pathname: '/projekt/[id]', params: { id: project.id } })}
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: spacing.sm,
+                minHeight: touch.min,
+              }}
+            >
+              <Avatar name={member.name} size={36} />
+              <View style={{ flex: 1 }}>
+                <AppText variant="label" numberOfLines={1}>
+                  {memberId === CURRENT_MEMBER_ID ? de.zeit.ich : member.name.split(' ')[0]} ·{' '}
+                  {formatDuration(now - new Date(timer.startedAt).getTime())}
+                </AppText>
+                <AppText variant="small" muted numberOfLines={1}>
+                  {project.title}
+                </AppText>
+              </View>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`${de.zeit.stoppen}: ${member.name}`}
+              onPress={() => stopTimer(memberId)}
+              style={{
+                minHeight: touch.min,
+                paddingHorizontal: spacing.md,
+                borderRadius: radius.md,
+                justifyContent: 'center',
+                backgroundColor: colors.danger,
+              }}
+            >
+              <AppText variant="label" color="#FFFFFF">
+                {de.zeit.stopp}
+              </AppText>
+            </Pressable>
+          </View>
+        );
+      })}
     </Card>
   );
 }

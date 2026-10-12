@@ -93,7 +93,8 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 - **Nummernkreise selbst festlegen** (Präfix, Zahl, Stellen, Suffix, Jahr als Platzhalter); Zahl nur erhöhbar
 - **Versand aus der App** (E-Mail-Dienst mit Server in der EU): an Kunde, automatische Kopie an mich, Rechnungen automatisch an die **DATEV-Upload-Mail**; zusätzlich Teilen (WhatsApp, Mail-App). Ohne Netz: Versand wartet.
 - **E-Rechnung (ZUGFeRD/XRechnung)** für Rechnungen an Firmenkunden – automatisch zusätzlich zum PDF
-- **Zeit pro Projekt:** Start/Stopp-Button im Projekt; beim Stoppen werden die Stunden im Projekt gespeichert (Summe sichtbar, fließt in die Kalkulation). Immer nur eine laufende Zeit.
+- **Zeit pro Projekt und Person:** Start/Stopp im Projekt je Teammitglied; mehrere Personen gleichzeitig auf verschiedenen Projekten. Pro Person läuft höchstens eine Zeit (Wechsel stoppt und speichert die alte). Beim Stoppen werden die Stunden im Projekt gespeichert (Summe sichtbar, fließt in die Kalkulation).
+- **Projekt-Team = Berechtigung:** Inhaber legt pro Projekt fest, wer dazugehört. Nur das Team sieht das Projekt und darf dort Zeit erfassen. Mitarbeiter sehen nur ihre eigene Zeit, Inhaber alle.
 - **Push-Erinnerungen:** Angebot nachfassen (nach X Tagen), Rechnung überfällig, Tagesabschluss
 - **Kalkulation (nur Inhaber):** Vorkalkulation im Angebot (Material zum EK, Arbeit zu internen Kosten, Betriebskosten-Zuschlag), Nachkalkulation pro Projekt aus von Hand erfassten Material-Kosten und Stunden, Gewinn mit Ampel
 - Kalender (Tag/Woche), Termine pro Projekt und Mitarbeiter

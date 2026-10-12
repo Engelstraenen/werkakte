@@ -158,7 +158,8 @@ export type Invoice = {
   sentAt?: string;
 };
 
-export type Timer = { projectId: string; startedAt: string } | null;
+/** Laufende Zeit einer Person (pro Person höchstens eine). */
+export type RunningTimer = { projectId: string; startedAt: string };
 
 export type SendSettings = {
   copyToMe: boolean;

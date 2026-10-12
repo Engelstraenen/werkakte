@@ -3,13 +3,12 @@ import { Pressable, View } from 'react-native';
 
 import { ProjectHero } from './ProjectCover';
 import { statusTone } from './status';
-import { ProjectTimer } from '@/features/time/ProjectTimer';
+import { TimeTeamCard } from '@/features/time/TimeTeamCard';
 import { AppText } from '@/components/AppText';
-import { AvatarStack } from '@/components/Avatar';
 import { Card } from '@/components/Card';
 import { Chips } from '@/components/Chips';
 import type { IconName } from '@/components/IconCircle';
-import { customerOf, memberById, statusOrder } from '@/features/demo/selectors';
+import { customerOf, statusOrder } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
 import type { Project } from '@/features/demo/types';
 import { de } from '@/i18n/de';
@@ -76,24 +75,8 @@ export function ProjectHeader({ project }: { project: Project }) {
           <QuickButton icon="call" label={de.akte.anrufen} onPress={() => call(customer.phone)} />
           <QuickButton icon="mail" label={de.akte.mail} onPress={() => mail(customer.email)} />
         </View>
-        <ProjectTimer projectId={project.id} />
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            marginTop: spacing.xs,
-          }}
-        >
-          <AppText variant="small" muted>
-            {de.akte.team}
-          </AppText>
-          <AvatarStack names={project.memberIds.map((id) => memberById(id).name)} size={30} />
-          <AppText variant="small" muted style={{ flex: 1 }} numberOfLines={1}>
-            {project.memberIds.map((id) => memberById(id).name.split(' ')[0]).join(', ')}
-          </AppText>
-        </View>
       </Card>
+      <TimeTeamCard project={project} />
       <View style={{ gap: spacing.xs }}>
         <AppText variant="small" muted>
           {de.akte.status}
