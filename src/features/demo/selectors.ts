@@ -1,5 +1,5 @@
 import { appointments, CURRENT_MEMBER_ID, customers, members, suppliers } from './data';
-import type { Invoice, Media, Project, ProjectStatus, Quote } from './types';
+import type { Invoice, Media, Project, ProjectCost, ProjectStatus, Quote } from './types';
 
 import { isSameDay } from '@/lib/date';
 import { documentTotals } from '@/lib/money';
@@ -99,3 +99,10 @@ export function coverOf(project: Project, media: Media[]): Media | undefined {
     own.find((m) => m.id === project.coverMediaId) ?? own.find((m) => m.tag === 'nachher') ?? own[0]
   );
 }
+
+/** Alle erfassten Minuten eines Projekts (Zeit-Button + von Hand eingetragen). */
+export const projectMinutes = (projectId: string, costs: ProjectCost[]) =>
+  costs.reduce(
+    (sum, c) => (c.projectId === projectId && c.kind === 'stunden' ? sum + c.minutes : sum),
+    0,
+  );

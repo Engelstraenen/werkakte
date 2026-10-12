@@ -5,6 +5,7 @@ import { AppText } from '@/components/AppText';
 import { Card } from '@/components/Card';
 import { company } from '@/features/demo/data';
 import { de } from '@/i18n/de';
+import { formatHours } from '@/lib/date';
 import { formatEuro } from '@/lib/money';
 import { spacing } from '@/theme';
 
@@ -41,7 +42,7 @@ function Row({
 export function CostTable({ soll, ist }: { soll?: Costing; ist?: Costing }) {
   const e = (c: Costing | undefined, key: keyof Costing['breakdown']) =>
     c ? formatEuro(c.breakdown[key]) : undefined;
-  const h = (c?: Costing) => (c ? `${Math.round(c.minutes / 6) / 10} Std.` : undefined);
+  const h = (c?: Costing) => (c ? formatHours(c.minutes) : undefined);
   return (
     <Card>
       <Row label={t.posten} soll={t.soll} ist={t.ist} strong />

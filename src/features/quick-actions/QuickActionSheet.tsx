@@ -23,6 +23,7 @@ export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClo
   const insets = useSafeAreaInsets();
   const timer = useDemo((s) => s.timer);
   const stopTimer = useDemo((s) => s.stopTimer);
+  const running = useDemo((s) => s.projects.find((p) => p.id === s.timer?.projectId));
 
   const open = (art: Art) => {
     onClose();
@@ -79,7 +80,7 @@ export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClo
           ))}
         </View>
         <Button
-          title={timer ? t.zeitStoppen : t.zeit}
+          title={timer && running ? `${t.zeitStoppen} · ${running.title}` : t.zeit}
           onPress={() => (timer ? (stopTimer(), onClose()) : open('zeit'))}
         />
         <Button title={t.schliessen} variant="secondary" onPress={onClose} />

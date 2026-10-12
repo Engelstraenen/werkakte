@@ -16,12 +16,11 @@ import { memberById, supplierById } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { marginTone } from '@/lib/calc';
-import { formatDate } from '@/lib/date';
+import { formatDate, formatHours as hours } from '@/lib/date';
 import { formatEuro } from '@/lib/money';
 import { spacing, useColors } from '@/theme';
 
 const t = de.kalk;
-const hours = (min: number) => `${Math.round(min / 6) / 10} Std.`;
 
 export function CostingView({ projectId }: { projectId: string }) {
   const colors = useColors();

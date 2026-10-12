@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 
 import { ProjectHero } from './ProjectCover';
 import { statusTone } from './status';
+import { ProjectTimer } from '@/features/time/ProjectTimer';
 import { AppText } from '@/components/AppText';
 import { AvatarStack } from '@/components/Avatar';
 import { Card } from '@/components/Card';
@@ -75,6 +76,7 @@ export function ProjectHeader({ project }: { project: Project }) {
           <QuickButton icon="call" label={de.akte.anrufen} onPress={() => call(customer.phone)} />
           <QuickButton icon="mail" label={de.akte.mail} onPress={() => mail(customer.email)} />
         </View>
+        <ProjectTimer projectId={project.id} />
         <View
           style={{
             flexDirection: 'row',

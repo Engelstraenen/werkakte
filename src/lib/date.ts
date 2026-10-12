@@ -53,3 +53,9 @@ export function formatDuration(ms: number): string {
   const totalMin = Math.max(0, Math.floor(ms / 60000));
   return `${Math.floor(totalMin / 60)}:${String(totalMin % 60).padStart(2, '0')} Std.`;
 }
+
+/** "45 Min.", "3,5 Std." bzw. "62 Std." aus Minuten. */
+export const formatHours = (minutes: number) =>
+  minutes < 60
+    ? `${minutes} Min.`
+    : `${(Math.round(minutes / 6) / 10).toLocaleString('de-DE')} Std.`;

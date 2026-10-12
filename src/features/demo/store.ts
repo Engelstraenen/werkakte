@@ -60,7 +60,9 @@ type DemoState = {
   addQuote: (projectId: string) => string;
   duplicateQuote: (fromQuoteId: string, projectId: string) => string;
   setQuoteItems: (quoteId: string, items: DocItem[]) => void;
+  /** Startet die Zeit für ein Projekt; läuft schon eine andere, wird sie vorher gestoppt und gespeichert. */
   startTimer: (projectId: string) => void;
+  /** Stoppt die laufende Zeit und speichert sie als Stunden im Projekt. */
   stopTimer: () => void;
 };
 
@@ -283,7 +285,19 @@ export const useDemo = create<DemoState>((set, get) => {
     },
     setQuoteItems: (quoteId, items) =>
       set((s) => ({ quotes: s.quotes.map((q) => (q.id === quoteId ? { ...q, items } : q)) })),
-    startTimer: (projectId) => set({ timer: { projectId, startedAt: now() } }),
-    stopTimer: () => set({ timer: null }),
+    startTimer: (projectId) => {
+      if (get().timer) get().stopTimer();
+      set({ timer: { projectId, startedAt: now() } });
+    },
+    stopTimer: () => {
+      const timer = get().timer;
+      if (!timer) return;
+      const minutes = Math.max(
+        1,
+        Math.round((Date.now() - new Date(timer.startedAt).getTime()) / 60000),
+      );
+      set({ timer: null });
+      get().addHours(timer.projectId, seed.CURRENT_MEMBER_ID, minutes);
+    },
   };
 });

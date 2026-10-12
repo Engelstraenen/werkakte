@@ -35,6 +35,7 @@
 - **Kalkulation so einfach wie möglich:** oben ein Satz „Dir bleiben X € (Y %)“ mit Ampel, darunter ein Balken „Wohin geht das Geld?“ (Material, Arbeit, Fixkosten, Gewinn). Tabelle nur unter „Details“. Stunden per Schnelltaste (1/2/4/8), Material = nur Betrag Pflicht. Wörter: „Einnahmen“, „Ausgaben“, „Fixkosten“ statt Fachbegriffen.
 - **Nummernkreise, Versand, E-Rechnung, Push** (Details in `docs/PRODUKTKONZEPT.md` §6): alles in Version 1.0. Rechnungsnummer erst beim Versand, Schlussrechnung zieht Abschläge ab, DATEV per Upload-Mail statt Schnittstelle.
 - **Projektliste:** Titelbild rechts fast quadratisch; Projektakte oben 4:3.
+- **Zeit läuft immer auf ein Projekt:** Start/Stopp im Projekt, Stoppen speichert Stunden im Projekt; Starten in einem anderen Projekt stoppt und speichert das laufende. Heute-Karte und Plus-Menü sind nur Abkürzungen.
 - **Testmodus** bleibt in der Entwicklung über Neuladen gespeichert.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 

@@ -93,13 +93,14 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 - **Nummernkreise selbst festlegen** (Präfix, Zahl, Stellen, Suffix, Jahr als Platzhalter); Zahl nur erhöhbar
 - **Versand aus der App** (E-Mail-Dienst mit Server in der EU): an Kunde, automatische Kopie an mich, Rechnungen automatisch an die **DATEV-Upload-Mail**; zusätzlich Teilen (WhatsApp, Mail-App). Ohne Netz: Versand wartet.
 - **E-Rechnung (ZUGFeRD/XRechnung)** für Rechnungen an Firmenkunden – automatisch zusätzlich zum PDF
+- **Zeit pro Projekt:** Start/Stopp-Button im Projekt; beim Stoppen werden die Stunden im Projekt gespeichert (Summe sichtbar, fließt in die Kalkulation). Immer nur eine laufende Zeit.
 - **Push-Erinnerungen:** Angebot nachfassen (nach X Tagen), Rechnung überfällig, Tagesabschluss
 - **Kalkulation (nur Inhaber):** Vorkalkulation im Angebot (Material zum EK, Arbeit zu internen Kosten, Betriebskosten-Zuschlag), Nachkalkulation pro Projekt aus von Hand erfassten Material-Kosten und Stunden, Gewinn mit Ampel
 - Kalender (Tag/Woche), Termine pro Projekt und Mitarbeiter
 - Offline-Modus für alles oben
 
 **Danach (Version 1.x):**
-- Zeiterfassung, Baustellen-/Regiebericht mit Unterschrift
+- Erweiterte Zeiterfassung (Pausen, Fahrzeit, Stundenzettel pro Mitarbeiter), Baustellen-/Regiebericht mit Unterschrift
 - Aufmaß-Erfassung → Positionen
 - Sprachdiktat → KI erzeugt Angebotspositionen (Vorschlag, Nutzer bestätigt)
 - Foto eines Teils → KI erkennt es → Preise vergleichen

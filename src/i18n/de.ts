@@ -54,7 +54,7 @@ export const de = {
     zuletzt: 'Zuletzt bearbeitet',
     alle: 'Alle',
     zeitLaeuft: 'Zeit läuft',
-    stoppen: 'Stoppen',
+    stoppen: 'Stoppen und speichern',
     jetzt: 'Jetzt',
   },
   projekte: {
@@ -278,6 +278,15 @@ export const de = {
     tagesabschlussText: (h: number) => `Um ${h}:00 Uhr: Stunden und Fotos vollständig?`,
     tage: 'Tage',
     uhr: 'Uhrzeit',
+  },
+  zeit: {
+    starten: 'Zeit starten',
+    stoppen: 'Zeit stoppen',
+    laeuft: 'Zeit läuft',
+    bisher: (h: string) => `Bisher erfasst: ${h}`,
+    gespeichert: 'Gespeichert im Projekt',
+    hinweis: 'Beim Stoppen wird die Zeit im Projekt gespeichert.',
+    welchesProjekt: 'Für welches Projekt?',
   },
   kalender: { tag: 'Tag', woche: 'Woche', heute: 'Heute', keineTermine: 'Keine Termine.' },
   mehr: {
