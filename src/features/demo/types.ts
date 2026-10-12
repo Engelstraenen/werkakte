@@ -16,9 +16,18 @@ export type Company = {
   taxNumber: string;
   iban: string;
   kleinunternehmer: boolean;
+  /** Betriebskosten-Zuschlag in % auf Material + Lohn (Fahrzeug, Werkstatt, Büro …). */
+  overheadPercent: number;
 };
 
-export type Member = { id: string; name: string; role: 'inhaber' | 'mitarbeiter'; phone: string };
+export type Member = {
+  id: string;
+  name: string;
+  role: 'inhaber' | 'mitarbeiter';
+  phone: string;
+  /** Interne Kosten pro Stunde (Lohn + Lohnnebenkosten), nur für Inhaber sichtbar. */
+  hourlyCostCents: number;
+};
 
 export type Customer = {
   id: string;
@@ -38,7 +47,45 @@ export type CatalogItem = {
   unitPriceCents: number;
   vatRate: 19 | 7;
   type: 'material' | 'arbeit';
+  /** Nur Arbeit: interne Kosten pro Einheit für die Vorkalkulation. Material-EK kommt aus Lieferantenpreisen. */
+  internalCostCents?: number;
 };
+
+export type Supplier = {
+  id: string;
+  name: string;
+  kind: 'grosshandel' | 'baumarkt' | 'online';
+  phone?: string;
+};
+
+/** Einkaufspreis (netto) eines Artikels bei einem Lieferanten, von Hand eingetragen. */
+export type SupplierPrice = {
+  id: string;
+  catalogItemId: string;
+  supplierId: string;
+  priceCents: number;
+  updatedAt: string;
+};
+
+/** Ist-Kosten eines Projekts, von Hand erfasst (Nachkalkulation). */
+export type ProjectCost =
+  | {
+      id: string;
+      projectId: string;
+      kind: 'material';
+      date: string;
+      text: string;
+      amountCents: number;
+      supplierId?: string;
+    }
+  | {
+      id: string;
+      projectId: string;
+      kind: 'stunden';
+      date: string;
+      memberId: string;
+      minutes: number;
+    };
 
 export type Project = {
   id: string;
@@ -82,7 +129,7 @@ export type Appointment = {
   memberIds: string[];
 };
 
-export type DocItem = LineItem & { id: string; name: string; unit: string };
+export type DocItem = LineItem & { id: string; name: string; unit: string; catalogId?: string };
 
 export type Quote = {
   id: string;

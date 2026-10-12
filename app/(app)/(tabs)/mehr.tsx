@@ -8,13 +8,20 @@ import { IconCircle, type IconName } from '@/components/IconCircle';
 import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
 import { useSession } from '@/features/auth/session';
-import { company, customers, catalog, members } from '@/features/demo/data';
+import { company, customers, catalog, members, suppliers } from '@/features/demo/data';
 import { de } from '@/i18n/de';
 import { supabase } from '@/lib/supabase';
 import type { Tone } from '@/theme';
 
 const t = de.mehr;
 const entries: { href: Href; title: string; subtitle: string; icon: IconName; tone: Tone }[] = [
+  {
+    href: '/einkauf',
+    title: t.einkauf,
+    subtitle: `${suppliers.length} Lieferanten`,
+    icon: 'cart',
+    tone: 'success',
+  },
   {
     href: '/kunden',
     title: t.kunden,

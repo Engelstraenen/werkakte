@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
@@ -9,9 +9,11 @@ import { Card } from '@/components/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { company, invoices } from '@/features/demo/data';
-import { customerOf } from '@/features/demo/selectors';
+import { customerOf, isOwner } from '@/features/demo/selectors';
+import { ProfitCard } from '@/features/costing/ProfitCard';
 import { useDemo } from '@/features/demo/store';
 import { DocItems } from '@/features/quotes/DocItems';
+import { QuoteEditor } from '@/features/quotes/QuoteEditor';
 import { de } from '@/i18n/de';
 import { formatDate } from '@/lib/date';
 import { notice } from '@/lib/notice';
@@ -76,7 +78,12 @@ export default function BelegScreen() {
         </View>
       </Card>
 
-      <DocItems items={doc.items} kleinunternehmer={company.kleinunternehmer} />
+      {isQuote && doc.status === 'entwurf' ? (
+        <QuoteEditor quote={doc} />
+      ) : (
+        <DocItems items={doc.items} kleinunternehmer={company.kleinunternehmer} />
+      )}
+      {isQuote && isOwner() ? <ProfitCard items={doc.items} /> : null}
 
       {isQuote && doc.signedAt ? (
         <Card style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -98,6 +105,15 @@ export default function BelegScreen() {
       <Button title={de.beleg.pdfTeilen} onPress={soon(4)} />
       {isQuote && !doc.signedAt ? (
         <Button title={de.beleg.unterschreiben} variant="secondary" onPress={soon(4)} />
+      ) : null}
+      {isQuote ? (
+        <Button
+          title={de.editor.vorlage}
+          variant="secondary"
+          onPress={() =>
+            router.push({ pathname: '/neu/[art]', params: { art: 'angebot', fromQuoteId: doc.id } })
+          }
+        />
       ) : null}
       {isQuote && doc.status === 'angenommen' ? (
         <Button title={de.beleg.inRechnung} variant="secondary" onPress={soon(5)} />

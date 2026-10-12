@@ -1,10 +1,13 @@
-import { appointments, customers, invoices, members } from './data';
+import { appointments, CURRENT_MEMBER_ID, customers, invoices, members, suppliers } from './data';
 import type { Invoice, Media, Project, ProjectStatus, Quote } from './types';
 import { isSameDay } from '@/lib/date';
 import { documentTotals } from '@/lib/money';
 
 export const customerOf = (p: Project) => customers.find((c) => c.id === p.customerId)!;
 export const memberById = (id: string) => members.find((m) => m.id === id)!;
+export const supplierById = (id: string) => suppliers.find((s) => s.id === id)!;
+/** Einkaufspreise, Kosten und Gewinn sieht nur der Inhaber. */
+export const isOwner = () => memberById(CURRENT_MEMBER_ID).role === 'inhaber';
 export const appointmentsOn = (day: Date) =>
   appointments
     .filter((a) => isSameDay(new Date(a.start), day))

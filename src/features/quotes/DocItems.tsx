@@ -27,7 +27,6 @@ export function DocItems({
   kleinunternehmer: boolean;
 }) {
   const colors = useColors();
-  const totals = documentTotals(items, kleinunternehmer);
   return (
     <>
       <Card style={{ paddingVertical: spacing.sm }}>
@@ -59,14 +58,28 @@ export function DocItems({
           </View>
         ))}
       </Card>
-      <Card>
-        <Row label={de.beleg.netto} value={formatEuro(totals.netCents)} />
-        {totals.vat.map((v) => (
-          <Row key={v.rate} label={de.beleg.mwst(v.rate)} value={formatEuro(v.vatCents)} />
-        ))}
-        <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.xs }} />
-        <Row label={de.beleg.brutto} value={formatEuro(totals.grossCents)} strong />
-      </Card>
+      <DocTotals items={items} kleinunternehmer={kleinunternehmer} />
     </>
+  );
+}
+
+export function DocTotals({
+  items,
+  kleinunternehmer,
+}: {
+  items: DocItem[];
+  kleinunternehmer: boolean;
+}) {
+  const colors = useColors();
+  const totals = documentTotals(items, kleinunternehmer);
+  return (
+    <Card>
+      <Row label={de.beleg.netto} value={formatEuro(totals.netCents)} />
+      {totals.vat.map((v) => (
+        <Row key={v.rate} label={de.beleg.mwst(v.rate)} value={formatEuro(v.vatCents)} />
+      ))}
+      <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.xs }} />
+      <Row label={de.beleg.brutto} value={formatEuro(totals.grossCents)} strong />
+    </Card>
   );
 }

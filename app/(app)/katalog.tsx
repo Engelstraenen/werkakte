@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 
 import { AppText } from '@/components/AppText';
@@ -43,6 +43,7 @@ export default function KatalogScreen() {
                 size={40}
               />
             }
+            onPress={() => router.push({ pathname: '/artikel/[id]', params: { id: c.id } })}
             right={
               <AppText variant="label">
                 {formatEuro(c.unitPriceCents)} / {c.unit}

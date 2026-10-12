@@ -19,12 +19,13 @@ const t = de.neu;
 const tags: MediaTag[] = ['vorher', 'nachher', 'mangel', 'sonstiges'];
 
 export default function NeuScreen() {
-  const params = useLocalSearchParams<{ art: Art; projectId?: string }>();
+  const params = useLocalSearchParams<{ art: Art; projectId?: string; fromQuoteId?: string }>();
   const [projectId, setProjectId] = useState(params.projectId);
   const [text, setText] = useState('');
   const [tag, setTag] = useState<MediaTag>('sonstiges');
   const [error, setError] = useState<string>();
-  const { addNote, addPhoto, addQuote, startTimer } = useDemo();
+  const { addNote, addPhoto, addQuote, duplicateQuote, startTimer } = useDemo();
+  const from = params.fromQuoteId;
   const art = params.art;
   const done = useRef(false);
 
@@ -34,12 +35,15 @@ export default function NeuScreen() {
     if (!projectId || done.current) return;
     if (art === 'angebot' || art === 'zeit') done.current = true;
     if (art === 'angebot')
-      router.replace({ pathname: '/beleg/[id]', params: { id: addQuote(projectId) } });
+      router.replace({
+        pathname: '/beleg/[id]',
+        params: { id: from ? duplicateQuote(from, projectId) : addQuote(projectId) },
+      });
     if (art === 'zeit') {
       startTimer(projectId);
       router.back();
     }
-  }, [art, projectId, addQuote, startTimer]);
+  }, [art, projectId, from, addQuote, duplicateQuote, startTimer]);
 
   const openProject = (tab: string) =>
     router.replace({ pathname: '/projekt/[id]', params: { id: projectId!, tab } });
@@ -57,7 +61,7 @@ export default function NeuScreen() {
 
   return (
     <Screen>
-      <Stack.Screen options={{ title: t[art] }} />
+      <Stack.Screen options={{ title: from ? t.vorlage : t[art] }} />
       {art === 'projekt' ? (
         <NewProjectForm />
       ) : !projectId ? (

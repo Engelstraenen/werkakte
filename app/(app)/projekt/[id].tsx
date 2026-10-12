@@ -7,7 +7,8 @@ import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { AppointmentCard } from '@/features/calendar/AppointmentCard';
 import { appointments } from '@/features/demo/data';
-import { invoicesOf } from '@/features/demo/selectors';
+import { invoicesOf, isOwner } from '@/features/demo/selectors';
+import { CostingView } from '@/features/costing/CostingView';
 import { useDemo } from '@/features/demo/store';
 import { NoteList } from '@/features/projects/NoteList';
 import { PhotoGrid } from '@/features/projects/PhotoGrid';
@@ -15,7 +16,7 @@ import { ProjectHeader } from '@/features/projects/ProjectHeader';
 import { DocList } from '@/features/quotes/DocList';
 import { de } from '@/i18n/de';
 
-type Tab = 'fotos' | 'notizen' | 'belege' | 'termine';
+type Tab = 'fotos' | 'notizen' | 'belege' | 'termine' | 'kalkulation';
 
 export default function ProjektScreen() {
   const { id, tab } = useLocalSearchParams<{ id: string; tab?: Tab }>();
@@ -40,6 +41,7 @@ export default function ProjektScreen() {
     { value: 'belege', label: `${de.akte.belege} ${docs.length}` },
     { value: 'termine', label: `${de.akte.termine} ${dates.length}` },
   ];
+  if (isOwner()) tabs.push({ value: 'kalkulation', label: de.akte.kalkulation });
   const add = (art: 'foto' | 'notiz' | 'angebot') =>
     router.push({ pathname: '/neu/[art]', params: { art, projectId: project.id } });
 
@@ -89,6 +91,7 @@ export default function ProjektScreen() {
           <EmptyState icon="calendar-outline" text={de.akte.keineTermine} />
         )
       ) : null}
+      {active === 'kalkulation' ? <CostingView projectId={project.id} /> : null}
     </Screen>
   );
 }

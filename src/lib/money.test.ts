@@ -1,4 +1,4 @@
-import { documentTotals, formatEuro, lineTotalCents } from './money';
+import { documentTotals, formatEuro, lineTotalCents, parseEuro, parseQty } from './money';
 
 const nbsp = (s: string) => s.replace(/ /g, ' ');
 
@@ -32,4 +32,21 @@ test('Kleinunternehmer: keine MwSt', () => {
 
 test('Euro-Format', () => {
   expect(nbsp(formatEuro(123456))).toBe('1.234,56 €');
+});
+
+test('Euro-Eingabe parsen', () => {
+  expect(parseEuro('12,50')).toBe(1250);
+  expect(parseEuro('1.234,5 €')).toBe(123450);
+  expect(parseEuro('12.50')).toBe(1250);
+  expect(parseEuro('7')).toBe(700);
+  expect(parseEuro('1.234')).toBe(123400);
+  expect(parseEuro('abc')).toBeUndefined();
+  expect(parseEuro('')).toBeUndefined();
+});
+
+test('Menge parsen', () => {
+  expect(parseQty('2,5')).toBe(2500);
+  expect(parseQty('24')).toBe(24000);
+  expect(parseQty('0')).toBeUndefined();
+  expect(parseQty('x')).toBeUndefined();
 });

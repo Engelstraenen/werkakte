@@ -46,3 +46,19 @@ export function documentTotals(items: LineItem[], kleinunternehmer = false): Tot
   const grossCents = netCents + vat.reduce((a, v) => a + v.vatCents, 0);
   return { netCents, vat, grossCents };
 }
+
+/** "1.234,5" oder "12.50" → Cent; ungültig → undefined. */
+export function parseEuro(input: string): number | undefined {
+  const s = input.trim().replace(/\s|€/g, '');
+  if (!/^\d{1,3}(\.\d{3})*(,\d{1,2})?$|^\d+([,.]\d{1,2})?$/.test(s)) return undefined;
+  // Komma = Dezimaltrenner; Punkt mit genau 3 Ziffern danach = Tausenderpunkt ("1.234").
+  const thousands = s.includes(',') || /^\d{1,3}(\.\d{3})+$/.test(s);
+  const normalized = thousands ? s.replace(/\./g, '').replace(',', '.') : s;
+  return Math.round(Number(normalized) * 100);
+}
+
+/** "2,5" → 2500 (Tausendstel); ungültig oder ≤ 0 → undefined. */
+export function parseQty(input: string): number | undefined {
+  const n = Number(input.trim().replace(',', '.'));
+  return Number.isFinite(n) && n > 0 ? Math.round(n * 1000) : undefined;
+}

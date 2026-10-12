@@ -11,7 +11,10 @@ import type {
   Member,
   Note,
   Project,
+  ProjectCost,
   Quote,
+  Supplier,
+  SupplierPrice,
 } from './types';
 
 /** Zeitpunkt relativ zu heute: Tage-Versatz, Stunde, Minute. */
@@ -35,12 +38,31 @@ export const company: Company = {
   taxNumber: '35/123/45678',
   iban: 'DE12 3456 7890 1234 5678 90',
   kleinunternehmer: false,
+  overheadPercent: 18,
 };
 
 export const members: Member[] = [
-  { id: 'm1', name: 'Thomas Weber', role: 'inhaber', phone: '0171 111 22 33' },
-  { id: 'm2', name: 'Lukas Brandt', role: 'mitarbeiter', phone: '0171 222 33 44' },
-  { id: 'm3', name: 'Mehmet Yilmaz', role: 'mitarbeiter', phone: '0171 333 44 55' },
+  {
+    id: 'm1',
+    name: 'Thomas Weber',
+    role: 'inhaber',
+    phone: '0171 111 22 33',
+    hourlyCostCents: 5500,
+  },
+  {
+    id: 'm2',
+    name: 'Lukas Brandt',
+    role: 'mitarbeiter',
+    phone: '0171 222 33 44',
+    hourlyCostCents: 4200,
+  },
+  {
+    id: 'm3',
+    name: 'Mehmet Yilmaz',
+    role: 'mitarbeiter',
+    phone: '0171 333 44 55',
+    hourlyCostCents: 4000,
+  },
 ];
 
 export const customers: Customer[] = [
@@ -120,6 +142,7 @@ export const catalog: CatalogItem[] = [
     unitPriceCents: 6800,
     vatRate: 19,
     type: 'arbeit',
+    internalCostCents: 4100,
   },
   {
     id: 'k2',
@@ -128,6 +151,7 @@ export const catalog: CatalogItem[] = [
     unitPriceCents: 8200,
     vatRate: 19,
     type: 'arbeit',
+    internalCostCents: 5500,
   },
   {
     id: 'k3',
@@ -136,6 +160,7 @@ export const catalog: CatalogItem[] = [
     unitPriceCents: 5200,
     vatRate: 19,
     type: 'arbeit',
+    internalCostCents: 3200,
   },
   {
     id: 'k4',
@@ -144,6 +169,7 @@ export const catalog: CatalogItem[] = [
     unitPriceCents: 4500,
     vatRate: 19,
     type: 'arbeit',
+    internalCostCents: 1800,
   },
   {
     id: 'k5',
@@ -152,6 +178,7 @@ export const catalog: CatalogItem[] = [
     unitPriceCents: 9500,
     vatRate: 19,
     type: 'arbeit',
+    internalCostCents: 0,
   },
   {
     id: 'k6',
@@ -546,6 +573,7 @@ const item = (
     unitPriceCents: c.unitPriceCents,
     vatRate: c.vatRate,
     qtyMilli,
+    catalogId,
     discountPercent,
   };
 };
@@ -661,4 +689,125 @@ export const invoices: Invoice[] = [
       },
     ],
   },
+];
+
+export const suppliers: Supplier[] = [
+  { id: 's1', name: 'Großhandel Süd', kind: 'grosshandel', phone: '0721 900 10 10' },
+  { id: 's2', name: 'Sanitär-Fachhandel Meier', kind: 'grosshandel', phone: '0721 900 20 20' },
+  { id: 's3', name: 'Baumarkt Karlsruhe', kind: 'baumarkt' },
+  { id: 's4', name: 'Haustechnik-Online', kind: 'online' },
+];
+
+const days = (n: number) => at(-n, 9);
+// [Artikel, Lieferant, Netto-EK in Cent, vor x Tagen eingetragen]
+const priceRows: [string, string, number, number][] = [
+  ['k6', 's1', 2290, 20],
+  ['k6', 's3', 2799, 5],
+  ['k6', 's4', 2450, 40],
+  ['k7', 's1', 2950, 20],
+  ['k7', 's4', 3190, 12],
+  ['k7', 's3', 3699, 5],
+  ['k8', 's1', 1790, 20],
+  ['k8', 's3', 1949, 2],
+  ['k8', 's4', 1680, 130],
+  ['k9', 's2', 18900, 30],
+  ['k9', 's4', 17900, 8],
+  ['k10', 's2', 15900, 30],
+  ['k10', 's1', 16400, 20],
+  ['k11', 's2', 12900, 30],
+  ['k11', 's4', 11990, 8],
+  ['k12', 's2', 23900, 30],
+  ['k12', 's4', 22900, 8],
+  ['k12', 's3', 27900, 5],
+  ['k13', 's1', 279000, 60],
+  ['k13', 's2', 284500, 30],
+  ['k13', 's4', 269000, 8],
+  ['k14', 's1', 16200, 20],
+  ['k14', 's3', 18900, 5],
+  ['k15', 's1', 640, 20],
+  ['k15', 's3', 899, 5],
+  ['k16', 's1', 115, 20],
+  ['k16', 's4', 98, 100],
+];
+export const supplierPrices: SupplierPrice[] = priceRows.map(
+  ([catalogItemId, supplierId, priceCents, age], i) => ({
+    id: `sp${i}`,
+    catalogItemId,
+    supplierId,
+    priceCents,
+    updatedAt: days(age),
+  }),
+);
+
+const hours = (projectId: string, memberId: string, dayOffset: number, h: number): ProjectCost => ({
+  id: `h-${projectId}-${memberId}-${dayOffset}`,
+  projectId,
+  kind: 'stunden',
+  date: at(dayOffset, 16),
+  memberId,
+  minutes: h * 60,
+});
+
+export const projectCosts: ProjectCost[] = [
+  // p1 Badsanierung: läuft, mehr Stunden als geplant (Mangel hinter Vorwand)
+  {
+    id: 'pc1',
+    projectId: 'p1',
+    kind: 'material',
+    date: at(-7, 8),
+    text: 'Fliesen Wand + Boden, Kleber',
+    amountCents: 94010,
+    supplierId: 's1',
+  },
+  {
+    id: 'pc2',
+    projectId: 'p1',
+    kind: 'material',
+    date: at(-6, 8),
+    text: 'WC, Vorwandelement, Brausegarnitur, Duschrinne',
+    amountCents: 71600,
+    supplierId: 's2',
+  },
+  {
+    id: 'pc3',
+    projectId: 'p1',
+    kind: 'material',
+    date: at(-4, 13),
+    text: 'Silikon, Schrauben, Kleinmaterial',
+    amountCents: 4890,
+    supplierId: 's3',
+  },
+  {
+    id: 'pc4',
+    projectId: 'p1',
+    kind: 'material',
+    date: at(-3, 15),
+    text: 'Kupferrohr + Fittings (Nachtrag Mangel)',
+    amountCents: 13240,
+    supplierId: 's1',
+  },
+  ...[-6, -5, -4, -3, -2, -1, 0].map((d) => hours('p1', 'm2', d, 8)),
+  ...[-6, -3, 0].map((d) => hours('p1', 'm1', d, 2)),
+  // p3 Rohrbruch: abgeschlossen, gut gelaufen
+  {
+    id: 'pc5',
+    projectId: 'p3',
+    kind: 'material',
+    date: at(-8, 9),
+    text: 'Kupferrohr, Pressfittings',
+    amountCents: 2850,
+    supplierId: 's1',
+  },
+  hours('p3', 'm3', -8, 4),
+  // p5 Wartung: bezahlt
+  {
+    id: 'pc6',
+    projectId: 'p5',
+    kind: 'material',
+    date: at(-27, 8),
+    text: 'Dichtungen, Filter, Kleinteile',
+    amountCents: 9680,
+    supplierId: 's1',
+  },
+  ...[-28, -27, -26].map((d) => hours('p5', 'm3', d, d === -26 ? 4 : 8)),
 ];
