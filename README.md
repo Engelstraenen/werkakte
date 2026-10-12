@@ -23,9 +23,9 @@ npm run typecheck && npm run lint && npm test
 3. _Authentication › URL Configuration › Redirect URLs_ hinzufügen:
    - `handwerkerapp://**` (eigener Build)
    - `exp://**` (Expo Go während der Entwicklung)
-4. _Authentication › Email Templates_: in **Magic Link** und **Confirm signup** den Code ergänzen, z. B.
+4. Eigenen SMTP-Versand einrichten (_Authentication › Emails › Set up SMTP_) – erst danach lassen sich die Vorlagen bearbeiten. Dann _Authentication › Emails_: in **Magic Link** und **Confirm signup** den Code ergänzen, z. B.
    `<p>Oder gib diesen Code in der App ein: <strong>{{ .Token }}</strong></p>`
-5. Für echte Nutzer später eigenen SMTP-Versand einrichten (der eingebaute Versand ist stark begrenzt).
+5. Ohne eigenen SMTP: nur wenige Mails pro Stunde, nur an Mitglieder des Supabase-Teams, und ohne Code in der Mail (nur Link).
 
 ## Anmelden mit Apple, Google, Microsoft, Facebook
 

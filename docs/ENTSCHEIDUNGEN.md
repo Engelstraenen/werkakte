@@ -22,7 +22,7 @@
 - Apple-, Google-, Microsoft- und Facebook-Zugänge anlegen (siehe README) und je Anbieter auf Gerät testen.
 - Datenschutzerklärung muss die Login-Anbieter nennen (Datenübermittlung an Apple, Google, Microsoft, Meta – USA). Facebook-Login braucht sie zwingend für die Freischaltung bei Meta.
 - Apple liefert den Namen nur beim allerersten Login – später beim Anlegen der Firma/des Profils abfragen.
-- Eigener SMTP-Versand für Auth-Mails vor dem ersten Test mit echten Nutzern.
+- Eigener SMTP-Versand für Auth-Mails vor dem ersten Test mit echten Nutzern. Erst damit lassen sich die Supabase-Vorlagen bearbeiten → Code (`{{ .Token }}`) in die Mail. Bis dahin funktioniert nur der Link (auf demselben Gerät).
 - Firma anlegen nach erstem Login (Phase 1/2).
 - App-Name und Icon final festlegen (Phase 7).
 - Xcode ist auf dem Entwickler-Mac nicht installiert → Test bisher über Web-Vorschau; native Prüfung mit Expo Go auf dem Handy.
