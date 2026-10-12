@@ -1,0 +1,40 @@
+export const de = {
+  tabs: {
+    heute: 'Heute',
+    projekte: 'Projekte',
+    neu: 'Neu',
+    kalender: 'Kalender',
+    mehr: 'Mehr',
+  },
+  schnellaktion: {
+    titel: 'Was willst du tun?',
+    foto: 'Foto aufnehmen',
+    notiz: 'Notiz oder Sprachnotiz',
+    angebot: 'Neues Angebot',
+    projekt: 'Neues Projekt',
+    zeit: 'Zeit starten',
+    bald: 'Kommt bald.',
+    schliessen: 'Schließen',
+  },
+  login: {
+    titel: 'Anmelden',
+    emailLabel: 'Deine E-Mail',
+    emailUngueltig: 'Bitte gib eine gültige E-Mail ein.',
+    linkSenden: 'Anmelde-Link senden',
+    gesendet:
+      'Wir haben dir eine E-Mail geschickt. Tipp auf den Link oder gib den Code aus der E-Mail ein.',
+    codeLabel: 'Code aus der E-Mail',
+    codeUngueltig: 'Der Code hat 6 bis 10 Ziffern.',
+    codeBestaetigen: 'Anmelden',
+    andereEmail: 'Andere E-Mail nehmen',
+    linkFehler: 'Der Link hat nicht geklappt. Fordere bitte einen neuen an.',
+  },
+  mehr: {
+    angemeldetAls: 'Angemeldet als',
+    abmelden: 'Abmelden',
+  },
+  platzhalter: 'Hier entsteht bald etwas.',
+  fehler: {
+    allgemein: 'Das hat nicht geklappt. Versuch es nochmal.',
+  },
+} as const;
