@@ -9,64 +9,11 @@ import { Platform, useColorScheme } from 'react-native';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-// Design „Bauplan“ (siehe docs/ENTSCHEIDUNGEN.md): Blaupausen-Blau mit Raster, Warngelb als Akzent.
-// Varianten: Ruhig (Standard), Hell (weiß, blaue Linien), Dunkel (Original-Blaupause).
-// Kontrast: Text mind. 7:1, Primär- und Statusfarben mind. 4.5:1 zur Karte.
+// Design „Bauplan Ruhig“ (siehe docs/ENTSCHEIDUNGEN.md): ruhige Flächen, eine Aktionsfarbe (Blau),
+// Signalfarben nur für Status (immer mit Wort). Kontrast: Text mind. 7:1, Aktionen mind. 4.5:1.
 
-const dark = {
-  // Hintergrund dunkler, Karten heller: klare Trennung auch bei Sonne/Displayhelligkeit niedrig.
-  background: '#071430',
-  grid: 'rgba(255, 255, 255, 0.035)',
-  card: '#1C3B6C',
-  surface: '#264B82',
-  text: '#F1F5FC',
-  textMuted: '#B7C7E3',
-  border: '#4A6FAD',
-  /** Hauptaktion (Buttons, aktiver Tab). */
-  primary: '#F6C445',
-  primarySoft: '#3A3520',
-  onPrimary: '#0D1F3C',
-  /** Warngelb: Plus-Button, Markierungen – in beiden Varianten gleich. */
-  accent: '#F6C445',
-  onAccent: '#0D1F3C',
-  danger: '#FF8A78',
-  success: '#5AD198',
-  warning: '#F6C445',
-  info: '#8DB4FF',
-  neutral: '#A9BBDA',
-  /** Text auf farbigen Status-Flächen (Grün/Rot/Gelb …). */
-  onTone: '#0D1F3C',
-  tabBar: '#0A1830',
-  shadow: '0px 6px 16px rgba(0, 0, 0, 0.45)',
-};
-
-// Hell: weißer Grund, hellblaues Blaupausen-Raster, mittelblaue Linien als Umrandung.
-const light: typeof dark = {
-  background: '#FFFFFF',
-  grid: 'rgba(59, 130, 246, 0.16)',
-  card: '#FFFFFF',
-  surface: '#EAF2FF',
-  text: '#0B1F44',
-  textMuted: '#3A5382',
-  border: '#3B76E0',
-  primary: '#1D4ED8',
-  primarySoft: '#DBE8FF',
-  onPrimary: '#FFFFFF',
-  accent: '#2563EB',
-  onAccent: '#FFFFFF',
-  danger: '#B42318',
-  success: '#15803D',
-  warning: '#9A5B00',
-  info: '#1D4ED8',
-  neutral: '#3A5382',
-  onTone: '#FFFFFF',
-  tabBar: '#FFFFFF',
-  shadow: '0px 2px 8px rgba(29, 78, 216, 0.10)',
-};
-
-// Ruhig (Standard): nach Lesbarkeits-Empfehlungen – leicht getöntes Weiß, weiße Karten,
-// zarte Ränder, kräftiges Blau nur für Aktionen, sehr dunkles Blau statt Schwarz, Raster kaum sichtbar.
-const calm: typeof dark = {
+// Hell (Standard): leicht getöntes Weiß, weiße Karten, zarte Ränder, Raster kaum sichtbar.
+const light = {
   background: '#F4F7FB',
   grid: 'rgba(59, 130, 246, 0.045)',
   card: '#FFFFFF',
@@ -74,9 +21,11 @@ const calm: typeof dark = {
   text: '#0F1F3D',
   textMuted: '#46597A',
   border: '#D3DDEB',
+  /** Hauptaktion (Buttons, aktiver Tab). */
   primary: '#1D4ED8',
   primarySoft: '#E3ECFF',
   onPrimary: '#FFFFFF',
+  /** Plus-Button, Abschnitts-Balken. */
   accent: '#1D4ED8',
   onAccent: '#FFFFFF',
   danger: '#B42318',
@@ -84,12 +33,38 @@ const calm: typeof dark = {
   warning: '#9A5B00',
   info: '#1D4ED8',
   neutral: '#46597A',
+  /** Text auf farbigen Status-Flächen (Grün/Rot/Gelb …). */
   onTone: '#FFFFFF',
   tabBar: '#FFFFFF',
   shadow: '0px 1px 2px rgba(15, 31, 61, 0.06), 0px 4px 14px rgba(15, 31, 61, 0.07)',
 };
 
-export type Colors = typeof dark;
+// Dunkel: dieselbe Ruhe – dunkles Blaugrau statt Schwarz, gebrochenes Weiß statt Reinweiß,
+// gedämpfte Farben (blenden nicht), Karten heller als der Grund.
+const dark: typeof light = {
+  background: '#0E1525',
+  grid: 'rgba(148, 163, 184, 0.035)',
+  card: '#172036',
+  surface: '#1F2A44',
+  text: '#E7ECF5',
+  textMuted: '#A7B3C8',
+  border: '#2B3857',
+  primary: '#7AA2FF',
+  primarySoft: '#1E2D52',
+  onPrimary: '#0E1525',
+  accent: '#7AA2FF',
+  onAccent: '#0E1525',
+  danger: '#F2877A',
+  success: '#5CC98C',
+  warning: '#E3B341',
+  info: '#7AA2FF',
+  neutral: '#A7B3C8',
+  onTone: '#0E1525',
+  tabBar: '#121A2C',
+  shadow: '0px 4px 14px rgba(0, 0, 0, 0.35)',
+};
+
+export type Colors = typeof light;
 export type Tone = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'neutral';
 
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;
@@ -122,9 +97,9 @@ export const fontFiles = {
   IBMPlexMono_500Medium,
 };
 
-export type Appearance = 'ruhig' | 'hell' | 'dunkel' | 'automatisch';
+export type Appearance = 'hell' | 'dunkel' | 'automatisch';
 
-const palettes = { ruhig: calm, hell: light, dunkel: dark } as const;
+const palettes = { hell: light, dunkel: dark } as const;
 
 // Web: localStorage, Handy: SecureStore – Darstellung bleibt nach Neustart erhalten.
 const appearanceStorage = createJSONStorage(() =>
@@ -137,18 +112,28 @@ const appearanceStorage = createJSONStorage(() =>
       },
 );
 
-/** Darstellung (Mehr › Darstellung). Standard: ruhig. */
-export const useAppearance = create<{ mode: Appearance; setMode: (mode: Appearance) => void }>()(
-  persist((set) => ({ mode: 'ruhig', setMode: (mode) => set({ mode }) }), {
+type AppearanceState = { mode: Appearance; setMode: (mode: Appearance) => void };
+
+/** Darstellung (Mehr › Darstellung). Standard: hell. */
+export const useAppearance = create<AppearanceState>()(
+  persist((set) => ({ mode: 'hell', setMode: (mode) => set({ mode }) }), {
     name: 'appearance',
     storage: appearanceStorage,
+    // v0 kannte noch „ruhig“ (jetzt = hell) und „hell“ mit blauen Linien.
+    version: 1,
+    migrate: (old) => {
+      const mode = (old as { mode?: string } | undefined)?.mode;
+      return {
+        mode: mode === 'dunkel' || mode === 'automatisch' ? mode : 'hell',
+      } as AppearanceState;
+    },
   }),
 );
 
 function useResolved(): keyof typeof palettes {
   const system = useColorScheme();
   const mode = useAppearance((s) => s.mode);
-  if (mode === 'automatisch') return system === 'dark' ? 'dunkel' : 'ruhig';
+  if (mode === 'automatisch') return system === 'dark' ? 'dunkel' : 'hell';
   return mode;
 }
 

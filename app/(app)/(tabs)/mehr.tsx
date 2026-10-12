@@ -96,7 +96,6 @@ export default function MehrScreen() {
         <Chips
           segmented
           options={[
-            { value: 'ruhig', label: t.ruhig },
             { value: 'hell', label: t.hell },
             { value: 'dunkel', label: t.dunkel },
             { value: 'automatisch', label: t.automatisch },
