@@ -3,6 +3,7 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import { useEffect, useState, type ComponentProps } from 'react';
 import { Platform, View, useColorScheme } from 'react-native';
 
+import { useEnabledProviders } from './useEnabledProviders';
 import { useSocialLogin, type OAuthProvider } from './useSocialLogin';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
@@ -21,6 +22,9 @@ export function SocialLogin() {
   const scheme = useColorScheme();
   const { busy, error, signInWithBrowser, signInWithApple } = useSocialLogin();
   const [nativeApple, setNativeApple] = useState(false);
+  // Offline oder Fehler → keine Anbieter-Buttons, E-Mail geht immer.
+  const { data: enabled = {} } = useEnabledProviders();
+  const visible = browserProviders.filter((p) => enabled[p.id]);
 
   useEffect(() => {
     if (Platform.OS === 'ios') AppleAuthentication.isAvailableAsync().then(setNativeApple);
@@ -38,9 +42,11 @@ export function SocialLogin() {
     />
   );
 
+  if (!enabled.apple && visible.length === 0) return null;
+
   return (
     <View style={{ gap: spacing.sm }}>
-      {nativeApple ? (
+      {!enabled.apple ? null : nativeApple ? (
         // Apple schreibt auf iOS den eigenen Button vor (Human Interface Guidelines).
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
@@ -56,8 +62,11 @@ export function SocialLogin() {
       ) : (
         providerButton('apple', de.login.mitApple, 'logo-apple')
       )}
-      {browserProviders.map((p) => providerButton(p.id, p.label, p.icon))}
+      {visible.map((p) => providerButton(p.id, p.label, p.icon))}
       {error ? <AppText style={{ color: colors.danger }}>{error}</AppText> : null}
+      <AppText muted style={{ textAlign: 'center' }}>
+        {de.login.oderEmail}
+      </AppText>
     </View>
   );
 }

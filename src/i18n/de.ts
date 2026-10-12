@@ -32,11 +32,13 @@ export const de = {
     codeUngueltig: 'Der Code hat 6 bis 10 Ziffern.',
     codeBestaetigen: 'Anmelden',
     andereEmail: 'Andere E-Mail nehmen',
+    testmodus: 'Ohne Anmeldung testen (nur Entwicklung)',
     linkFehler: 'Der Link hat nicht geklappt. Fordere bitte einen neuen an.',
   },
   mehr: {
     angemeldetAls: 'Angemeldet als',
     abmelden: 'Abmelden',
+    testmodus: 'Testmodus (nicht angemeldet)',
   },
   platzhalter: 'Hier entsteht bald etwas.',
   fehler: {

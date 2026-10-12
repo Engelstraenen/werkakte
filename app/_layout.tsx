@@ -26,7 +26,8 @@ export default function RootLayout() {
 }
 
 function RootStack() {
-  const { session, loading } = useSession();
+  const { session, loading, devMode } = useSession();
+  const signedIn = !!session || devMode;
 
   useEffect(() => {
     if (!loading) SplashScreen.hideAsync();
@@ -36,10 +37,10 @@ function RootStack() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={!!session}>
+      <Stack.Protected guard={signedIn}>
         <Stack.Screen name="(tabs)" />
       </Stack.Protected>
-      <Stack.Protected guard={!session}>
+      <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="login" />
       </Stack.Protected>
       <Stack.Screen name="login-callback" />

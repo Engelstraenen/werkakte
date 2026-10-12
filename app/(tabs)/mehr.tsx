@@ -6,15 +6,15 @@ import { de } from '@/i18n/de';
 import { supabase } from '@/lib/supabase';
 
 export default function MehrScreen() {
-  const { session } = useSession();
+  const { session, devMode, setDevMode } = useSession();
   return (
     <Screen>
       <AppText muted>{de.mehr.angemeldetAls}</AppText>
-      <AppText style={{ fontWeight: '700' }}>{session?.user.email}</AppText>
+      <AppText style={{ fontWeight: '700' }}>{session?.user.email ?? de.mehr.testmodus}</AppText>
       <Button
         title={de.mehr.abmelden}
         variant="secondary"
-        onPress={() => supabase.auth.signOut({ scope: 'local' })}
+        onPress={() => (devMode ? setDevMode(false) : supabase.auth.signOut({ scope: 'local' }))}
       />
     </Screen>
   );

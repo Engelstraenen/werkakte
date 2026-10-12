@@ -5,6 +5,7 @@ import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
+import { useSession } from '@/features/auth/session';
 import { SocialLogin } from '@/features/auth/SocialLogin';
 import { useLogin } from '@/features/auth/useLogin';
 import { de } from '@/i18n/de';
@@ -15,6 +16,7 @@ const t = de.login;
 export default function LoginScreen() {
   const colors = useColors();
   const login = useLogin();
+  const { setDevMode } = useSession();
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
@@ -24,14 +26,10 @@ export default function LoginScreen() {
       >
         <Screen>
           <AppText variant="heading">{t.titel}</AppText>
-          {login.sent ? null : (
-            <>
-              <SocialLogin />
-              <AppText muted style={{ textAlign: 'center' }}>
-                {t.oderEmail}
-              </AppText>
-            </>
-          )}
+          {__DEV__ ? (
+            <Button title={t.testmodus} variant="secondary" onPress={() => setDevMode(true)} />
+          ) : null}
+          {login.sent ? null : <SocialLogin />}
           {login.sent ? (
             <>
               <AppText>{t.gesendet}</AppText>

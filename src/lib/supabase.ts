@@ -13,6 +13,9 @@ if (!url || !anonKey) {
   );
 }
 
+export const supabaseUrl = url;
+export const supabaseAnonKey = anonKey;
+
 export const supabase = createClient(url, anonKey, {
   auth: {
     // Web (nur Vorschau) nutzt localStorage, SecureStore gibt es dort nicht.
