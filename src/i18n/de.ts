@@ -18,6 +18,11 @@ export const de = {
   },
   login: {
     titel: 'Anmelden',
+    mitApple: 'Mit Apple anmelden',
+    mitGoogle: 'Mit Google anmelden',
+    mitMicrosoft: 'Mit Microsoft anmelden',
+    mitFacebook: 'Mit Facebook anmelden',
+    oderEmail: 'oder mit E-Mail',
     emailLabel: 'Deine E-Mail',
     emailUngueltig: 'Bitte gib eine gültige E-Mail ein.',
     linkSenden: 'Anmelde-Link senden',

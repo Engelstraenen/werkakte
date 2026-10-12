@@ -7,6 +7,7 @@
 - **Expo SDK 57**, React Native 0.86, TypeScript 6 (strict + `noUncheckedIndexedAccess`).
 - **Routen liegen in `app/` im Projekt-Root** (laut CLAUDE.md), nicht in `src/app/` wie im Expo-Template.
 - **Login: Magic Link + 6-stelliger Code** in derselben E-Mail. Grund: Der Link klappt nicht, wenn die Mail auf einem anderen Gerät geöffnet wird; der Code klappt immer. Link nutzt PKCE (`/login-callback`).
+- **Weitere Anmelde-Wege (optional neben E-Mail): Apple, Google, Microsoft, Facebook.** Google/Microsoft/Facebook (und Apple auf Android) über Supabase-OAuth im Browser-Fenster (`expo-web-browser`, PKCE, gleiche Route `/login-callback`). Apple auf dem iPhone mit nativem Dialog (`expo-apple-authentication`) – Pflicht laut App-Store-Regel 4.8, sobald Google-Login angeboten wird. Nativer Google-Dialog wurde verworfen (bräuchte Development-Build statt Expo Go).
 - **Session-Speicher: `expo-secure-store`** (verschlüsselt), aufgeteilt in Stücke, weil eine Session > 2 KB sein kann. Im Web (nur Vorschau) `localStorage`.
 - **Abmelden nur auf diesem Gerät** (`scope: 'local'`), funktioniert auch offline.
 - **Navigation: JS-Tabs** (`expo-router/js-tabs`) statt Native Tabs, weil der Plus-Mittelbutton ein eigenes Aussehen braucht und kein Screen ist, sondern ein Bottom-Sheet öffnet.
@@ -18,6 +19,9 @@
 ## Offene Punkte
 
 - Supabase-Projekt (Frankfurt) anlegen und Einrichtung laut README durchführen → danach Login auf echtem Gerät testen.
+- Apple-, Google-, Microsoft- und Facebook-Zugänge anlegen (siehe README) und je Anbieter auf Gerät testen.
+- Datenschutzerklärung muss die Login-Anbieter nennen (Datenübermittlung an Apple, Google, Microsoft, Meta – USA). Facebook-Login braucht sie zwingend für die Freischaltung bei Meta.
+- Apple liefert den Namen nur beim allerersten Login – später beim Anlegen der Firma/des Profils abfragen.
 - Eigener SMTP-Versand für Auth-Mails vor dem ersten Test mit echten Nutzern.
 - Firma anlegen nach erstem Login (Phase 1/2).
 - App-Name und Icon final festlegen (Phase 7).

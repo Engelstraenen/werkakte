@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, Text } from 'react-native';
 
 import { fontSize, radius, spacing, touch, useColors } from '@/theme';
@@ -8,9 +9,10 @@ type Props = {
   variant?: 'primary' | 'secondary';
   loading?: boolean;
   disabled?: boolean;
+  icon?: ReactNode;
 };
 
-export function Button({ title, onPress, variant = 'primary', loading, disabled }: Props) {
+export function Button({ title, onPress, variant = 'primary', loading, disabled, icon }: Props) {
   const colors = useColors();
   const primary = variant === 'primary';
   const inactive = disabled || loading;
@@ -24,6 +26,8 @@ export function Button({ title, onPress, variant = 'primary', loading, disabled 
         minHeight: touch.main,
         borderRadius: radius.md,
         paddingHorizontal: spacing.lg,
+        flexDirection: 'row',
+        gap: spacing.sm,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: primary ? colors.primary : 'transparent',
@@ -35,15 +39,18 @@ export function Button({ title, onPress, variant = 'primary', loading, disabled 
       {loading ? (
         <ActivityIndicator color={primary ? colors.onPrimary : colors.text} />
       ) : (
-        <Text
-          style={{
-            color: primary ? colors.onPrimary : colors.text,
-            fontSize: fontSize.body,
-            fontWeight: '700',
-          }}
-        >
-          {title}
-        </Text>
+        <>
+          {icon}
+          <Text
+            style={{
+              color: primary ? colors.onPrimary : colors.text,
+              fontSize: fontSize.body,
+              fontWeight: '700',
+            }}
+          >
+            {title}
+          </Text>
+        </>
       )}
     </Pressable>
   );
