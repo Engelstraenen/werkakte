@@ -25,12 +25,22 @@
 - **Demo-Fotos** von Wikimedia Commons (freie Lizenzen, Quellen in `assets/demo/QUELLEN.md`) – vor dem Store-Release entfernen.
 - **Offene Aufgaben** auf „Heute“ werden aus den Daten abgeleitet (überfällige Rechnung, Angebot nachfassen, Mangel, neue Anfrage) – kein eigenes Aufgaben-Modul.
 
+### Einkauf, Kalkulation, Angebote (2026-10-12)
+
+- **Preisvergleich ohne Großhändler-Schnittstelle:** Einkaufspreise je Lieferant von Hand (A), Online-Suche per Link zu Google Shopping/idealo (B), Foto → KI-Erkennung → Suche (C, Version 1.x; im Prototyp nur als Ablauf). IDS Connect/DATANORM (D) gestrichen – nicht nötig, Preise werden selbst gepflegt.
+- **Empfehlung:** günstigster _aktueller_ Preis; Preise älter als 90 Tage gelten als veraltet und werden nur genommen, wenn es nichts Neueres gibt.
+- **Kalkulation in 1.0 (nur Inhaber):** Vorkalkulation im Angebot (Material zum besten EK, Arbeit zu internen Kosten, Betriebskosten-Zuschlag), Nachkalkulation aus von Hand erfassten Material-Kosten und Stunden. Ampel: ab 15 % grün, ab 5 % gelb. **Fachlich zu prüfen:** Ist ein pauschaler Betriebskosten-Zuschlag auf Material + Lohn (Demo: 18 %) für die Zielgruppe verständlich, oder lieber Gemeinkosten nur auf Lohn?
+- **Angebote schneller:** Vorschläge beim Tippen aus Katalog + früheren Positionen (Wortanfang zuerst, dann häufig benutzte), altes Angebot als Vorlage übernehmen. Startkatalog je Gewerk beim Einrichten (Inhalt noch offen).
+- **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
+
 ## Offene Punkte
 
 - Supabase-Projekt (Frankfurt) anlegen und Einrichtung laut README durchführen → danach Login auf echtem Gerät testen.
 - Apple-, Google-, Microsoft- und Facebook-Zugänge anlegen (siehe README) und je Anbieter auf Gerät testen.
 - Datenschutzerklärung muss die Login-Anbieter nennen (Datenübermittlung an Apple, Google, Microsoft, Meta – USA). Facebook-Login braucht sie zwingend für die Freischaltung bei Meta.
 - Apple liefert den Namen nur beim allerersten Login – später beim Anlegen der Firma/des Profils abfragen.
+- Entscheidungen aus `docs/PRODUKTKONZEPT.md` §6: E-Rechnung in 1.0?, Versand-Weg, Nummernformat, Push-Erinnerungen.
+- Startkataloge je Gewerk zusammenstellen (Maler, Schreiner, SHK, Elektro …) – am besten mit echten Betrieben.
 - Eigener SMTP-Versand für Auth-Mails vor dem ersten Test mit echten Nutzern. Erst damit lassen sich die Supabase-Vorlagen bearbeiten → Code (`{{ .Token }}`) in die Mail. Bis dahin funktioniert nur der Link (auf demselben Gerät).
 - Firma anlegen nach erstem Login (Phase 1/2).
 - App-Name und Icon final festlegen (Phase 7).

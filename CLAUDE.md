@@ -32,7 +32,7 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 
 - **Heute:** Termine des Tages, offene Aufgaben, zuletzt bearbeitete Projekte
 - **+ Schnellaktion:** Foto aufnehmen · Notiz/Sprachnotiz · Neues Angebot · Neues Projekt · Zeit starten
-- **Mehr:** Kunden, Artikelkatalog, Einstellungen, Firmendaten, Mitarbeiter
+- **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Einstellungen, Firmendaten, Mitarbeiter
 
 ## 4. Tech-Stack (festgelegt)
 
@@ -54,17 +54,20 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 ## 5. Datenmodell (MVP)
 
 ```
-Firma (company)
- ├─ Mitarbeiter (member)        rolle: inhaber | mitarbeiter
+Firma (company)                 Gewerk, Betriebskosten-Zuschlag %
+ ├─ Mitarbeiter (member)        rolle: inhaber | mitarbeiter, interne Stundenkosten
  ├─ Kunde (customer)            privat | gewerblich, Adresse, Kontakt
- ├─ Artikel/Leistung (catalog_item)  Name, Einheit, Preis netto, MwSt-Satz, Typ: material | arbeit
+ ├─ Artikel/Leistung (catalog_item)  Name, Einheit, Preis netto (VK), MwSt-Satz, Typ: material | arbeit, interne Kosten (nur Arbeit)
+ ├─ Lieferant (supplier)        Name, Art: großhandel | baumarkt | online
+ │    └─ Lieferantenpreis (supplier_price)  Artikel, Einkaufspreis netto, Stand-Datum
  └─ Projekt (project)           Kunde, Titel, Adresse Baustelle, Status
       ├─ Medien (media)         Foto | Video, Notiz, Tag (vorher/nachher/mangel/sonstiges), Zeitstempel, GPS optional
       ├─ Notiz (note)           Text oder Sprachnotiz (Audio + Transkript)
       ├─ Termin (appointment)   Start, Ende, zugewiesene Mitarbeiter
       ├─ Zeiteintrag (time_entry)  Mitarbeiter, Start, Ende, Pause, Art: arbeit | fahrt
+      ├─ Projektkosten (project_cost)  Ist-Kosten von Hand: Material (Betrag, Lieferant) | Stunden (Mitarbeiter, Dauer)
       ├─ Angebot (quote)        Nummer, Datum, Gültig bis, Status, Positionen, Unterschrift
-      │    └─ Position (quote_item)  Menge, Einheit, Einzelpreis, MwSt, Rabatt
+      │    └─ Position (quote_item)  Menge, Einheit, Einzelpreis, MwSt, Rabatt, Katalog-Bezug (optional)
       └─ Rechnung (invoice)     Nummer (fortlaufend, unveränderbar), Typ: abschlag | schluss | einzel, Positionen
 ```
 
@@ -72,6 +75,7 @@ Projekt-Status: `anfrage → angebot → beauftragt → in_arbeit → abgeschlos
 
 Alle Tabellen: `id (uuid)`, `company_id`, `created_at`, `updated_at`, `deleted_at` (Soft Delete).
 RLS: Nutzer sehen nur Daten ihrer Firma; Mitarbeiter nur Projekte, denen sie zugewiesen sind.
+Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber**.
 
 ## 6. MVP-Funktionsumfang
 
@@ -81,9 +85,11 @@ RLS: Nutzer sehen nur Daten ihrer Firma; Mitarbeiter nur Projekte, denen sie zug
 - Projekte mit Status, Baustellenadresse (Tippen öffnet Navigation)
 - Fotos/Videos aufnehmen oder aus Galerie, mit Tag + Notiz, Galerie-Ansicht pro Projekt
 - Notizen, Sprachnotizen
-- Artikel- und Leistungskatalog
-- Angebot erstellen aus Katalog oder Freitext, automatische Summen (netto, MwSt 19 %/7 %, brutto), PDF, teilen per E-Mail/WhatsApp, Kundenunterschrift auf dem Handy
+- Artikel- und Leistungskatalog, beim Einrichten **Startkatalog je Gewerk** (Maler, Schreiner, SHK …)
+- **Einkauf & Preise:** Einkaufspreise je Lieferant von Hand, Empfehlung des günstigsten aktuellen Preises, Online-Suche per Link (Google Shopping, idealo)
+- Angebot erstellen aus Katalog oder Freitext, **Vorschläge beim Tippen** (Katalog + frühere Positionen, häufige zuerst), **altes Angebot als Vorlage übernehmen**, automatische Summen (netto, MwSt 19 %/7 %, brutto), PDF, teilen per E-Mail/WhatsApp, Kundenunterschrift auf dem Handy
 - Angebot → Rechnung mit einem Tap
+- **Kalkulation (nur Inhaber):** Vorkalkulation im Angebot (Material zum EK, Arbeit zu internen Kosten, Betriebskosten-Zuschlag), Nachkalkulation pro Projekt aus von Hand erfassten Material-Kosten und Stunden, Gewinn mit Ampel
 - Kalender (Tag/Woche), Termine pro Projekt und Mitarbeiter
 - Offline-Modus für alles oben
 
@@ -91,10 +97,12 @@ RLS: Nutzer sehen nur Daten ihrer Firma; Mitarbeiter nur Projekte, denen sie zug
 - Zeiterfassung, Baustellen-/Regiebericht mit Unterschrift
 - Aufmaß-Erfassung → Positionen
 - Sprachdiktat → KI erzeugt Angebotspositionen (Vorschlag, Nutzer bestätigt)
+- Foto eines Teils → KI erkennt es → Preise vergleichen
 - E-Rechnung ZUGFeRD/XRechnung, DATEV-Export
 - Mahnwesen, Auswertungen
 
-**Nicht im MVP:** Lager, Großhändler-Anbindung, GAEB, Kundenportal, Buchhaltung.
+**Nicht geplant:** Großhändler-Schnittstelle (IDS Connect, DATANORM) – Preise werden von Hand gepflegt.
+**Nicht im MVP:** Lager, GAEB, Kundenportal, Buchhaltung.
 
 ## 7. Rechtliches / Compliance (immer beachten)
 
@@ -132,8 +140,8 @@ RLS: Nutzer sehen nur Daten ihrer Firma; Mitarbeiter nur Projekte, denen sie zug
 | 1 | Lokale DB + Sync-Grundgerüst | Datensatz offline anlegen → online automatisch in Supabase |
 | 2 | Kunden + Projekte | Kunde und Projekt anlegen, Status ändern, Liste + Suche |
 | 3 | Fotos/Videos/Notizen | Foto im Projekt, offline aufgenommen, später hochgeladen |
-| 4 | Katalog + Angebote + PDF + Unterschrift | Angebot als PDF per WhatsApp teilen |
-| 5 | Rechnungen | Angebot → Rechnung, Nummernkreis, Sperre nach Versand |
+| 4 | Katalog + Einkaufspreise + Angebote (Vorschläge, Vorlage, Vorkalkulation) + PDF + Unterschrift | Angebot als PDF per WhatsApp teilen |
+| 5 | Rechnungen + Nachkalkulation | Angebot → Rechnung, Nummernkreis, Sperre nach Versand, Soll/Ist pro Projekt |
 | 6 | Kalender + Heute-Screen | Termine pro Mitarbeiter, Tagesübersicht |
 | 7 | Feinschliff, Tests mit echten Handwerkern, Store-Vorbereitung | Testflight/Play-Testversion läuft |
 
