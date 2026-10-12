@@ -22,7 +22,7 @@ export function Card({ children, onPress, style, accent, accessibilityLabel }: P
     boxShadow: colors.shadow,
     borderWidth: 1,
     borderColor: colors.border,
-    borderLeftWidth: accent ? 4 : 1,
+    borderLeftWidth: accent ? 6 : 1,
     borderLeftColor: accent ?? colors.border,
     overflow: 'hidden',
   };

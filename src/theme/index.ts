@@ -11,13 +11,14 @@ import { useColorScheme } from 'react-native';
 // Kontrast: Text mind. 7:1, Primär- und Statusfarben mind. 4.5:1 zur Karte.
 
 const dark = {
-  background: '#0D1F3C',
-  grid: 'rgba(255, 255, 255, 0.05)',
-  card: '#142B52',
-  surface: '#1B3866',
-  text: '#EAF0FB',
-  textMuted: '#A9BBDA',
-  border: '#2B4A7E',
+  // Hintergrund dunkler, Karten heller: klare Trennung auch bei Sonne/Displayhelligkeit niedrig.
+  background: '#071430',
+  grid: 'rgba(255, 255, 255, 0.035)',
+  card: '#1C3B6C',
+  surface: '#264B82',
+  text: '#F1F5FC',
+  textMuted: '#B7C7E3',
+  border: '#4A6FAD',
   /** Hauptaktion (Buttons, aktiver Tab). */
   primary: '#F6C445',
   primarySoft: '#3A3520',
@@ -33,17 +34,17 @@ const dark = {
   /** Text auf farbigen Status-Flächen (Grün/Rot/Gelb …). */
   onTone: '#0D1F3C',
   tabBar: '#0A1830',
-  shadow: '0px 0px 0px rgba(0, 0, 0, 0)',
+  shadow: '0px 6px 16px rgba(0, 0, 0, 0.45)',
 };
 
 const light: typeof dark = {
-  background: '#EAF0F9',
-  grid: 'rgba(29, 78, 216, 0.07)',
+  background: '#DDE6F3',
+  grid: 'rgba(29, 78, 216, 0.06)',
   card: '#FFFFFF',
   surface: '#DCE6F5',
   text: '#0D1F3C',
   textMuted: '#3B5276',
-  border: '#A7B9D6',
+  border: '#8FA5C9',
   primary: '#1D4ED8',
   primarySoft: '#DCE6FF',
   onPrimary: '#FFFFFF',
@@ -56,7 +57,7 @@ const light: typeof dark = {
   neutral: '#3B5276',
   onTone: '#FFFFFF',
   tabBar: '#FFFFFF',
-  shadow: '0px 1px 3px rgba(13, 31, 60, 0.10)',
+  shadow: '0px 3px 10px rgba(13, 31, 60, 0.14)',
 };
 
 export type Colors = typeof dark;

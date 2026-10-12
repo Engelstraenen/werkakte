@@ -38,6 +38,7 @@
 - **Zeit läuft immer auf ein Projekt und eine Person:** Start/Stopp pro Teammitglied im Projekt; mehrere Personen parallel. Wechsel stoppt und speichert die alte Zeit derselben Person. Team-Mitgliedschaft im Projekt ist zugleich die Berechtigung. Heute zeigt „Gerade im Einsatz“ (Inhaber: alle).
 - **Testmodus** bleibt in der Entwicklung über Neuladen gespeichert.
 - **Design „Bauplan“ + Name „Werkakte“** (Auswahl aus drei Richtungen: Signal, Klar, Bauplan). Zusätzlich helle Variante für Sonne, weil CLAUDE.md hohen Kontrast draußen verlangt. Fließtext in normal breiter Schrift (besser lesbar), Überschriften schmal.
+- **Bauplan-Kontrast nachgeschärft:** dunklerer Hintergrund, hellere Karten mit kräftigem Rand und Schatten, leiseres Raster, Abschnitte mit gelbem Balken, Statusstreifen 6 px. Grund: Karten gingen im Raster unter.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 
 ## Offene Punkte
