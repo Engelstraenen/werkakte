@@ -4,11 +4,13 @@ import {
   IBMPlexSansCondensed_600SemiBold,
   IBMPlexSansCondensed_700Bold,
 } from '@expo-google-fonts/ibm-plex-sans-condensed';
-import { useColorScheme } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { Platform, useColorScheme } from 'react-native';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 // Design „Bauplan“ (siehe docs/ENTSCHEIDUNGEN.md): Blaupausen-Blau mit Raster, Warngelb als Akzent.
-// Hell (Standard) = weißes Blaupausen-Papier. Dunkel = Original-Blaupause.
+// Varianten: Ruhig (Standard), Hell (weiß, blaue Linien), Dunkel (Original-Blaupause).
 // Kontrast: Text mind. 7:1, Primär- und Statusfarben mind. 4.5:1 zur Karte.
 
 const dark = {
@@ -38,7 +40,7 @@ const dark = {
   shadow: '0px 6px 16px rgba(0, 0, 0, 0.45)',
 };
 
-// Hell = Standard: weißer Grund, hellblaues Blaupausen-Raster, mittelblaue Linien als Umrandung.
+// Hell: weißer Grund, hellblaues Blaupausen-Raster, mittelblaue Linien als Umrandung.
 const light: typeof dark = {
   background: '#FFFFFF',
   grid: 'rgba(59, 130, 246, 0.16)',
@@ -60,6 +62,31 @@ const light: typeof dark = {
   onTone: '#FFFFFF',
   tabBar: '#FFFFFF',
   shadow: '0px 2px 8px rgba(29, 78, 216, 0.10)',
+};
+
+// Ruhig (Standard): nach Lesbarkeits-Empfehlungen – leicht getöntes Weiß, weiße Karten,
+// zarte Ränder, kräftiges Blau nur für Aktionen, sehr dunkles Blau statt Schwarz, Raster kaum sichtbar.
+const calm: typeof dark = {
+  background: '#F4F7FB',
+  grid: 'rgba(59, 130, 246, 0.045)',
+  card: '#FFFFFF',
+  surface: '#EDF2F9',
+  text: '#0F1F3D',
+  textMuted: '#46597A',
+  border: '#D3DDEB',
+  primary: '#1D4ED8',
+  primarySoft: '#E3ECFF',
+  onPrimary: '#FFFFFF',
+  accent: '#1D4ED8',
+  onAccent: '#FFFFFF',
+  danger: '#B42318',
+  success: '#15803D',
+  warning: '#9A5B00',
+  info: '#1D4ED8',
+  neutral: '#46597A',
+  onTone: '#FFFFFF',
+  tabBar: '#FFFFFF',
+  shadow: '0px 1px 2px rgba(15, 31, 61, 0.06), 0px 4px 14px rgba(15, 31, 61, 0.07)',
 };
 
 export type Colors = typeof dark;
@@ -95,22 +122,42 @@ export const fontFiles = {
   IBMPlexMono_500Medium,
 };
 
-export type Appearance = 'hell' | 'dunkel' | 'automatisch';
+export type Appearance = 'ruhig' | 'hell' | 'dunkel' | 'automatisch';
 
-/** Darstellung (Mehr › Darstellung). Standard: hell. */
-export const useAppearance = create<{ mode: Appearance; setMode: (mode: Appearance) => void }>(
-  (set) => ({ mode: 'hell', setMode: (mode) => set({ mode }) }),
+const palettes = { ruhig: calm, hell: light, dunkel: dark } as const;
+
+// Web: localStorage, Handy: SecureStore – Darstellung bleibt nach Neustart erhalten.
+const appearanceStorage = createJSONStorage(() =>
+  Platform.OS === 'web'
+    ? globalThis.localStorage
+    : {
+        getItem: (k: string) => SecureStore.getItemAsync(k),
+        setItem: (k: string, v: string) => SecureStore.setItemAsync(k, v),
+        removeItem: (k: string) => SecureStore.deleteItemAsync(k),
+      },
 );
 
-export function useScheme(): 'light' | 'dark' {
+/** Darstellung (Mehr › Darstellung). Standard: ruhig. */
+export const useAppearance = create<{ mode: Appearance; setMode: (mode: Appearance) => void }>()(
+  persist((set) => ({ mode: 'ruhig', setMode: (mode) => set({ mode }) }), {
+    name: 'appearance',
+    storage: appearanceStorage,
+  }),
+);
+
+function useResolved(): keyof typeof palettes {
   const system = useColorScheme();
   const mode = useAppearance((s) => s.mode);
-  if (mode === 'automatisch') return system === 'dark' ? 'dark' : 'light';
-  return mode === 'dunkel' ? 'dark' : 'light';
+  if (mode === 'automatisch') return system === 'dark' ? 'dunkel' : 'ruhig';
+  return mode;
+}
+
+export function useScheme(): 'light' | 'dark' {
+  return useResolved() === 'dunkel' ? 'dark' : 'light';
 }
 
 export function useColors(): Colors {
-  return useScheme() === 'dark' ? dark : light;
+  return palettes[useResolved()];
 }
 
 /** Hintergrund mit 15 % Deckkraft für Badges und Icon-Kreise. */

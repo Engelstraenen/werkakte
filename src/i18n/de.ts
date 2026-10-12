@@ -307,6 +307,7 @@ export const de = {
     einkauf: 'Einkauf & Preise',
     nummernkreise: 'Nummernkreise',
     darstellung: 'Darstellung',
+    ruhig: 'Ruhig',
     hell: 'Hell',
     dunkel: 'Dunkel',
     automatisch: 'Wie Handy',
