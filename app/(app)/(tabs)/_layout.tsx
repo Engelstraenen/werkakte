@@ -26,16 +26,15 @@ export default function TabLayout() {
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.textMuted,
           tabBarStyle: {
-            backgroundColor: colors.background,
-            borderTopColor: colors.border,
+            backgroundColor: colors.card,
+            borderTopColor: colors.surface,
             // Platz für den 56-pt-Mittelbutton und große Touch-Ziele.
             height: 68 + insets.bottom,
             paddingTop: spacing.xs,
             paddingBottom: spacing.xs + insets.bottom,
           },
-          tabBarLabelStyle: { fontSize: 13, fontWeight: '600' },
-          headerStyle: { backgroundColor: colors.background },
-          headerTintColor: colors.text,
+          tabBarLabelStyle: { fontSize: 13, fontWeight: '700' },
+          headerShown: false,
         }}
       >
         <Tabs.Screen name="index" options={{ title: de.tabs.heute, tabBarIcon: icon('today') }} />

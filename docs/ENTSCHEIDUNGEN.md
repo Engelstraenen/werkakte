@@ -16,6 +16,15 @@
 - **Formulare:** Login nutzt nur Zod (ein Feld). React Hook Form kommt mit dem ersten echten Formular (Phase 2).
 - **Texte** als einfaches Objekt in `src/i18n/de.ts`, noch keine i18n-Bibliothek.
 
+### Klick-Prototyp (2026-10-12)
+
+- **Auf Wunsch vorgezogen:** Alle Screens (Heute, Projekte, Projektakte, Angebote/Rechnungen, Kalender, Mehr, Neu-Formulare) mit Beispieldaten zum Durchklicken – vor Phase 1, um Aufbau und Design früh zu prüfen.
+- **Beispieldaten nur im Speicher** (`src/features/demo`, Zustand). Nach Neuladen wieder Ausgangszustand. Wird ab Phase 1/2 durch SQLite + Sync ersetzt; die Screens bleiben.
+- **Design:** eigene Bausteine (kein UI-Framework), Karten mit Schatten, Status-Farben, Avatare, große Titel. Online geprüft: NativeWind/React Native Reusables, gluestack-ui v3, Tamagui, Paper – bewusst nicht eingesetzt (Stack-Änderung, Risiko mit SDK 57).
+- **Geld/MwSt-Logik** schon echt (`src/lib/money.ts`, Cent + Mengen in Tausendsteln, MwSt pro Satz auf die Summe) mit Unit-Tests.
+- **Demo-Fotos** von Wikimedia Commons (freie Lizenzen, Quellen in `assets/demo/QUELLEN.md`) – vor dem Store-Release entfernen.
+- **Offene Aufgaben** auf „Heute“ werden aus den Daten abgeleitet (überfällige Rechnung, Angebot nachfassen, Mangel, neue Anfrage) – kein eigenes Aufgaben-Modul.
+
 ## Offene Punkte
 
 - Supabase-Projekt (Frankfurt) anlegen und Einrichtung laut README durchführen → danach Login auf echtem Gerät testen.

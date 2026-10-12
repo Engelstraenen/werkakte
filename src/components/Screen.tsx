@@ -1,17 +1,45 @@
 import type { ReactNode } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AppText } from './AppText';
 import { spacing, useColors } from '@/theme';
 
-export function Screen({ children }: { children: ReactNode }) {
+type Props = {
+  children: ReactNode;
+  /** Großer Titel oben (für Tab-Screens ohne Kopfleiste). */
+  title?: string;
+  subtitle?: string;
+  /** Element rechts neben dem Titel, z. B. ein Avatar. */
+  right?: ReactNode;
+  /** Bereich unter dem Titel, der beim Scrollen mitläuft (z. B. Suche). */
+  header?: ReactNode;
+};
+
+export function Screen({ children, title, subtitle, right, header }: Props) {
   const colors = useColors();
+  const insets = useSafeAreaInsets();
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing.md, gap: spacing.md }}
+      contentContainerStyle={{
+        padding: spacing.md,
+        paddingTop: title ? insets.top + spacing.md : spacing.md,
+        paddingBottom: spacing.xl,
+        gap: spacing.md,
+      }}
       keyboardShouldPersistTaps="handled"
-      contentInsetAdjustmentBehavior="automatic"
     >
+      {title ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+          <View style={{ flex: 1 }}>
+            {subtitle ? <AppText muted>{subtitle}</AppText> : null}
+            <AppText variant="display">{title}</AppText>
+          </View>
+          {right}
+        </View>
+      ) : null}
+      {header}
       {children}
     </ScrollView>
   );

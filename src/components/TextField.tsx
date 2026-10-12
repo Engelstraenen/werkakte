@@ -22,7 +22,7 @@ export function TextField({ label, error, style, ...rest }: Props) {
             paddingHorizontal: spacing.md,
             fontSize: fontSize.body,
             color: colors.text,
-            backgroundColor: colors.background,
+            backgroundColor: colors.card,
           },
           style,
         ]}

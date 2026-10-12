@@ -1,67 +1,87 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import type { ComponentProps } from 'react';
-import { Alert, Modal, Pressable, View } from 'react-native';
+import { router } from 'expo-router';
+import { Modal, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
+import { IconCircle, type IconName } from '@/components/IconCircle';
+import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
-import { radius, spacing, touch, useColors } from '@/theme';
+import { radius, spacing, useColors, type Tone } from '@/theme';
 
 const t = de.schnellaktion;
-const actions: { label: string; icon: ComponentProps<typeof Ionicons>['name'] }[] = [
-  { label: t.foto, icon: 'camera' },
-  { label: t.notiz, icon: 'mic' },
-  { label: t.angebot, icon: 'document-text' },
-  { label: t.projekt, icon: 'folder-open' },
-  { label: t.zeit, icon: 'timer' },
+type Art = 'foto' | 'notiz' | 'angebot' | 'projekt' | 'zeit';
+const tiles: { art: Art; label: string; icon: IconName; tone: Tone }[] = [
+  { art: 'foto', label: t.foto, icon: 'camera', tone: 'primary' },
+  { art: 'notiz', label: t.notiz, icon: 'mic', tone: 'info' },
+  { art: 'angebot', label: t.angebot, icon: 'document-text', tone: 'warning' },
+  { art: 'projekt', label: t.projekt, icon: 'folder-open', tone: 'success' },
 ];
 
 export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const timer = useDemo((s) => s.timer);
+  const stopTimer = useDemo((s) => s.stopTimer);
+
+  const open = (art: Art) => {
+    onClose();
+    router.push({ pathname: '/neu/[art]', params: { art } });
+  };
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable
         accessibilityLabel={t.schliessen}
         onPress={onClose}
-        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }}
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.45)' }}
       />
       <View
         style={{
           backgroundColor: colors.background,
-          borderTopLeftRadius: radius.md * 2,
-          borderTopRightRadius: radius.md * 2,
+          borderTopLeftRadius: radius.lg,
+          borderTopRightRadius: radius.lg,
           padding: spacing.md,
           paddingBottom: spacing.md + insets.bottom,
-          gap: spacing.sm,
+          gap: spacing.md,
         }}
       >
-        <AppText variant="title" style={{ marginBottom: spacing.sm }}>
-          {t.titel}
-        </AppText>
-        {actions.map((a) => (
-          <Pressable
-            key={a.label}
-            accessibilityRole="button"
-            // Funktionen kommen in späteren Phasen.
-            onPress={() => Alert.alert(a.label, t.bald)}
-            style={({ pressed }) => ({
-              minHeight: touch.main,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: spacing.md,
-              paddingHorizontal: spacing.md,
-              borderRadius: radius.md,
-              backgroundColor: colors.surface,
-              opacity: pressed ? 0.7 : 1,
-            })}
-          >
-            <Ionicons name={a.icon} size={28} color={colors.primary} />
-            <AppText style={{ fontWeight: '600' }}>{a.label}</AppText>
-          </Pressable>
-        ))}
+        <View
+          style={{
+            alignSelf: 'center',
+            width: 40,
+            height: 5,
+            borderRadius: 3,
+            backgroundColor: colors.border,
+          }}
+        />
+        <AppText variant="heading">{t.titel}</AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          {tiles.map((tile) => (
+            <Pressable
+              key={tile.art}
+              accessibilityRole="button"
+              onPress={() => open(tile.art)}
+              style={({ pressed }) => ({
+                width: '48.5%',
+                minHeight: 112,
+                padding: spacing.md,
+                borderRadius: radius.md,
+                backgroundColor: colors.card,
+                boxShadow: colors.shadow,
+                justifyContent: 'space-between',
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <IconCircle name={tile.icon} tone={tile.tone} size={48} />
+              <AppText variant="title">{tile.label}</AppText>
+            </Pressable>
+          ))}
+        </View>
+        <Button
+          title={timer ? t.zeitStoppen : t.zeit}
+          onPress={() => (timer ? (stopTimer(), onClose()) : open('zeit'))}
+        />
         <Button title={t.schliessen} variant="secondary" onPress={onClose} />
       </View>
     </Modal>
