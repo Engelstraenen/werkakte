@@ -39,7 +39,7 @@
 - **Testmodus** bleibt in der Entwicklung über Neuladen gespeichert.
 - **Design „Bauplan“ + Name „Werkakte“** (Auswahl aus drei Richtungen: Signal, Klar, Bauplan). Zusätzlich helle Variante für Sonne, weil CLAUDE.md hohen Kontrast draußen verlangt. Fließtext in normal breiter Schrift (besser lesbar), Überschriften schmal.
 - **Bauplan-Kontrast nachgeschärft:** dunklerer Hintergrund, hellere Karten mit kräftigem Rand und Schatten, leiseres Raster, Abschnitte mit gelbem Balken, Statusstreifen 6 px. Grund: Karten gingen im Raster unter.
-- **Farbvarianten:** Ruhig (Standard, Vorschlag nach Lesbarkeits-Forschung: positive Polarität, wenig Linien, eine Aktionsfarbe, Status immer mit Wort), Hell (weiß + hellblaues Raster + mittelblaue Umrandungen), Dunkel (Blaupause). Wählbar unter Mehr › Darstellung, wird gespeichert. **Offen: Bestätigung des Standards durch den Auftraggeber** (Vergleichsseite als Artifact).
+- **Farbvarianten:** Ruhig (Standard, Vorschlag nach Lesbarkeits-Forschung: positive Polarität, wenig Linien, eine Aktionsfarbe, Status immer mit Wort), Hell (weiß + hellblaues Raster + mittelblaue Umrandungen), Dunkel (Blaupause). Wählbar unter Mehr › Darstellung, wird gespeichert. **Ruhig als Standard bestätigt (2026-10-12).**
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 
 ## Offene Punkte
