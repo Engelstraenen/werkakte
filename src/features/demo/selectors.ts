@@ -1,5 +1,6 @@
 import { appointments, CURRENT_MEMBER_ID, customers, invoices, members, suppliers } from './data';
 import type { Invoice, Media, Project, ProjectStatus, Quote } from './types';
+
 import { isSameDay } from '@/lib/date';
 import { documentTotals } from '@/lib/money';
 
@@ -86,4 +87,14 @@ export function openTasks(
       });
   }
   return tasks;
+}
+
+/** Titelbild: selbst gewählt, sonst neuestes Nachher-Foto, sonst neuestes Foto. */
+export function coverOf(project: Project, media: Media[]): Media | undefined {
+  const own = media
+    .filter((m) => m.projectId === project.id)
+    .sort((a, b) => b.takenAt.localeCompare(a.takenAt));
+  return (
+    own.find((m) => m.id === project.coverMediaId) ?? own.find((m) => m.tag === 'nachher') ?? own[0]
+  );
 }

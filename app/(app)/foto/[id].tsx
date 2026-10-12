@@ -6,7 +6,7 @@ import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
-import { memberById } from '@/features/demo/selectors';
+import { coverOf, memberById } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
 import { tagTone } from '@/features/projects/status';
 import { de } from '@/i18n/de';
@@ -17,6 +17,8 @@ export default function FotoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const photo = useDemo((s) => s.media.find((m) => m.id === id));
   const project = useDemo((s) => s.projects.find((p) => p.id === photo?.projectId));
+  const media = useDemo((s) => s.media);
+  const setCover = useDemo((s) => s.setCover);
   if (!photo || !project) return <EmptyState icon="image-outline" text={de.akte.keineFotos} />;
 
   return (
@@ -36,6 +38,13 @@ export default function FotoScreen() {
         </AppText>
         <AppText muted>{project.title}</AppText>
       </View>
+      {coverOf(project, media)?.id === photo.id ? (
+        <AppText variant="label" muted>
+          ★ {de.akte.istTitelbild}
+        </AppText>
+      ) : (
+        <Button title={de.akte.alsTitelbild} onPress={() => setCover(project.id, photo.id)} />
+      )}
       <View style={{ marginTop: spacing.sm }}>
         <Button
           title={de.schnellaktion.schliessen}

@@ -36,6 +36,7 @@ type DemoState = {
   addHours: (projectId: string, memberId: string, minutes: number) => void;
   addProject: (p: Pick<Project, 'title' | 'customerId' | 'street' | 'zipCity'>) => string;
   setStatus: (projectId: string, status: ProjectStatus) => void;
+  setCover: (projectId: string, mediaId: string) => void;
   addNote: (projectId: string, text: string) => void;
   addPhoto: (projectId: string, tag: MediaTag, note: string) => void;
   addQuote: (projectId: string) => string;
@@ -108,6 +109,8 @@ export const useDemo = create<DemoState>((set, get) => ({
   },
   setStatus: (projectId, status) =>
     set((s) => ({ projects: touch(s.projects, projectId, { status }) })),
+  setCover: (projectId, mediaId) =>
+    set((s) => ({ projects: touch(s.projects, projectId, { coverMediaId: mediaId }) })),
   addNote: (projectId, text) =>
     set((s) => ({
       notes: [

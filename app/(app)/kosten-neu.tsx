@@ -1,99 +1,139 @@
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Chips } from '@/components/Chips';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
-import { members, suppliers } from '@/features/demo/data';
+import { CURRENT_MEMBER_ID, members, suppliers } from '@/features/demo/data';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { parseEuro } from '@/lib/money';
-import { spacing } from '@/theme';
+import { radius, spacing, useColors } from '@/theme';
 
 const t = de.kalk;
+const quickHours = [1, 2, 4, 8];
 
-/** Ist-Kosten von Hand erfassen: Material (Betrag + Lieferant) oder Stunden (wer + wie viele). */
+/** Kosten von Hand: Material = Betrag eintippen; Stunden = Schnelltaste antippen. */
 export default function KostenNeuScreen() {
+  const colors = useColors();
   const { projectId, kind } = useLocalSearchParams<{
     projectId: string;
     kind: 'material' | 'stunden';
   }>();
   const { addMaterialCost, addHours } = useDemo();
-  const [text, setText] = useState('');
   const [amount, setAmount] = useState('');
-  const [supplierId, setSupplierId] = useState(suppliers[0]!.id);
-  const [memberId, setMemberId] = useState(members[0]!.id);
+  const [text, setText] = useState('');
+  const [supplierId, setSupplierId] = useState('keiner');
+  const [memberId, setMemberId] = useState(CURRENT_MEMBER_ID);
   const [error, setError] = useState<string>();
+
+  const saveHours = (h: number) => {
+    addHours(projectId, memberId, Math.round(h * 60));
+    router.back();
+  };
 
   function save() {
     if (kind === 'material') {
       const cents = parseEuro(amount);
-      if (!text.trim()) return setError(de.neu.pflicht);
-      if (cents === undefined) return setError(t.ungueltig);
-      addMaterialCost(projectId, text.trim(), cents, supplierId);
+      if (!cents) return setError(t.ungueltig);
+      addMaterialCost(
+        projectId,
+        text.trim() || t.wofuerStandard,
+        cents,
+        supplierId === 'keiner' ? undefined : supplierId,
+      );
+      router.back();
     } else {
       const h = Number(amount.replace(',', '.'));
       if (!(h > 0 && h <= 24)) return setError(t.ungueltig);
-      addHours(projectId, memberId, Math.round(h * 60));
+      saveHours(h);
     }
-    router.back();
+  }
+
+  if (kind === 'stunden') {
+    return (
+      <Screen>
+        <Stack.Screen options={{ title: t.stundenEintragen }} />
+        <View style={{ gap: spacing.xs }}>
+          <AppText variant="label">{t.wer}</AppText>
+          <Chips
+            options={members.map((m) => ({ value: m.id, label: m.name }))}
+            value={memberId}
+            onChange={setMemberId}
+          />
+        </View>
+        <AppText variant="label">{t.wieviele}</AppText>
+        <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+          {quickHours.map((h) => (
+            <Pressable
+              key={h}
+              accessibilityRole="button"
+              onPress={() => saveHours(h)}
+              style={({ pressed }) => ({
+                flex: 1,
+                height: 72,
+                borderRadius: radius.md,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.primary,
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <AppText variant="heading" color={colors.onPrimary}>
+                {h}
+              </AppText>
+              <AppText variant="small" color={colors.onPrimary}>
+                Std.
+              </AppText>
+            </Pressable>
+          ))}
+        </View>
+        <TextField
+          label={t.andere}
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="decimal-pad"
+          placeholder="z. B. 3,5"
+          error={error}
+        />
+        {amount ? <Button title={de.neu.speichern} onPress={save} /> : null}
+      </Screen>
+    );
   }
 
   return (
     <Screen>
-      <Stack.Screen
-        options={{ title: kind === 'material' ? t.materialEintragen : t.stundenEintragen }}
+      <Stack.Screen options={{ title: t.materialEintragen }} />
+      <TextField
+        label={t.betrag}
+        value={amount}
+        onChangeText={setAmount}
+        keyboardType="decimal-pad"
+        placeholder="0,00"
+        error={error}
+        autoFocus
+        style={{ fontSize: 28, fontWeight: '800', minHeight: 72 }}
       />
-      {kind === 'material' ? (
-        <>
-          <TextField
-            label={t.wofuer}
-            placeholder={t.wofuerBeispiel}
-            value={text}
-            onChangeText={setText}
-            autoFocus
-          />
-          <View style={{ gap: spacing.xs }}>
-            <AppText style={{ fontWeight: '600' }}>{t.lieferant}</AppText>
-            <Chips
-              options={suppliers.map((s) => ({ value: s.id, label: s.name }))}
-              value={supplierId}
-              onChange={setSupplierId}
-            />
-          </View>
-          <TextField
-            label={t.betrag}
-            value={amount}
-            onChangeText={setAmount}
-            keyboardType="decimal-pad"
-            placeholder="0,00"
-            error={error}
-          />
-        </>
-      ) : (
-        <>
-          <View style={{ gap: spacing.xs }}>
-            <AppText style={{ fontWeight: '600' }}>{t.wer}</AppText>
-            <Chips
-              options={members.map((m) => ({ value: m.id, label: m.name }))}
-              value={memberId}
-              onChange={setMemberId}
-            />
-          </View>
-          <TextField
-            label={t.wieviele}
-            value={amount}
-            onChangeText={setAmount}
-            keyboardType="decimal-pad"
-            placeholder="8"
-            error={error}
-            autoFocus
-          />
-        </>
-      )}
+      <TextField
+        label={t.wofuer}
+        placeholder={t.wofuerBeispiel}
+        value={text}
+        onChangeText={setText}
+      />
+      <View style={{ gap: spacing.xs }}>
+        <AppText variant="label">{t.lieferant}</AppText>
+        <Chips
+          options={[
+            { value: 'keiner', label: '–' },
+            ...suppliers.map((s) => ({ value: s.id, label: s.name })),
+          ]}
+          value={supplierId}
+          onChange={setSupplierId}
+        />
+      </View>
       <Button title={de.neu.speichern} onPress={save} />
     </Screen>
   );

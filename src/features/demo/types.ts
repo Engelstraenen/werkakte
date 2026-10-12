@@ -96,6 +96,8 @@ export type Project = {
   status: ProjectStatus;
   memberIds: string[];
   updatedAt: string;
+  /** Selbst gewähltes Titelbild; sonst automatisch (siehe coverOf). */
+  coverMediaId?: string;
 };
 
 export type MediaTag = 'vorher' | 'nachher' | 'mangel' | 'sonstiges';

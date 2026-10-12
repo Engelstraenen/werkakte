@@ -60,7 +60,7 @@ Firma (company)                 Gewerk, Betriebskosten-Zuschlag %
  ├─ Artikel/Leistung (catalog_item)  Name, Einheit, Preis netto (VK), MwSt-Satz, Typ: material | arbeit, interne Kosten (nur Arbeit)
  ├─ Lieferant (supplier)        Name, Art: großhandel | baumarkt | online
  │    └─ Lieferantenpreis (supplier_price)  Artikel, Einkaufspreis netto, Stand-Datum
- └─ Projekt (project)           Kunde, Titel, Adresse Baustelle, Status
+ └─ Projekt (project)           Kunde, Titel, Adresse Baustelle, Status, Titelbild (optional, sonst automatisch)
       ├─ Medien (media)         Foto | Video, Notiz, Tag (vorher/nachher/mangel/sonstiges), Zeitstempel, GPS optional
       ├─ Notiz (note)           Text oder Sprachnotiz (Audio + Transkript)
       ├─ Termin (appointment)   Start, Ende, zugewiesene Mitarbeiter
@@ -82,7 +82,7 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 **Muss (Version 1.0):**
 - Login (E-Mail + Magic Link), Firma anlegen, Firmendaten + Logo
 - Kunden anlegen/bearbeiten, Suche
-- Projekte mit Status, Baustellenadresse (Tippen öffnet Navigation)
+- Projekte mit Status, **Titelbild** (zum schnellen Wiedererkennen), Baustellenadresse (Tippen öffnet Navigation)
 - Fotos/Videos aufnehmen oder aus Galerie, mit Tag + Notiz, Galerie-Ansicht pro Projekt
 - Notizen, Sprachnotizen
 - Artikel- und Leistungskatalog, beim Einrichten **Startkatalog je Gewerk** (Maler, Schreiner, SHK …)

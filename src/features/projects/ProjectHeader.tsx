@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Pressable, View } from 'react-native';
 
+import { ProjectCover } from './ProjectCover';
 import { statusTone } from './status';
 import { AppText } from '@/components/AppText';
 import { AvatarStack } from '@/components/Avatar';
@@ -56,6 +57,7 @@ export function ProjectHeader({ project }: { project: Project }) {
   return (
     <>
       <Card accent={colors[statusTone[project.status]]}>
+        <ProjectCover project={project} height={190} />
         <AppText variant="heading">{project.title}</AppText>
         <View style={{ gap: 2 }}>
           <AppText variant="label">

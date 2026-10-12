@@ -2,6 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { View } from 'react-native';
 
+import { ProjectCover } from './ProjectCover';
 import { statusTone } from './status';
 import { AppText } from '@/components/AppText';
 import { AvatarStack } from '@/components/Avatar';
@@ -23,6 +24,7 @@ export function ProjectCard({ project }: { project: Project }) {
       accessibilityLabel={`${project.title}, ${customer.name}`}
       onPress={() => router.push({ pathname: '/projekt/[id]', params: { id: project.id } })}
     >
+      <ProjectCover project={project} height={120} />
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm }}>
         <View style={{ flex: 1, gap: 2 }}>
           <AppText variant="title" numberOfLines={2}>

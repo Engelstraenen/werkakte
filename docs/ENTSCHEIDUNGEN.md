@@ -31,6 +31,8 @@
 - **Empfehlung:** günstigster _aktueller_ Preis; Preise älter als 90 Tage gelten als veraltet und werden nur genommen, wenn es nichts Neueres gibt.
 - **Kalkulation in 1.0 (nur Inhaber):** Vorkalkulation im Angebot (Material zum besten EK, Arbeit zu internen Kosten, Betriebskosten-Zuschlag), Nachkalkulation aus von Hand erfassten Material-Kosten und Stunden. Ampel: ab 15 % grün, ab 5 % gelb. **Fachlich zu prüfen:** Ist ein pauschaler Betriebskosten-Zuschlag auf Material + Lohn (Demo: 18 %) für die Zielgruppe verständlich, oder lieber Gemeinkosten nur auf Lohn?
 - **Angebote schneller:** Vorschläge beim Tippen aus Katalog + früheren Positionen (Wortanfang zuerst, dann häufig benutzte), altes Angebot als Vorlage übernehmen. Startkatalog je Gewerk beim Einrichten (Inhalt noch offen).
+- **Titelbild pro Projekt:** selbst gewählt, sonst neuestes Nachher-Foto, sonst neuestes Foto; ohne Foto farbiger Platzhalter. Hilft, ähnliche Aufträge (z. B. mehrere Bäder in einer Stadt) auseinanderzuhalten.
+- **Kalkulation so einfach wie möglich:** oben ein Satz „Dir bleiben X € (Y %)“ mit Ampel, darunter ein Balken „Wohin geht das Geld?“ (Material, Arbeit, Fixkosten, Gewinn). Tabelle nur unter „Details“. Stunden per Schnelltaste (1/2/4/8), Material = nur Betrag Pflicht. Wörter: „Einnahmen“, „Ausgaben“, „Fixkosten“ statt Fachbegriffen.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 
 ## Offene Punkte
