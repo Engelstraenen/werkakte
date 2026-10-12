@@ -9,7 +9,7 @@ export function TextField({ label, error, style, ...rest }: Props) {
   const colors = useColors();
   return (
     <View style={{ gap: spacing.xs }}>
-      <AppText style={{ fontWeight: '600' }}>{label}</AppText>
+      <AppText variant="label">{label}</AppText>
       <TextInput
         accessibilityLabel={label}
         placeholderTextColor={colors.textMuted}

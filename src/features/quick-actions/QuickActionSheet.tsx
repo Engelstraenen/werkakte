@@ -73,6 +73,8 @@ export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClo
                 borderRadius: radius.md,
                 backgroundColor: colors.card,
                 boxShadow: colors.shadow,
+                borderWidth: 1,
+                borderColor: colors.border,
                 justifyContent: 'space-between',
                 opacity: pressed ? 0.8 : 1,
               })}

@@ -11,7 +11,7 @@
 - **Session-Speicher: `expo-secure-store`** (verschlüsselt), aufgeteilt in Stücke, weil eine Session > 2 KB sein kann. Im Web (nur Vorschau) `localStorage`.
 - **Abmelden nur auf diesem Gerät** (`scope: 'local'`), funktioniert auch offline.
 - **Navigation: JS-Tabs** (`expo-router/js-tabs`) statt Native Tabs, weil der Plus-Mittelbutton ein eigenes Aussehen braucht und kein Screen ist, sondern ein Bottom-Sheet öffnet.
-- **Bundle-ID / Package:** `de.handwerkerapp.app` (vorläufig), Deep-Link-Scheme `handwerkerapp`.
+- **Name: Werkakte.** Bundle-ID / Package `de.werkakte.app`, Deep-Link-Scheme `werkakte` (vorher `handwerkerapp` – in Supabase die Redirect-URL `werkakte://**` eintragen). Marke, Domain und App-Store-Name noch prüfen.
 - **Farben:** Signal-Orange als Primärfarbe (`#C2410C` hell / `#FB923C` dunkel), Kontrast ≥ 4,5:1, Text ≥ 7:1.
 - **Formulare:** Login nutzt nur Zod (ein Feld). React Hook Form kommt mit dem ersten echten Formular (Phase 2).
 - **Texte** als einfaches Objekt in `src/i18n/de.ts`, noch keine i18n-Bibliothek.
@@ -37,6 +37,7 @@
 - **Projektliste:** Titelbild rechts fast quadratisch; Projektakte oben 4:3.
 - **Zeit läuft immer auf ein Projekt und eine Person:** Start/Stopp pro Teammitglied im Projekt; mehrere Personen parallel. Wechsel stoppt und speichert die alte Zeit derselben Person. Team-Mitgliedschaft im Projekt ist zugleich die Berechtigung. Heute zeigt „Gerade im Einsatz“ (Inhaber: alle).
 - **Testmodus** bleibt in der Entwicklung über Neuladen gespeichert.
+- **Design „Bauplan“ + Name „Werkakte“** (Auswahl aus drei Richtungen: Signal, Klar, Bauplan). Zusätzlich helle Variante für Sonne, weil CLAUDE.md hohen Kontrast draußen verlangt. Fließtext in normal breiter Schrift (besser lesbar), Überschriften schmal.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 
 ## Offene Punkte

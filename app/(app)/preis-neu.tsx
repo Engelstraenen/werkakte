@@ -35,7 +35,7 @@ export default function PreisNeuScreen() {
         {item?.name} ({item?.unit})
       </AppText>
       <View style={{ gap: spacing.xs }}>
-        <AppText style={{ fontWeight: '600' }}>{de.kalk.lieferant}</AppText>
+        <AppText variant="label">{de.kalk.lieferant}</AppText>
         <Chips
           options={suppliers.map((s) => ({ value: s.id, label: s.name }))}
           value={supplierId}

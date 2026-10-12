@@ -13,7 +13,7 @@ import { useDemo } from '@/features/demo/store';
 import type { DocItem, Quote } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { formatEuro, formatQty, lineTotalCents, parseQty } from '@/lib/money';
-import { fontSize, radius, spacing, touch, useColors } from '@/theme';
+import { fonts, fontSize, radius, spacing, touch, useColors } from '@/theme';
 
 const t = de.editor;
 
@@ -44,7 +44,7 @@ function QtyInput({ item, onChange }: { item: DocItem; onChange: (qtyMilli: numb
         borderRadius: radius.sm,
         textAlign: 'center',
         fontSize: fontSize.body,
-        fontWeight: '700',
+        fontFamily: fonts.bodyBold,
         color: colors.text,
         backgroundColor: colors.card,
       }}

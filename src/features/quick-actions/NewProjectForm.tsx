@@ -47,7 +47,7 @@ export function NewProjectForm() {
         autoFocus
       />
       <View style={{ gap: spacing.xs }}>
-        <AppText style={{ fontWeight: '600' }}>{t.kunde}</AppText>
+        <AppText variant="label">{t.kunde}</AppText>
         <Chips
           options={customers.map((c) => ({ value: c.id, label: c.name }))}
           value={customerId}

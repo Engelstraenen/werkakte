@@ -27,7 +27,7 @@ export function useLogin() {
     const ok = await run(() =>
       supabase.auth.signInWithOtp({
         email: trimmed,
-        // Expo Go: exp://…/--/login-callback, eigener Build: handwerkerapp://login-callback
+        // Expo Go: exp://…/--/login-callback, eigener Build: werkakte://login-callback
         options: { emailRedirectTo: Linking.createURL('login-callback') },
       }),
     );

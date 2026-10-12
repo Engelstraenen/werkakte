@@ -4,7 +4,7 @@ import { AppText } from '@/components/AppText';
 import { de } from '@/i18n/de';
 import type { CostBreakdown } from '@/lib/calc';
 import { formatEuro } from '@/lib/money';
-import { radius, spacing, useColors } from '@/theme';
+import { fonts, radius, spacing, useColors } from '@/theme';
 
 const t = de.kalk;
 
@@ -45,7 +45,7 @@ export function MoneyBar({ b }: { b: CostBreakdown }) {
             <View style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: p.color }} />
             <AppText variant="small">
               {p.label}{' '}
-              <AppText variant="small" style={{ fontWeight: '700' }}>
+              <AppText variant="small" style={{ fontFamily: fonts.bodyBold }}>
                 {formatEuro(p.cents)}
               </AppText>
             </AppText>

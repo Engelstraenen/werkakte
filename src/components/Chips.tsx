@@ -50,15 +50,15 @@ export function Chips<T extends string>({ options, value, onChange, segmented }:
               flexGrow: segmented ? 1 : 0,
               minHeight: 48,
               paddingHorizontal: spacing.md,
-              borderRadius: radius.full,
+              borderRadius: radius.md,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: active ? colors.text : colors.card,
+              backgroundColor: active ? colors.primary : colors.card,
               borderWidth: 1,
-              borderColor: active ? colors.text : colors.border,
+              borderColor: active ? colors.primary : colors.border,
             }}
           >
-            <AppText variant="label" color={active ? colors.card : colors.text}>
+            <AppText variant="label" color={active ? colors.onPrimary : colors.text}>
               {o.label}
             </AppText>
           </Pressable>

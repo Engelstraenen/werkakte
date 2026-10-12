@@ -74,8 +74,8 @@ export function ProjectTimer({ project }: { project: Project }) {
                 opacity: pressed ? 0.85 : 1,
               })}
             >
-              <Ionicons name={here ? 'stop' : 'play'} size={20} color="#FFFFFF" />
-              <AppText variant="label" color="#FFFFFF">
+              <Ionicons name={here ? 'stop' : 'play'} size={20} color={colors.onTone} />
+              <AppText variant="label" color={colors.onTone}>
                 {here ? t.stopp : t.start}
               </AppText>
             </Pressable>

@@ -22,9 +22,7 @@ export function TimerCard() {
 
   return (
     <Card>
-      <AppText variant="small" muted>
-        ● {de.zeit.imEinsatz}
-      </AppText>
+      <AppText variant="mono">● {de.zeit.imEinsatz}</AppText>
       {running.map(([memberId, timer]) => {
         const project = projects.find((p) => p.id === timer.projectId)!;
         const member = memberById(memberId);
@@ -67,7 +65,7 @@ export function TimerCard() {
                 backgroundColor: colors.danger,
               }}
             >
-              <AppText variant="label" color="#FFFFFF">
+              <AppText variant="label" color={colors.onTone}>
                 {de.zeit.stopp}
               </AppText>
             </Pressable>

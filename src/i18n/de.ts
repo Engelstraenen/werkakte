@@ -1,4 +1,5 @@
 export const de = {
+  app: { name: 'Werkakte', claim: 'Eine Akte pro Auftrag.' },
   tabs: {
     heute: 'Heute',
     projekte: 'Projekte',

@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 
 import { AppText } from './AppText';
-import { useColors } from '@/theme';
+import { fonts, useColors } from '@/theme';
 
 const palette = ['#C2410C', '#1D4ED8', '#15803D', '#7C3AED', '#B45309', '#0E7490'];
 
@@ -32,7 +32,7 @@ export function Avatar({ name, size = 40 }: { name: string; size?: number }) {
         borderColor: colors.card,
       }}
     >
-      <AppText color="#FFFFFF" style={{ fontWeight: '800', fontSize: size * 0.38 }}>
+      <AppText color="#FFFFFF" style={{ fontFamily: fonts.heading, fontSize: size * 0.4 }}>
         {initials(name)}
       </AppText>
     </View>

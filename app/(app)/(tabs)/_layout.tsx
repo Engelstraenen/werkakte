@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { QuickActionSheet } from '@/features/quick-actions/QuickActionSheet';
 import { de } from '@/i18n/de';
-import { spacing, touch, useColors } from '@/theme';
+import { fonts, spacing, touch, useColors } from '@/theme';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 const icon = (name: IconName) =>
@@ -26,14 +26,14 @@ export default function TabLayout() {
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.textMuted,
           tabBarStyle: {
-            backgroundColor: colors.card,
-            borderTopColor: colors.surface,
+            backgroundColor: colors.tabBar,
+            borderTopColor: colors.border,
             // Platz für den 56-pt-Mittelbutton und große Touch-Ziele.
             height: 68 + insets.bottom,
             paddingTop: spacing.xs,
             paddingBottom: spacing.xs + insets.bottom,
           },
-          tabBarLabelStyle: { fontSize: 13, fontWeight: '700' },
+          tabBarLabelStyle: { fontSize: 13, fontFamily: fonts.headingMedium },
           headerShown: false,
         }}
       >
@@ -54,17 +54,21 @@ export default function TabLayout() {
                 onPress={() => setSheetOpen(true)}
                 style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
               >
+                {/* Gelbe Raute wie ein Warnschild – das Bauplan-Markenzeichen. */}
                 <View
                   style={{
-                    width: touch.main,
-                    height: touch.main,
-                    borderRadius: touch.main / 2,
+                    width: touch.main - 6,
+                    height: touch.main - 6,
+                    borderRadius: 10,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: colors.primary,
+                    backgroundColor: colors.accent,
+                    transform: [{ rotate: '45deg' }],
                   }}
                 >
-                  <Ionicons name="add" size={36} color={colors.onPrimary} />
+                  <View style={{ transform: [{ rotate: '-45deg' }] }}>
+                    <Ionicons name="add" size={34} color={colors.onAccent} />
+                  </View>
                 </View>
               </Pressable>
             ),

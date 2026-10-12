@@ -1,60 +1,100 @@
+import { IBMPlexMono_500Medium } from '@expo-google-fonts/ibm-plex-mono';
+import { IBMPlexSans_400Regular, IBMPlexSans_600SemiBold } from '@expo-google-fonts/ibm-plex-sans';
+import {
+  IBMPlexSansCondensed_600SemiBold,
+  IBMPlexSansCondensed_700Bold,
+} from '@expo-google-fonts/ibm-plex-sans-condensed';
 import { useColorScheme } from 'react-native';
 
-// Hoher Kontrast für Sonnenlicht: Text mind. 7:1, Primär- und Statusfarben mind. 4.5:1 zur Karte.
-const light = {
-  background: '#F2F3F5',
-  card: '#FFFFFF',
-  surface: '#E9EBEF',
-  text: '#0F172A',
-  textMuted: '#475569',
-  border: '#CBD5E1',
-  primary: '#C2410C',
-  primarySoft: '#FFEDD5',
-  onPrimary: '#FFFFFF',
-  danger: '#B91C1C',
-  success: '#15803D',
-  warning: '#B45309',
-  info: '#1D4ED8',
-  neutral: '#475569',
-  shadow: '0px 2px 10px rgba(15, 23, 42, 0.08)',
-};
+// Design „Bauplan“ (siehe docs/ENTSCHEIDUNGEN.md): Blaupausen-Blau mit Raster, Warngelb als Akzent.
+// Dunkel = Original-Blaupause. Hell = Blaupausen-Papier für pralle Sonne.
+// Kontrast: Text mind. 7:1, Primär- und Statusfarben mind. 4.5:1 zur Karte.
 
-const dark: typeof light = {
-  background: '#000000',
-  card: '#1C1C1F',
-  surface: '#2A2A2E',
-  text: '#F8FAFC',
-  textMuted: '#CBD5E1',
-  border: '#3F3F46',
-  primary: '#FB923C',
-  primarySoft: '#431407',
-  onPrimary: '#000000',
-  danger: '#F87171',
-  success: '#4ADE80',
-  warning: '#FBBF24',
-  info: '#60A5FA',
-  neutral: '#A1A1AA',
+const dark = {
+  background: '#0D1F3C',
+  grid: 'rgba(255, 255, 255, 0.05)',
+  card: '#142B52',
+  surface: '#1B3866',
+  text: '#EAF0FB',
+  textMuted: '#A9BBDA',
+  border: '#2B4A7E',
+  /** Hauptaktion (Buttons, aktiver Tab). */
+  primary: '#F6C445',
+  primarySoft: '#3A3520',
+  onPrimary: '#0D1F3C',
+  /** Warngelb: Plus-Button, Markierungen – in beiden Varianten gleich. */
+  accent: '#F6C445',
+  onAccent: '#0D1F3C',
+  danger: '#FF8A78',
+  success: '#5AD198',
+  warning: '#F6C445',
+  info: '#8DB4FF',
+  neutral: '#A9BBDA',
+  /** Text auf farbigen Status-Flächen (Grün/Rot/Gelb …). */
+  onTone: '#0D1F3C',
+  tabBar: '#0A1830',
   shadow: '0px 0px 0px rgba(0, 0, 0, 0)',
 };
 
-export type Colors = typeof light;
+const light: typeof dark = {
+  background: '#EAF0F9',
+  grid: 'rgba(29, 78, 216, 0.07)',
+  card: '#FFFFFF',
+  surface: '#DCE6F5',
+  text: '#0D1F3C',
+  textMuted: '#3B5276',
+  border: '#A7B9D6',
+  primary: '#1D4ED8',
+  primarySoft: '#DCE6FF',
+  onPrimary: '#FFFFFF',
+  accent: '#F6C445',
+  onAccent: '#0D1F3C',
+  danger: '#B42318',
+  success: '#15803D',
+  warning: '#9A5B00',
+  info: '#1D4ED8',
+  neutral: '#3B5276',
+  onTone: '#FFFFFF',
+  tabBar: '#FFFFFF',
+  shadow: '0px 1px 3px rgba(13, 31, 60, 0.10)',
+};
+
+export type Colors = typeof dark;
 export type Tone = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'neutral';
 
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;
 export const fontSize = {
   small: 14,
   body: 17,
-  title: 20,
-  heading: 26,
-  display: 32,
+  title: 21,
+  heading: 27,
+  display: 33,
 } as const;
-export const radius = { sm: 8, md: 14, lg: 20, full: 999 } as const;
+/** Kanten eher eckig – technisch wie ein Plan. */
+export const radius = { sm: 4, md: 8, lg: 12, full: 999 } as const;
 /** Mindestgrößen für Touch-Ziele (pt), siehe CLAUDE.md §3. */
 export const touch = { min: 48, main: 56 } as const;
 
+/** Schriften: Fließtext normal breit (gut lesbar), Überschriften schmal, Beschriftungen Mono. */
+export const fonts = {
+  body: 'IBMPlexSans_400Regular',
+  bodyBold: 'IBMPlexSans_600SemiBold',
+  heading: 'IBMPlexSansCondensed_700Bold',
+  headingMedium: 'IBMPlexSansCondensed_600SemiBold',
+  mono: 'IBMPlexMono_500Medium',
+} as const;
+
+export const fontFiles = {
+  IBMPlexSans_400Regular,
+  IBMPlexSans_600SemiBold,
+  IBMPlexSansCondensed_600SemiBold,
+  IBMPlexSansCondensed_700Bold,
+  IBMPlexMono_500Medium,
+};
+
 export function useColors(): Colors {
-  return useColorScheme() === 'dark' ? dark : light;
+  return useColorScheme() === 'light' ? light : dark;
 }
 
-/** Hintergrund mit 12 % Deckkraft für Badges und Icon-Kreise. */
-export const soft = (hex: string) => `${hex}1F`;
+/** Hintergrund mit 15 % Deckkraft für Badges und Icon-Kreise. */
+export const soft = (hex: string) => `${hex}26`;

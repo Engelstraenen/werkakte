@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { useColors } from '@/theme';
+import { fonts, useColors } from '@/theme';
 
 /** Alle Screens nach der Anmeldung. Detail-Screens bekommen eine Kopfleiste mit Zurück-Pfeil. */
 export default function AppLayout() {
@@ -10,7 +10,7 @@ export default function AppLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.primary,
-        headerTitleStyle: { color: colors.text, fontWeight: '700', fontSize: 18 },
+        headerTitleStyle: { color: colors.text, fontFamily: fonts.heading, fontSize: 20 },
         headerShadowVisible: false,
         headerBackButtonDisplayMode: 'minimal',
         contentStyle: { backgroundColor: colors.background },

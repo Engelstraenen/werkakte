@@ -1,7 +1,7 @@
 import { View, type ViewStyle } from 'react-native';
 
 import { AppText } from './AppText';
-import { radius, soft, spacing, useColors, type Tone } from '@/theme';
+import { fonts, radius, soft, spacing, type Tone, useColors } from '@/theme';
 
 type Props = { label: string; tone?: Tone; align?: ViewStyle['alignSelf'] };
 
@@ -22,7 +22,7 @@ export function Badge({ label, tone = 'neutral', align = 'flex-start' }: Props) 
       }}
     >
       <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: color }} />
-      <AppText variant="small" color={color} style={{ fontWeight: '700' }}>
+      <AppText variant="small" color={color} style={{ fontFamily: fonts.bodyBold }}>
         {label}
       </AppText>
     </View>

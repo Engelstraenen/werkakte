@@ -13,7 +13,7 @@ import { useDemo } from '@/features/demo/store';
 import type { Project } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { call, mail, openRoute } from '@/lib/links';
-import { radius, soft, spacing, touch, useColors } from '@/theme';
+import { fonts, radius, soft, spacing, touch, useColors } from '@/theme';
 
 function QuickButton({
   icon,
@@ -41,7 +41,7 @@ function QuickButton({
       })}
     >
       <Ionicons name={icon} size={24} color={colors.primary} />
-      <AppText variant="small" color={colors.primary} style={{ fontWeight: '700' }}>
+      <AppText variant="small" color={colors.primary} style={{ fontFamily: fonts.bodyBold }}>
         {label}
       </AppText>
     </Pressable>
@@ -78,9 +78,7 @@ export function ProjectHeader({ project }: { project: Project }) {
       </Card>
       <TimeTeamCard project={project} />
       <View style={{ gap: spacing.xs }}>
-        <AppText variant="small" muted>
-          {de.akte.status}
-        </AppText>
+        <AppText variant="mono">{de.akte.status}</AppText>
         <Chips
           options={statusOrder.map((s) => ({ value: s, label: de.status[s] }))}
           value={project.status}

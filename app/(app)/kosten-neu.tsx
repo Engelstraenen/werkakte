@@ -11,7 +11,7 @@ import { CURRENT_MEMBER_ID, members, suppliers } from '@/features/demo/data';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { parseEuro } from '@/lib/money';
-import { radius, spacing, useColors } from '@/theme';
+import { fonts, radius, spacing, useColors } from '@/theme';
 
 const t = de.kalk;
 const quickHours = [1, 2, 4, 8];
@@ -115,7 +115,7 @@ export default function KostenNeuScreen() {
         placeholder="0,00"
         error={error}
         autoFocus
-        style={{ fontSize: 28, fontWeight: '800', minHeight: 72 }}
+        style={{ fontSize: 28, fontFamily: fonts.heading, minHeight: 72 }}
       />
       <TextField
         label={t.wofuer}

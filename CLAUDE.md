@@ -1,4 +1,4 @@
-# CLAUDE.md – Handwerker-App (Arbeitstitel)
+# CLAUDE.md – Werkakte
 
 > Masterfile für Claude Code. Vor jeder Aufgabe lesen und einhalten.
 > Bei Konflikten gilt: diese Datei > Gewohnheit. Änderungen an Stack oder Architektur nur nach Rückfrage.
@@ -26,6 +26,12 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 4. **Offline-first:** Jede Kernfunktion funktioniert ohne Netz und synchronisiert später automatisch.
 5. **Kein Feature ohne Grund:** Lieber eine Funktion weglassen als den Screen überladen.
 6. **Hoher Kontrast**, gut lesbar bei Sonnenlicht; Dark Mode unterstützt.
+
+### Marke & Design „Bauplan“ (verbindlich)
+- Name **Werkakte**, Claim „Eine Akte pro Auftrag.“ Logo: aufgeklappter Zollstock als „W“ in Warngelb auf Blaupausen-Blau (`src/components/Logo.tsx`, App-Icon in `assets/images`).
+- Farben/Schriften nur über `src/theme` (Tokens). Dunkel = Blaupause (#0D1F3C, Raster, Warngelb #F6C445), Hell = Blaupausen-Papier für Sonne (helles Raster, dunkelblaue Schrift, blaue Hauptaktion). Das Handy wählt automatisch.
+- Schriften (in der App gebündelt, offline): IBM Plex Sans (Text), IBM Plex Sans Condensed (Überschriften, Buttons), IBM Plex Mono (Beschriftungen wie Datum/Uhrzeit, Großbuchstaben).
+- Eher eckige Kanten (4–12 px), Karten mit feiner Linie, Plus-Button als gelbe Raute.
 
 ### Navigation (Bottom Tabs, max. 5)
 `Heute` · `Projekte` · `+ (Schnellaktion)` · `Kalender` · `Mehr`

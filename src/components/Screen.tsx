@@ -3,6 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from './AppText';
+import { BlueprintGrid } from './BlueprintGrid';
 import { spacing, useColors } from '@/theme';
 
 type Props = {
@@ -20,27 +21,30 @@ export function Screen({ children, title, subtitle, right, header }: Props) {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{
-        padding: spacing.md,
-        paddingTop: title ? insets.top + spacing.md : spacing.md,
-        paddingBottom: spacing.xl,
-        gap: spacing.md,
-      }}
-      keyboardShouldPersistTaps="handled"
-    >
-      {title ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-          <View style={{ flex: 1 }}>
-            {subtitle ? <AppText muted>{subtitle}</AppText> : null}
-            <AppText variant="display">{title}</AppText>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <BlueprintGrid />
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          padding: spacing.md,
+          paddingTop: title ? insets.top + spacing.md : spacing.md,
+          paddingBottom: spacing.xl,
+          gap: spacing.md,
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {title ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+            <View style={{ flex: 1 }}>
+              {subtitle ? <AppText variant="mono">{subtitle}</AppText> : null}
+              <AppText variant="display">{title}</AppText>
+            </View>
+            {right}
           </View>
-          {right}
-        </View>
-      ) : null}
-      {header}
-      {children}
-    </ScrollView>
+        ) : null}
+        {header}
+        {children}
+      </ScrollView>
+    </View>
   );
 }

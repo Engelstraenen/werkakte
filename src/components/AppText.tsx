@@ -1,17 +1,20 @@
-import { Text, type TextProps } from 'react-native';
+import { Text, type TextProps, type TextStyle } from 'react-native';
 
-import { fontSize, useColors } from '@/theme';
+import { fonts, fontSize, useColors } from '@/theme';
 
-type Variant = 'small' | 'body' | 'label' | 'title' | 'heading' | 'display';
+type Variant = 'small' | 'body' | 'label' | 'title' | 'heading' | 'display' | 'mono';
 type Props = TextProps & { variant?: Variant; muted?: boolean; color?: string };
 
-const styles: Record<Variant, { fontSize: number; fontWeight: '400' | '600' | '700' | '800' }> = {
-  small: { fontSize: fontSize.small, fontWeight: '400' },
-  body: { fontSize: fontSize.body, fontWeight: '400' },
-  label: { fontSize: fontSize.body, fontWeight: '600' },
-  title: { fontSize: fontSize.title, fontWeight: '700' },
-  heading: { fontSize: fontSize.heading, fontWeight: '800' },
-  display: { fontSize: fontSize.display, fontWeight: '800' },
+// Schrift-Datei statt fontWeight: eigene Schriften brauchen je Stärke eine eigene Datei.
+const styles: Record<Variant, TextStyle> = {
+  small: { fontFamily: fonts.body, fontSize: fontSize.small },
+  body: { fontFamily: fonts.body, fontSize: fontSize.body },
+  label: { fontFamily: fonts.bodyBold, fontSize: fontSize.body },
+  title: { fontFamily: fonts.heading, fontSize: fontSize.title },
+  heading: { fontFamily: fonts.heading, fontSize: fontSize.heading, letterSpacing: -0.3 },
+  display: { fontFamily: fonts.heading, fontSize: fontSize.display, letterSpacing: -0.5 },
+  /** Technische Beschriftung wie auf einem Plan: Datum, Uhrzeit, Abschnitts-Labels. */
+  mono: { fontFamily: fonts.mono, fontSize: 12.5, letterSpacing: 1, textTransform: 'uppercase' },
 };
 
 export function AppText({ variant = 'body', muted, color, style, ...rest }: Props) {
@@ -20,8 +23,7 @@ export function AppText({ variant = 'body', muted, color, style, ...rest }: Prop
     <Text
       style={[
         styles[variant],
-        { color: color ?? (muted ? colors.textMuted : colors.text) },
-        variant === 'display' || variant === 'heading' ? { letterSpacing: -0.5 } : null,
+        { color: color ?? (muted || variant === 'mono' ? colors.textMuted : colors.text) },
         style,
       ]}
       {...rest}

@@ -74,7 +74,7 @@ export default function NeuScreen() {
           {art === 'foto' ? (
             <View style={{ gap: spacing.xs }}>
               <AppText muted>{t.fotoHinweis}</AppText>
-              <AppText style={{ fontWeight: '600' }}>{t.fotoArt}</AppText>
+              <AppText variant="label">{t.fotoArt}</AppText>
               <Chips
                 options={tags.map((x) => ({ value: x, label: de.tag[x] }))}
                 value={tag}

@@ -1,15 +1,16 @@
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
+import { Logo } from '@/components/Logo';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
 import { useSession } from '@/features/auth/session';
 import { SocialLogin } from '@/features/auth/SocialLogin';
 import { useLogin } from '@/features/auth/useLogin';
 import { de } from '@/i18n/de';
-import { useColors } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 const t = de.login;
 
@@ -25,6 +26,10 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <Screen>
+          <View style={{ gap: spacing.sm, marginTop: spacing.lg, marginBottom: spacing.md }}>
+            <Logo size={56} />
+            <AppText variant="mono">{de.app.claim}</AppText>
+          </View>
           <AppText variant="heading">{t.titel}</AppText>
           {__DEV__ ? (
             <Button title={t.testmodus} variant="secondary" onPress={() => setDevMode(true)} />

@@ -5,7 +5,7 @@ import { tagTone } from './status';
 import { AppText } from '@/components/AppText';
 import type { Media } from '@/features/demo/types';
 import { de } from '@/i18n/de';
-import { radius, spacing, useColors } from '@/theme';
+import { fonts, radius, spacing, useColors } from '@/theme';
 
 export function PhotoGrid({ media }: { media: Media[] }) {
   const colors = useColors();
@@ -31,7 +31,7 @@ export function PhotoGrid({ media }: { media: Media[] }) {
               paddingVertical: 3,
             }}
           >
-            <AppText variant="small" color="#FFFFFF" style={{ fontWeight: '800' }}>
+            <AppText variant="small" color={colors.onTone} style={{ fontFamily: fonts.bodyBold }}>
               {de.tag[m.tag]}
             </AppText>
           </View>

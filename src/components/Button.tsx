@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, Text } from 'react-native';
 
-import { fontSize, radius, spacing, touch, useColors } from '@/theme';
+import { fonts, fontSize, radius, spacing, touch, useColors } from '@/theme';
 
 type Props = {
   title: string;
@@ -44,8 +44,8 @@ export function Button({ title, onPress, variant = 'primary', loading, disabled,
           <Text
             style={{
               color: primary ? colors.onPrimary : colors.text,
-              fontSize: fontSize.body,
-              fontWeight: '700',
+              fontFamily: fonts.heading,
+              fontSize: fontSize.body + 1,
             }}
           >
             {title}

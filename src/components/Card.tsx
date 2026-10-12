@@ -20,8 +20,10 @@ export function Card({ children, onPress, style, accent, accessibilityLabel }: P
     padding: spacing.md,
     gap: spacing.sm,
     boxShadow: colors.shadow,
-    borderLeftWidth: accent ? 5 : 0,
-    borderLeftColor: accent,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderLeftWidth: accent ? 4 : 1,
+    borderLeftColor: accent ?? colors.border,
     overflow: 'hidden',
   };
   if (!onPress) return <View style={[base, style]}>{children}</View>;

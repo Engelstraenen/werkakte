@@ -11,7 +11,7 @@ import type { Appointment } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { formatTime } from '@/lib/date';
 import { openRoute } from '@/lib/links';
-import { radius, soft, spacing, touch, useColors } from '@/theme';
+import { fonts, radius, soft, spacing, touch, useColors } from '@/theme';
 
 export function AppointmentCard({ appointment, now }: { appointment: Appointment; now?: Date }) {
   const colors = useColors();
@@ -41,7 +41,11 @@ export function AppointmentCard({ appointment, now }: { appointment: Appointment
               {formatTime(appointment.end)}
             </AppText>
             {running ? (
-              <AppText variant="small" color={colors.primary} style={{ fontWeight: '800' }}>
+              <AppText
+                variant="small"
+                color={colors.primary}
+                style={{ fontFamily: fonts.bodyBold }}
+              >
                 {de.heute.jetzt}
               </AppText>
             ) : null}

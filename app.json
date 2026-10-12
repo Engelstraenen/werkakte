@@ -1,26 +1,25 @@
 {
   "expo": {
-    "name": "Handwerker-App",
-    "slug": "handwerker-app",
+    "name": "Werkakte",
+    "slug": "werkakte",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "handwerkerapp",
+    "scheme": "werkakte",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
-      "bundleIdentifier": "de.handwerkerapp.app",
+      "bundleIdentifier": "de.werkakte.app",
       "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0D1F3C",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "de.handwerkerapp.app"
+      "package": "de.werkakte.app"
     },
     "web": {
       "output": "single",
@@ -31,9 +30,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#0D1F3C",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 140
         }
       ],
       "expo-secure-store",

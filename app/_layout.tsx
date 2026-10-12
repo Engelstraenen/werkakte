@@ -3,9 +3,11 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { useFonts } from 'expo-font';
 import { useColorScheme } from 'react-native';
 
 import { SessionProvider, useSession } from '@/features/auth/session';
+import { fontFiles, useColors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -13,11 +15,25 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const scheme = useColorScheme();
+  const colors = useColors();
+  const base = scheme === 'light' ? DefaultTheme : DarkTheme;
+  // Navigations-Hintergründe in Bauplan-Farben, damit beim Wechseln nichts weiß aufblitzt.
+  const navTheme = {
+    ...base,
+    colors: {
+      ...base.colors,
+      background: colors.background,
+      card: colors.tabBar,
+      text: colors.text,
+      border: colors.border,
+      primary: colors.primary,
+    },
+  };
   return (
-    <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={navTheme}>
       <QueryClientProvider client={queryClient}>
         <SessionProvider>
-          <StatusBar style="auto" />
+          <StatusBar style={scheme === 'light' ? 'dark' : 'light'} />
           <RootStack />
         </SessionProvider>
       </QueryClientProvider>
@@ -26,7 +42,10 @@ export default function RootLayout() {
 }
 
 function RootStack() {
-  const { session, loading, devMode } = useSession();
+  const { session, loading: sessionLoading, devMode } = useSession();
+  // Schriften liegen in der App (offline), Laden dauert nur einen Moment.
+  const [fontsLoaded, fontError] = useFonts(fontFiles);
+  const loading = sessionLoading || (!fontsLoaded && !fontError);
   const signedIn = !!session || devMode;
 
   useEffect(() => {
