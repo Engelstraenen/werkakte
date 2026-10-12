@@ -25,10 +25,10 @@ const hours = (min: number) => `${Math.round(min / 6) / 10} Std.`;
 
 export function CostingView({ projectId }: { projectId: string }) {
   const colors = useColors();
-  const { quotes, supplierPrices, projectCosts, projects } = useDemo();
+  const { quotes, invoices, supplierPrices, projectCosts, projects } = useDemo();
   const [details, setDetails] = useState(false);
   const project = projects.find((p) => p.id === projectId)!;
-  const { soll, ist } = projectCosting(projectId, quotes, supplierPrices, projectCosts);
+  const { soll, ist } = projectCosting(projectId, quotes, invoices, supplierPrices, projectCosts);
   const own = projectCosts.filter((c) => c.projectId === projectId);
   const running = project.status !== 'abgeschlossen' && project.status !== 'bezahlt';
   const main = ist ?? soll;

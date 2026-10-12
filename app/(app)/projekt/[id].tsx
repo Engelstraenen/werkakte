@@ -7,7 +7,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { AppointmentCard } from '@/features/calendar/AppointmentCard';
 import { appointments } from '@/features/demo/data';
-import { invoicesOf, isOwner } from '@/features/demo/selectors';
+import { isOwner } from '@/features/demo/selectors';
 import { CostingView } from '@/features/costing/CostingView';
 import { useDemo } from '@/features/demo/store';
 import { NoteList } from '@/features/projects/NoteList';
@@ -24,13 +24,17 @@ export default function ProjektScreen() {
   const allMedia = useDemo((s) => s.media);
   const allNotes = useDemo((s) => s.notes);
   const allQuotes = useDemo((s) => s.quotes);
+  const allInvoices = useDemo((s) => s.invoices);
   const [active, setActive] = useState<Tab>(tab ?? 'fotos');
 
   if (!project) return <EmptyState icon="alert-circle" text={de.projekte.keine} />;
 
   const media = allMedia.filter((m) => m.projectId === id);
   const notes = allNotes.filter((n) => n.projectId === id);
-  const docs = [...allQuotes.filter((q) => q.projectId === id), ...invoicesOf(id)];
+  const docs = [
+    ...allQuotes.filter((q) => q.projectId === id),
+    ...allInvoices.filter((i) => i.projectId === id),
+  ];
   const dates = appointments
     .filter((a) => a.projectId === id)
     .sort((a, b) => a.start.localeCompare(b.start));

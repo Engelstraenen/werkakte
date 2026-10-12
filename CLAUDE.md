@@ -32,7 +32,7 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 
 - **Heute:** Termine des Tages, offene Aufgaben, zuletzt bearbeitete Projekte
 - **+ Schnellaktion:** Foto aufnehmen · Notiz/Sprachnotiz · Neues Angebot · Neues Projekt · Zeit starten
-- **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Einstellungen, Firmendaten, Mitarbeiter
+- **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Firmendaten, Nummernkreise, Versand & DATEV, Erinnerungen, Mitarbeiter
 
 ## 4. Tech-Stack (festgelegt)
 
@@ -54,7 +54,8 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 ## 5. Datenmodell (MVP)
 
 ```
-Firma (company)                 Gewerk, Betriebskosten-Zuschlag %
+Firma (company)                 Gewerk, Fixkosten-Zuschlag %, Nummernkreise (Angebot/Rechnung: Präfix, nächste Zahl, Stellen, Suffix),
+                                Versand (Kopie an mich, DATEV-Upload-Mail), Erinnerungen
  ├─ Mitarbeiter (member)        rolle: inhaber | mitarbeiter, interne Stundenkosten
  ├─ Kunde (customer)            privat | gewerblich, Adresse, Kontakt
  ├─ Artikel/Leistung (catalog_item)  Name, Einheit, Preis netto (VK), MwSt-Satz, Typ: material | arbeit, interne Kosten (nur Arbeit)
@@ -68,7 +69,7 @@ Firma (company)                 Gewerk, Betriebskosten-Zuschlag %
       ├─ Projektkosten (project_cost)  Ist-Kosten von Hand: Material (Betrag, Lieferant) | Stunden (Mitarbeiter, Dauer)
       ├─ Angebot (quote)        Nummer, Datum, Gültig bis, Status, Positionen, Unterschrift
       │    └─ Position (quote_item)  Menge, Einheit, Einzelpreis, MwSt, Rabatt, Katalog-Bezug (optional)
-      └─ Rechnung (invoice)     Nummer (fortlaufend, unveränderbar), Typ: abschlag | schluss | einzel, Positionen
+      └─ Rechnung (invoice)     Nummer (fortlaufend, unveränderbar, erst beim Versand vergeben), Typ: abschlag | schluss | einzel, Positionen, Bezug zum Angebot, Versanddatum
 ```
 
 Projekt-Status: `anfrage → angebot → beauftragt → in_arbeit → abgeschlossen → bezahlt`
@@ -88,7 +89,11 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 - Artikel- und Leistungskatalog, beim Einrichten **Startkatalog je Gewerk** (Maler, Schreiner, SHK …)
 - **Einkauf & Preise:** Einkaufspreise je Lieferant von Hand, Empfehlung des günstigsten aktuellen Preises, Online-Suche per Link (Google Shopping, idealo)
 - Angebot erstellen aus Katalog oder Freitext, **Vorschläge beim Tippen** (Katalog + frühere Positionen, häufige zuerst), **altes Angebot als Vorlage übernehmen**, automatische Summen (netto, MwSt 19 %/7 %, brutto), PDF, teilen per E-Mail/WhatsApp, Kundenunterschrift auf dem Handy
-- Angebot → Rechnung mit einem Tap
+- Angebot → Rechnung mit einem Tap (Schlussrechnung zieht Abschläge automatisch ab)
+- **Nummernkreise selbst festlegen** (Präfix, Zahl, Stellen, Suffix, Jahr als Platzhalter); Zahl nur erhöhbar
+- **Versand aus der App** (E-Mail-Dienst mit Server in der EU): an Kunde, automatische Kopie an mich, Rechnungen automatisch an die **DATEV-Upload-Mail**; zusätzlich Teilen (WhatsApp, Mail-App). Ohne Netz: Versand wartet.
+- **E-Rechnung (ZUGFeRD/XRechnung)** für Rechnungen an Firmenkunden – automatisch zusätzlich zum PDF
+- **Push-Erinnerungen:** Angebot nachfassen (nach X Tagen), Rechnung überfällig, Tagesabschluss
 - **Kalkulation (nur Inhaber):** Vorkalkulation im Angebot (Material zum EK, Arbeit zu internen Kosten, Betriebskosten-Zuschlag), Nachkalkulation pro Projekt aus von Hand erfassten Material-Kosten und Stunden, Gewinn mit Ampel
 - Kalender (Tag/Woche), Termine pro Projekt und Mitarbeiter
 - Offline-Modus für alles oben
@@ -98,7 +103,7 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 - Aufmaß-Erfassung → Positionen
 - Sprachdiktat → KI erzeugt Angebotspositionen (Vorschlag, Nutzer bestätigt)
 - Foto eines Teils → KI erkennt es → Preise vergleichen
-- E-Rechnung ZUGFeRD/XRechnung, DATEV-Export
+- DATEV-Export (Buchungsstapel)
 - Mahnwesen, Auswertungen
 
 **Nicht geplant:** Großhändler-Schnittstelle (IDS Connect, DATANORM) – Preise werden von Hand gepflegt.
@@ -109,7 +114,8 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 - **Rechnungen:** fortlaufende, lückenlose Nummernkreise; versendete Rechnungen sind **nicht editierbar** (nur Storno + Neue). Pflichtangaben nach § 14 UStG im Template.
 - **GoBD:** Änderungen an Rechnungen protokollieren (Audit-Log-Tabelle), keine physischen Löschungen.
 - **Kleinunternehmer (§ 19 UStG)** als Einstellung: dann keine MwSt, Hinweistext auf PDF.
-- **E-Rechnung:** Datenmodell von Anfang an so bauen, dass ZUGFeRD/XRechnung später ohne Umbau möglich ist.
+- **E-Rechnung:** ZUGFeRD/XRechnung in 1.0 für Rechnungen an Unternehmen (Ausstellungspflicht nach Übergangsfristen bis Ende 2026/2027 – Fristen vom Steuerberater bestätigen lassen).
+- **Rechnungsnummer** wird serverseitig beim Versenden vergeben (eindeutig auch bei mehreren Geräten/offline).
 - **DSGVO:** Daten nur in EU, Medien in privatem Storage-Bucket mit signierten URLs, Konto-Löschung möglich.
 - Geldbeträge **immer in Cent als Integer** speichern und rechnen, nie Floats.
 
@@ -141,9 +147,9 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 | 2 | Kunden + Projekte | Kunde und Projekt anlegen, Status ändern, Liste + Suche |
 | 3 | Fotos/Videos/Notizen | Foto im Projekt, offline aufgenommen, später hochgeladen |
 | 4 | Katalog + Einkaufspreise + Angebote (Vorschläge, Vorlage, Vorkalkulation) + PDF + Unterschrift | Angebot als PDF per WhatsApp teilen |
-| 5 | Rechnungen + Nachkalkulation | Angebot → Rechnung, Nummernkreis, Sperre nach Versand, Soll/Ist pro Projekt |
+| 5 | Rechnungen + E-Rechnung + Versand + Nachkalkulation | Angebot → Rechnung, eigener Nummernkreis, Versand an Kunde/mich/DATEV, ZUGFeRD, Sperre nach Versand, Soll/Ist pro Projekt |
 | 6 | Kalender + Heute-Screen | Termine pro Mitarbeiter, Tagesübersicht |
-| 7 | Feinschliff, Tests mit echten Handwerkern, Store-Vorbereitung | Testflight/Play-Testversion läuft |
+| 7 | Push-Erinnerungen, Feinschliff, Tests mit echten Handwerkern, Store-Vorbereitung | Testflight/Play-Testversion läuft |
 
 Immer nur **eine Phase** gleichzeitig bearbeiten. Nach jeder Phase kurze Zusammenfassung: was gebaut, was offen, was getestet.
 

@@ -1,5 +1,5 @@
-import { catalog, company, invoices, members } from '@/features/demo/data';
-import type { DocItem, ProjectCost, Quote, SupplierPrice } from '@/features/demo/types';
+import { catalog, company, members } from '@/features/demo/data';
+import type { DocItem, Invoice, ProjectCost, Quote, SupplierPrice } from '@/features/demo/types';
 import { bestOffer, breakdown, laborCents, type CostBreakdown } from '@/lib/calc';
 import { documentTotals } from '@/lib/money';
 
@@ -61,7 +61,11 @@ export function actualCosting(costs: ProjectCost[], revenueCents: number): Costi
 }
 
 /** Soll-Grundlage: angenommenes Angebot, sonst neuestes Angebot, sonst Rechnungen (ohne Abschläge). */
-export function revenueItems(projectId: string, quotes: Quote[]): DocItem[] | undefined {
+export function revenueItems(
+  projectId: string,
+  quotes: Quote[],
+  invoices: Invoice[],
+): DocItem[] | undefined {
   const own = quotes
     .filter((q) => q.projectId === projectId)
     .sort((a, b) => b.date.localeCompare(a.date));
@@ -74,10 +78,11 @@ export function revenueItems(projectId: string, quotes: Quote[]): DocItem[] | un
 export function projectCosting(
   projectId: string,
   quotes: Quote[],
+  invoices: Invoice[],
   prices: SupplierPrice[],
   costs: ProjectCost[],
 ) {
-  const items = revenueItems(projectId, quotes);
+  const items = revenueItems(projectId, quotes, invoices);
   const soll = items ? plannedCosting(items, prices) : undefined;
   const own = costs.filter((c) => c.projectId === projectId);
   const ist = own.length ? actualCosting(own, soll?.breakdown.revenueCents ?? 0) : undefined;

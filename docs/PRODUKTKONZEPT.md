@@ -75,9 +75,9 @@ Jeder Schritt ist höchstens ein paar Taps und baut auf dem vorherigen auf – n
 - Laufende Kosten pro Betrieb beachten: Server, Foto-Speicher, E-Mail-Versand, später KI. Fotos sind der größte Posten → Komprimierung vor Upload (ist geplant).
 - Idee: **Basis für 1 Person** im unteren Bereich, **Team-Paket** (Mitarbeiter-Zugänge) und **KI-Funktionen** als Aufpreis. Vor dem Start mit echten Handwerkern testen, was sie zahlen würden.
 
-## 6. Offene Entscheidungen
+## 6. Entscheidungen (2026-10-12)
 
-1. **E-Rechnung früher einplanen?** Rechnungen an Firmen (z. B. Hausverwaltungen) müssen in Deutschland bald als E-Rechnung (XRechnung/ZUGFeRD) ausgestellt werden: Übergangsfristen enden Ende 2026 bzw. Ende 2027 (für Betriebe bis 800.000 € Vorjahresumsatz). Steht bisher in Version 1.x – sollte wohl in 1.0. _Bitte vom Steuerberater bestätigen lassen._
-2. **Versand-Weg:** A (aus der App, Empfehlung) oder B (Mail-App des Handys)?
-3. **Rechnungsnummer-Format:** `R-2026-0031` oder eigenes Format des Betriebs übernehmen (wichtig für Umsteiger)?
-4. **Push-Erinnerungen** (Angebot nachfassen, Rechnung überfällig, Tagesabschluss) in 1.0?
+1. **E-Rechnung in Version 1.0** – für Firmenkunden automatisch zusätzlich zum PDF. Fristen vom Steuerberater bestätigen lassen.
+2. **Versand aus der App** (Weg A) mit automatischer Kopie an mich und an DATEV; Teilen über WhatsApp/Mail-App zusätzlich.
+3. **Nummernkreise frei wählbar:** Präfix, nächste Zahl, Stellen, Suffix, Jahr als Platzhalter. Zahl kann nur erhöht werden.
+4. **Push-Erinnerungen in Version 1.0:** Angebot nachfassen, Rechnung überfällig, Tagesabschluss.

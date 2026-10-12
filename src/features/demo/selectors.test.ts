@@ -2,7 +2,7 @@ import { invoices, media, projects, quotes } from './data';
 import { openTasks } from './selectors';
 
 test('leitet überfällige Rechnung, Nachfassen, Entwurf, Mangel und Anfrage ab', () => {
-  const texts = openTasks(projects, quotes, media).map((t) => t.text);
+  const texts = openTasks(projects, quotes, invoices, media).map((t) => t.text);
   const overdue = invoices.find((i) => i.id === 'r1')!;
   expect(texts).toContain(`Rechnung ${overdue.number} überfällig`);
   expect(texts).toContain('Angebot A-2026-0041 nachfassen');

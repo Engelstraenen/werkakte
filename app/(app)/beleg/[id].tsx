@@ -1,31 +1,29 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Badge } from '@/components/Badge';
-import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
-import { company, invoices } from '@/features/demo/data';
+import { company } from '@/features/demo/data';
 import { customerOf, isOwner } from '@/features/demo/selectors';
 import { ProfitCard } from '@/features/costing/ProfitCard';
+import { DocActions } from '@/features/invoices/DocActions';
 import { useDemo } from '@/features/demo/store';
 import { DocItems } from '@/features/quotes/DocItems';
 import { QuoteEditor } from '@/features/quotes/QuoteEditor';
 import { de } from '@/i18n/de';
 import { formatDate } from '@/lib/date';
-import { notice } from '@/lib/notice';
 import { spacing, useColors } from '@/theme';
-
-const soon = (phase: number) => () => notice(de.prototyp.titel, de.prototyp.bald(phase));
 
 export default function BelegScreen() {
   const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const quote = useDemo((s) => s.quotes.find((q) => q.id === id));
-  const doc = quote ?? invoices.find((i) => i.id === id);
+  const invoice = useDemo((s) => s.invoices.find((i) => i.id === id));
+  const doc = quote ?? invoice;
   const project = useDemo((s) => s.projects.find((p) => p.id === doc?.projectId));
   if (!doc || !project) return <EmptyState icon="alert-circle" text={de.akte.keineBelege} />;
 
@@ -35,12 +33,16 @@ export default function BelegScreen() {
     ? de.beleg.angebot
     : doc.type === 'abschlag'
       ? de.beleg.abschlag
-      : de.beleg.rechnung;
+      : doc.type === 'schluss'
+        ? de.beleg.schluss
+        : de.beleg.rechnung;
+  const number = doc.number || de.ablauf.entwurfNummer;
+  const eInvoice = !isQuote && customer.type === 'gewerblich';
   const locked = !isQuote && doc.status !== 'entwurf';
 
   return (
     <Screen>
-      <Stack.Screen options={{ title: `${kind} ${doc.number}` }} />
+      <Stack.Screen options={{ title: `${kind} ${doc.number}`.trim() }} />
       <Card>
         <AppText variant="small" muted>
           {company.name}
@@ -51,10 +53,17 @@ export default function BelegScreen() {
           </AppText>
           <Badge
             label={de.belegStatus[doc.status]}
-            tone={doc.status === 'entwurf' ? 'neutral' : 'success'}
+            tone={
+              doc.status === 'entwurf'
+                ? 'neutral'
+                : doc.status === 'versendet'
+                  ? 'warning'
+                  : 'success'
+            }
           />
         </View>
-        <AppText variant="label">{doc.number}</AppText>
+        <AppText variant="label">{number}</AppText>
+        {eInvoice ? <Badge label={de.senden.eRechnung} tone="info" /> : null}
         <View style={{ gap: 2, marginTop: spacing.xs }}>
           <AppText>{customer.name}</AppText>
           <AppText muted>
@@ -102,22 +111,7 @@ export default function BelegScreen() {
         </Card>
       ) : null}
 
-      <Button title={de.beleg.pdfTeilen} onPress={soon(4)} />
-      {isQuote && !doc.signedAt ? (
-        <Button title={de.beleg.unterschreiben} variant="secondary" onPress={soon(4)} />
-      ) : null}
-      {isQuote ? (
-        <Button
-          title={de.editor.vorlage}
-          variant="secondary"
-          onPress={() =>
-            router.push({ pathname: '/neu/[art]', params: { art: 'angebot', fromQuoteId: doc.id } })
-          }
-        />
-      ) : null}
-      {isQuote && doc.status === 'angenommen' ? (
-        <Button title={de.beleg.inRechnung} variant="secondary" onPress={soon(5)} />
-      ) : null}
+      <DocActions doc={doc} />
     </Screen>
   );
 }

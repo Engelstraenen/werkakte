@@ -142,6 +142,7 @@ export type Quote = {
   status: 'entwurf' | 'versendet' | 'angenommen' | 'abgelehnt';
   items: DocItem[];
   signedAt?: string;
+  sentAt?: string;
 };
 
 export type Invoice = {
@@ -154,6 +155,23 @@ export type Invoice = {
   type: 'abschlag' | 'schluss' | 'einzel';
   status: 'entwurf' | 'versendet' | 'bezahlt';
   items: DocItem[];
+  sentAt?: string;
 };
 
 export type Timer = { projectId: string; startedAt: string } | null;
+
+export type SendSettings = {
+  copyToMe: boolean;
+  myEmail: string;
+  /** Rechnungen automatisch an die DATEV-Upload-Mail-Adresse des Steuerberaters. */
+  toDatev: boolean;
+  datevEmail: string;
+};
+
+export type Reminders = {
+  followUp: boolean;
+  followUpDays: number;
+  overdue: boolean;
+  dailyWrapUp: boolean;
+  wrapUpHour: number;
+};

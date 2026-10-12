@@ -1,4 +1,4 @@
-import { appointments, CURRENT_MEMBER_ID, customers, invoices, members, suppliers } from './data';
+import { appointments, CURRENT_MEMBER_ID, customers, members, suppliers } from './data';
 import type { Invoice, Media, Project, ProjectStatus, Quote } from './types';
 
 import { isSameDay } from '@/lib/date';
@@ -13,7 +13,6 @@ export const appointmentsOn = (day: Date) =>
   appointments
     .filter((a) => isSameDay(new Date(a.start), day))
     .sort((a, b) => a.start.localeCompare(b.start));
-export const invoicesOf = (projectId: string) => invoices.filter((i) => i.projectId === projectId);
 
 export const docTotal = (d: Quote | Invoice) => documentTotals(d.items).grossCents;
 
@@ -37,7 +36,9 @@ export type Task = {
 export function openTasks(
   projects: Project[],
   quotes: Quote[],
+  invoices: Invoice[],
   media: Media[],
+  followUpDays = 7,
   now = new Date(),
 ): Task[] {
   const tasks: Task[] = [];
@@ -52,7 +53,7 @@ export function openTasks(
   }
   for (const q of quotes) {
     const ageDays = (now.getTime() - new Date(q.date).getTime()) / 86400000;
-    if (q.status === 'versendet' && ageDays > 7)
+    if (q.status === 'versendet' && ageDays > followUpDays)
       tasks.push({
         id: `t-${q.id}`,
         projectId: q.projectId,

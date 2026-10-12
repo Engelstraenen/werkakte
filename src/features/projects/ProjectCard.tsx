@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { View } from 'react-native';
 
-import { ProjectCover } from './ProjectCover';
+import { ProjectThumb } from './ProjectCover';
 import { statusTone } from './status';
 import { AppText } from '@/components/AppText';
 import { AvatarStack } from '@/components/Avatar';
@@ -24,21 +24,23 @@ export function ProjectCard({ project }: { project: Project }) {
       accessibilityLabel={`${project.title}, ${customer.name}`}
       onPress={() => router.push({ pathname: '/projekt/[id]', params: { id: project.id } })}
     >
-      <ProjectCover project={project} height={120} />
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm }}>
-        <View style={{ flex: 1, gap: 2 }}>
+      <View style={{ flexDirection: 'row', gap: spacing.md }}>
+        <View style={{ flex: 1, gap: spacing.xs }}>
+          <Badge label={de.status[project.status]} tone={tone} />
           <AppText variant="title" numberOfLines={2}>
             {project.title}
           </AppText>
-          <AppText muted>{customer.name}</AppText>
+          <AppText muted numberOfLines={1}>
+            {customer.name}
+          </AppText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+            <Ionicons name="location-outline" size={16} color={colors.textMuted} />
+            <AppText variant="small" muted style={{ flex: 1 }} numberOfLines={2}>
+              {project.street}, {project.zipCity}
+            </AppText>
+          </View>
         </View>
-        <Badge label={de.status[project.status]} tone={tone} />
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-        <Ionicons name="location-outline" size={18} color={colors.textMuted} />
-        <AppText variant="small" muted style={{ flex: 1 }} numberOfLines={1}>
-          {project.street}, {project.zipCity}
-        </AppText>
+        <ProjectThumb project={project} size={116} />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <AvatarStack names={project.memberIds.map((id) => memberById(id).name)} size={28} />

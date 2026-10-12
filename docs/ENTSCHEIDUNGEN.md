@@ -33,6 +33,9 @@
 - **Angebote schneller:** Vorschläge beim Tippen aus Katalog + früheren Positionen (Wortanfang zuerst, dann häufig benutzte), altes Angebot als Vorlage übernehmen. Startkatalog je Gewerk beim Einrichten (Inhalt noch offen).
 - **Titelbild pro Projekt:** selbst gewählt, sonst neuestes Nachher-Foto, sonst neuestes Foto; ohne Foto farbiger Platzhalter. Hilft, ähnliche Aufträge (z. B. mehrere Bäder in einer Stadt) auseinanderzuhalten.
 - **Kalkulation so einfach wie möglich:** oben ein Satz „Dir bleiben X € (Y %)“ mit Ampel, darunter ein Balken „Wohin geht das Geld?“ (Material, Arbeit, Fixkosten, Gewinn). Tabelle nur unter „Details“. Stunden per Schnelltaste (1/2/4/8), Material = nur Betrag Pflicht. Wörter: „Einnahmen“, „Ausgaben“, „Fixkosten“ statt Fachbegriffen.
+- **Nummernkreise, Versand, E-Rechnung, Push** (Details in `docs/PRODUKTKONZEPT.md` §6): alles in Version 1.0. Rechnungsnummer erst beim Versand, Schlussrechnung zieht Abschläge ab, DATEV per Upload-Mail statt Schnittstelle.
+- **Projektliste:** Titelbild rechts fast quadratisch; Projektakte oben 4:3.
+- **Testmodus** bleibt in der Entwicklung über Neuladen gespeichert.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 
 ## Offene Punkte
@@ -41,7 +44,7 @@
 - Apple-, Google-, Microsoft- und Facebook-Zugänge anlegen (siehe README) und je Anbieter auf Gerät testen.
 - Datenschutzerklärung muss die Login-Anbieter nennen (Datenübermittlung an Apple, Google, Microsoft, Meta – USA). Facebook-Login braucht sie zwingend für die Freischaltung bei Meta.
 - Apple liefert den Namen nur beim allerersten Login – später beim Anlegen der Firma/des Profils abfragen.
-- Entscheidungen aus `docs/PRODUKTKONZEPT.md` §6: E-Rechnung in 1.0?, Versand-Weg, Nummernformat, Push-Erinnerungen.
+- E-Mail-Dienst mit Server in der EU auswählen (Versand aus der App), DATEV-Upload-Mail mit einem Steuerberater testen.
 - Startkataloge je Gewerk zusammenstellen (Maler, Schreiner, SHK, Elektro …) – am besten mit echten Betrieben.
 - Eigener SMTP-Versand für Auth-Mails vor dem ersten Test mit echten Nutzern. Erst damit lassen sich die Supabase-Vorlagen bearbeiten → Code (`{{ .Token }}`) in die Mail. Bis dahin funktioniert nur der Link (auf demselben Gerät).
 - Firma anlegen nach erstem Login (Phase 1/2).

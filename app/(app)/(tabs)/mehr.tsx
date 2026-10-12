@@ -38,6 +38,27 @@ const entries: { href: Href; title: string; subtitle: string; icon: IconName; to
   },
   { href: '/firma', title: t.firma, subtitle: company.name, icon: 'business', tone: 'primary' },
   {
+    href: '/nummernkreise',
+    title: t.nummernkreise,
+    subtitle: 'Angebote, Rechnungen',
+    icon: 'keypad',
+    tone: 'neutral',
+  },
+  {
+    href: '/versand',
+    title: t.versand,
+    subtitle: 'Kopie an mich, DATEV',
+    icon: 'paper-plane',
+    tone: 'info',
+  },
+  {
+    href: '/erinnerungen',
+    title: t.erinnerungen,
+    subtitle: 'Push-Nachrichten',
+    icon: 'notifications',
+    tone: 'warning',
+  },
+  {
     href: '/mitarbeiter',
     title: t.mitarbeiter,
     subtitle: `${members.length}`,
