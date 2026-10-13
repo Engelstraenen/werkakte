@@ -5,6 +5,7 @@ import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
 import { ToggleRow } from '@/components/ToggleRow';
+import { members } from '@/features/demo/data';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 
@@ -47,6 +48,34 @@ export default function VersandScreen() {
         <AppText variant="small" muted>
           {t.datevHinweis}
         </AppText>
+      </Card>
+      <Card>
+        <AppText variant="title">{de.material.empfaenger}</AppText>
+        <AppText variant="small" muted>
+          {de.material.empfaengerHinweis}
+        </AppText>
+        {members.map((m, i) => (
+          <ToggleRow
+            key={m.id}
+            divider={i > 0}
+            title={m.name}
+            value={sending.materialRecipients.includes(m.id)}
+            onChange={(on) =>
+              setSending({
+                materialRecipients: on
+                  ? [...sending.materialRecipients, m.id]
+                  : sending.materialRecipients.filter((x) => x !== m.id),
+              })
+            }
+          />
+        ))}
+        <TextField
+          label={de.material.einkaufMail}
+          value={sending.purchasingEmail}
+          onChangeText={(v) => setSending({ purchasingEmail: v })}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
       </Card>
     </Screen>
   );

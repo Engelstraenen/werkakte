@@ -37,7 +37,7 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 `Heute` · `Projekte` · `+ (Schnellaktion)` · `Kalender` · `Mehr`
 
 - **Heute:** Termine des Tages, offene Aufgaben, zuletzt bearbeitete Projekte
-- **+ Schnellaktion:** Foto aufnehmen · Notiz/Sprachnotiz · Neues Angebot · Neues Projekt · Zeit starten
+- **+ Schnellaktion:** Foto · Notiz/Sprachnotiz · Angebot · Projekt · Material anfragen · Problem melden · Zeit starten
 - **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Firmendaten, Nummernkreise, Versand & DATEV, Erinnerungen, Mitarbeiter
 
 ## 4. Tech-Stack (festgelegt)
@@ -68,7 +68,8 @@ Firma (company)                 Gewerk, Fixkosten-Zuschlag %, Nummernkreise (Ang
  ├─ Lieferant (supplier)        Name, Art: großhandel | baumarkt | online
  │    └─ Lieferantenpreis (supplier_price)  Artikel, Einkaufspreis netto, Stand-Datum
  └─ Projekt (project)           Kunde, Titel, Adresse Baustelle, Status, Titelbild (optional, sonst automatisch)
-      ├─ Medien (media)         Foto | Video, Notiz, Tag (vorher/nachher/mangel/sonstiges), Zeitstempel, GPS optional
+      ├─ Medien (media)         Foto | Video, Notiz, Tag (vorher/nachher/problem/fortschritt), Zeitstempel, GPS optional, Problem erledigt am
+      ├─ Materialanfrage (material_request)  Was, Menge, dringend, Status: offen | bestellt | erledigt, von Mitarbeiter
       ├─ Notiz (note)           Text oder Sprachnotiz (Audio + Transkript)
       ├─ Termin (appointment)   Start, Ende, zugewiesene Mitarbeiter
       ├─ Zeiteintrag (time_entry)  Mitarbeiter, Start, Ende, Pause, Art: arbeit | fahrt
@@ -90,7 +91,8 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 - Login (E-Mail + Magic Link), Firma anlegen, Firmendaten + Logo
 - Kunden anlegen/bearbeiten, Suche
 - Projekte mit Status, **Titelbild** (zum schnellen Wiedererkennen), Baustellenadresse (Tippen öffnet Navigation)
-- Fotos/Videos aufnehmen oder aus Galerie, mit Tag + Notiz, Galerie-Ansicht pro Projekt
+- Fotos/Videos aufnehmen oder aus Galerie, mit Tag + Notiz; **Doku als Zeitleiste** pro Projekt (nach Datum, Fotos + Text). **Problem melden** (Foto + Beschreibung) → **rotes Ausrufezeichen** am Projekt, bis jemand „Erledigt“ tippt; normaler Fortschritt ohne Signal
+- **Materialanfrage** aus dem Projekt (Mitarbeiter im Team): geht als Push + E-Mail an festgelegte Empfänger (Chef, Einkauf, optional externe Einkaufs-E-Mail); Status offen → bestellt → da
 - Notizen, Sprachnotizen
 - Artikel- und Leistungskatalog, beim Einrichten **Startkatalog je Gewerk** (Maler, Schreiner, SHK …)
 - **Einkauf & Preise:** Einkaufspreise je Lieferant von Hand, Empfehlung des günstigsten aktuellen Preises, Online-Suche per Link (Google Shopping, idealo)
@@ -101,6 +103,7 @@ Einkaufspreise, interne Kosten, Projektkosten und Gewinn sieht **nur der Inhaber
 - **E-Rechnung (ZUGFeRD/XRechnung)** für Rechnungen an Firmenkunden – automatisch zusätzlich zum PDF
 - **Zeit pro Projekt und Person:** Start/Stopp im Projekt je Teammitglied; mehrere Personen gleichzeitig auf verschiedenen Projekten. Pro Person läuft höchstens eine Zeit (Wechsel stoppt und speichert die alte). Beim Stoppen werden die Stunden im Projekt gespeichert (Summe sichtbar, fließt in die Kalkulation).
 - **Projekt-Team = Berechtigung:** Inhaber legt pro Projekt fest, wer dazugehört. Nur das Team sieht das Projekt und darf dort Zeit erfassen. Mitarbeiter sehen nur ihre eigene Zeit, Inhaber alle.
+- **Automatisch einstempeln (optional, Standard aus):** Standort-Zaun um die Baustellen-Adresse startet die Zeit bei Ankunft. Nur mit Einwilligung des Mitarbeiters (und ggf. Betriebsrat), keine laufende Ortung.
 - **Push-Erinnerungen:** Angebot nachfassen (nach X Tagen), Rechnung überfällig, Tagesabschluss
 - **Kalkulation (nur Inhaber):** Vorkalkulation im Angebot (Material zum EK, Arbeit zu internen Kosten, Betriebskosten-Zuschlag), Nachkalkulation pro Projekt aus von Hand erfassten Material-Kosten und Stunden, Gewinn mit Ampel
 - Kalender (Tag/Woche), Termine pro Projekt und Mitarbeiter

@@ -110,6 +110,8 @@ export type Media = {
   note: string;
   takenAt: string;
   authorId: string;
+  /** Nur Problem-Fotos: wann erledigt. Offen = rotes Ausrufezeichen am Projekt. */
+  resolvedAt?: string;
 };
 
 export type Note = {
@@ -167,6 +169,10 @@ export type SendSettings = {
   /** Rechnungen automatisch an die DATEV-Upload-Mail-Adresse des Steuerberaters. */
   toDatev: boolean;
   datevEmail: string;
+  /** Wer Materialanfragen bekommt (Push + E-Mail), Mitarbeiter-IDs. */
+  materialRecipients: string[];
+  /** Optional: E-Mail des Einkaufs (z. B. Einkaufsleiter ohne App-Zugang). */
+  purchasingEmail: string;
 };
 
 export type Reminders = {
@@ -175,4 +181,18 @@ export type Reminders = {
   overdue: boolean;
   dailyWrapUp: boolean;
   wrapUpHour: number;
+  /** Automatisch einstempeln an der Baustelle (Standort-Zaun). Standard aus – braucht Einwilligung. */
+  autoClockIn: boolean;
+};
+
+/** Materialanfrage aus dem Projekt („wird knapp, bitte nachbestellen“). */
+export type MaterialRequest = {
+  id: string;
+  projectId: string;
+  memberId: string;
+  text: string;
+  quantity: string;
+  urgent: boolean;
+  status: 'offen' | 'bestellt' | 'erledigt';
+  createdAt: string;
 };

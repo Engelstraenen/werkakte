@@ -11,12 +11,20 @@ import { de } from '@/i18n/de';
 import { radius, spacing, useColors, type Tone } from '@/theme';
 
 const t = de.schnellaktion;
-type Art = 'foto' | 'notiz' | 'angebot' | 'projekt' | 'zeit';
-const tiles: { art: Art; label: string; icon: IconName; tone: Tone }[] = [
+type Art = 'foto' | 'notiz' | 'angebot' | 'projekt' | 'zeit' | 'material';
+const tiles: { art: Art; label: string; icon: IconName; tone: Tone; tag?: 'mangel' }[] = [
   { art: 'foto', label: t.foto, icon: 'camera', tone: 'primary' },
   { art: 'notiz', label: t.notiz, icon: 'mic', tone: 'info' },
   { art: 'angebot', label: t.angebot, icon: 'document-text', tone: 'warning' },
   { art: 'projekt', label: t.projekt, icon: 'folder-open', tone: 'success' },
+  { art: 'material', label: t.material, icon: 'cube', tone: 'danger' },
+  {
+    art: 'foto',
+    label: de.akte.problemMelden,
+    icon: 'alert-circle',
+    tone: 'danger',
+    tag: 'mangel',
+  },
 ];
 
 export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
@@ -28,9 +36,10 @@ export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClo
     s.projects.find((p) => p.id === s.timers[CURRENT_MEMBER_ID]?.projectId),
   );
 
-  const open = (art: Art) => {
+  const open = (art: Art, tag?: 'mangel') => {
     onClose();
-    router.push({ pathname: '/neu/[art]', params: { art } });
+    if (art === 'material') router.push('/material-neu');
+    else router.push({ pathname: '/neu/[art]', params: { art, tag } });
   };
 
   return (
@@ -63,9 +72,9 @@ export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClo
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
           {tiles.map((tile) => (
             <Pressable
-              key={tile.art}
+              key={tile.label}
               accessibilityRole="button"
-              onPress={() => open(tile.art)}
+              onPress={() => open(tile.art, tile.tag)}
               style={({ pressed }) => ({
                 width: '48.5%',
                 minHeight: 112,

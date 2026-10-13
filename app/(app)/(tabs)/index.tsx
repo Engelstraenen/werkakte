@@ -18,7 +18,7 @@ import { formatDayLong } from '@/lib/date';
 const greeting = (h: number) => (h < 11 ? de.heute.morgen : h < 18 ? de.heute.tag : de.heute.abend);
 
 export default function HeuteScreen() {
-  const { projects, quotes, invoices, media, reminders } = useDemo();
+  const { projects, quotes, invoices, media, materialRequests, reminders } = useDemo();
   const now = new Date();
   const me = memberById(CURRENT_MEMBER_ID);
   const today = appointmentsOn(now);
@@ -27,6 +27,7 @@ export default function HeuteScreen() {
     quotes,
     invoices,
     media,
+    materialRequests,
     reminders.followUp ? reminders.followUpDays : Infinity,
   );
   const recent = [...projects].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3);

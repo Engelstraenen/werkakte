@@ -61,6 +61,17 @@ export default function ErinnerungenScreen() {
           />
         ) : null}
       </Card>
+      <Card>
+        <ToggleRow
+          title={t.einstempeln}
+          subtitle={t.einstempelnText}
+          value={r.autoClockIn}
+          onChange={(v) => set({ autoClockIn: v })}
+        />
+        <AppText variant="small" muted>
+          {t.einstempelnRecht}
+        </AppText>
+      </Card>
     </Screen>
   );
 }

@@ -40,6 +40,8 @@
 - **Design „Bauplan“ + Name „Werkakte“** (Auswahl aus drei Richtungen: Signal, Klar, Bauplan). Zusätzlich helle Variante für Sonne, weil CLAUDE.md hohen Kontrast draußen verlangt. Fließtext in normal breiter Schrift (besser lesbar), Überschriften schmal.
 - **Bauplan-Kontrast nachgeschärft:** dunklerer Hintergrund, hellere Karten mit kräftigem Rand und Schatten, leiseres Raster, Abschnitte mit gelbem Balken, Statusstreifen 6 px. Grund: Karten gingen im Raster unter.
 - **Farbvarianten:** Design „Ruhig“ bestätigt (2026-10-12), in **Hell (Standard)** und passender **Dunkel**-Variante. Die Varianten „Hell mit blauen Linien“ und „Blaupause mit Gelb“ wurden verworfen. Gespeicherte alte Auswahl wird automatisch auf Hell umgestellt.
+- **Sprachnachricht 13.10. umgesetzt (Prototyp):** Materialanfragen (Push + E-Mail an Chef/Einkauf), Doku-Zeitleiste mit Problem-Fotos (rotes Ausrufezeichen bis erledigt), automatisches Einstempeln an der Baustelle (Einstellung, Standard aus, Test-Knopf „Ankunft simulieren“).
+- **Rechtlich zu prüfen:** Automatisches Einstempeln per Standort ist Verarbeitung personenbezogener Daten von Beschäftigten (DSGVO/§ 26 BDSG) und ggf. mitbestimmungspflichtig (§ 87 Abs. 1 Nr. 6 BetrVG). Deshalb: Opt-in, nur Geofence um Baustellen, keine Bewegungsprofile. Vor Einsatz mit Datenschutz/Anwalt klären.
 - **Code auf GitHub** (privat): https://github.com/Engelstraenen/werkakte. `.env` wird nicht hochgeladen.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 

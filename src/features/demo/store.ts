@@ -8,6 +8,7 @@ import * as seed from './data';
 import type {
   DocItem,
   Invoice,
+  MaterialRequest,
   Media,
   MediaTag,
   Note,
@@ -60,6 +61,12 @@ type DemoState = {
   setCover: (projectId: string, mediaId: string) => void;
   addNote: (projectId: string, text: string) => void;
   addPhoto: (projectId: string, tag: MediaTag, note: string) => void;
+  resolveProblem: (mediaId: string) => void;
+  materialRequests: MaterialRequest[];
+  addMaterialRequest: (
+    r: Pick<MaterialRequest, 'projectId' | 'text' | 'quantity' | 'urgent'>,
+  ) => void;
+  setMaterialStatus: (id: string, status: MaterialRequest['status']) => void;
   addQuote: (projectId: string) => string;
   duplicateQuote: (fromQuoteId: string, projectId: string) => string;
   setQuoteItems: (quoteId: string, items: DocItem[]) => void;
@@ -106,6 +113,8 @@ export const useDemo = create<DemoState>((set, get) => {
       myEmail: seed.company.email,
       toDatev: true,
       datevEmail: 'weber-belege@upload.example',
+      materialRecipients: [seed.CURRENT_MEMBER_ID],
+      purchasingEmail: '',
     },
     reminders: {
       followUp: true,
@@ -113,6 +122,7 @@ export const useDemo = create<DemoState>((set, get) => {
       overdue: true,
       dailyWrapUp: true,
       wrapUpHour: 17,
+      autoClockIn: false,
     },
     setSending: (patch) => set((s) => ({ sending: { ...s.sending, ...patch } })),
     setReminders: (patch) => set((s) => ({ reminders: { ...s.reminders, ...patch } })),
@@ -235,6 +245,29 @@ export const useDemo = create<DemoState>((set, get) => {
           ...s.notes,
         ],
         projects: touch(s.projects, projectId),
+      })),
+    resolveProblem: (mediaId) =>
+      set((s) => ({
+        media: s.media.map((m) => (m.id === mediaId ? { ...m, resolvedAt: now() } : m)),
+      })),
+    materialRequests: seed.materialRequests,
+    addMaterialRequest: (r) =>
+      set((s) => ({
+        materialRequests: [
+          {
+            ...r,
+            id: newId('mr'),
+            memberId: seed.CURRENT_MEMBER_ID,
+            status: 'offen',
+            createdAt: now(),
+          },
+          ...s.materialRequests,
+        ],
+        projects: touch(s.projects, r.projectId),
+      })),
+    setMaterialStatus: (id, status) =>
+      set((s) => ({
+        materialRequests: s.materialRequests.map((r) => (r.id === id ? { ...r, status } : r)),
       })),
     addPhoto: (projectId, tag, note) =>
       set((s) => {

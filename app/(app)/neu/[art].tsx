@@ -19,10 +19,15 @@ const t = de.neu;
 const tags: MediaTag[] = ['vorher', 'nachher', 'mangel', 'sonstiges'];
 
 export default function NeuScreen() {
-  const params = useLocalSearchParams<{ art: Art; projectId?: string; fromQuoteId?: string }>();
+  const params = useLocalSearchParams<{
+    art: Art;
+    projectId?: string;
+    fromQuoteId?: string;
+    tag?: MediaTag;
+  }>();
   const [projectId, setProjectId] = useState(params.projectId);
   const [text, setText] = useState('');
-  const [tag, setTag] = useState<MediaTag>('sonstiges');
+  const [tag, setTag] = useState<MediaTag>(params.tag ?? 'sonstiges');
   const [error, setError] = useState<string>();
   const { addNote, addPhoto, addQuote, duplicateQuote, startTimer } = useDemo();
   const from = params.fromQuoteId;
@@ -52,10 +57,10 @@ export default function NeuScreen() {
     if (art === 'notiz') {
       if (!text.trim()) return setError(t.pflicht);
       addNote(projectId!, text.trim());
-      openProject('notizen');
+      openProject('doku');
     } else {
       addPhoto(projectId!, tag, text.trim() || de.tag[tag]);
-      openProject('fotos');
+      openProject('doku');
     }
   }
 

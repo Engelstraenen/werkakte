@@ -1,5 +1,13 @@
 import { appointments, CURRENT_MEMBER_ID, customers, members, suppliers } from './data';
-import type { Invoice, Media, Project, ProjectCost, ProjectStatus, Quote } from './types';
+import type {
+  Invoice,
+  MaterialRequest,
+  Media,
+  Project,
+  ProjectCost,
+  ProjectStatus,
+  Quote,
+} from './types';
 
 import { isSameDay } from '@/lib/date';
 import { documentTotals } from '@/lib/money';
@@ -38,6 +46,7 @@ export function openTasks(
   quotes: Quote[],
   invoices: Invoice[],
   media: Media[],
+  materialRequests: MaterialRequest[] = [],
   followUpDays = 7,
   now = new Date(),
 ): Task[] {
@@ -68,14 +77,22 @@ export function openTasks(
         tone: 'info',
       });
   }
-  const active = new Set(projects.filter((p) => p.status === 'in_arbeit').map((p) => p.id));
   for (const m of media) {
-    if (m.tag === 'mangel' && active.has(m.projectId))
+    if (isOpenProblem(m))
       tasks.push({
         id: `t-${m.id}`,
         projectId: m.projectId,
-        text: `Mangel klären: ${m.note}`,
-        tone: 'warning',
+        text: `Problem: ${m.note}`,
+        tone: 'danger',
+      });
+  }
+  for (const r of materialRequests) {
+    if (r.status === 'offen')
+      tasks.push({
+        id: `t-${r.id}`,
+        projectId: r.projectId,
+        text: `Material bestellen: ${r.text} (${r.quantity})`,
+        tone: r.urgent ? 'danger' : 'warning',
       });
   }
   for (const p of projects) {
@@ -106,3 +123,7 @@ export const projectMinutes = (projectId: string, costs: ProjectCost[]) =>
     (sum, c) => (c.projectId === projectId && c.kind === 'stunden' ? sum + c.minutes : sum),
     0,
   );
+
+export const isOpenProblem = (m: Media) => m.tag === 'mangel' && !m.resolvedAt;
+export const openProblemCount = (projectId: string, media: Media[]) =>
+  media.filter((m) => m.projectId === projectId && isOpenProblem(m)).length;

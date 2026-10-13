@@ -8,7 +8,8 @@ import { AppText } from '@/components/AppText';
 import { AvatarStack } from '@/components/Avatar';
 import { Badge } from '@/components/Badge';
 import { Card } from '@/components/Card';
-import { customerOf, memberById } from '@/features/demo/selectors';
+import { customerOf, memberById, openProblemCount } from '@/features/demo/selectors';
+import { useDemo } from '@/features/demo/store';
 import type { Project } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { formatRelative } from '@/lib/date';
@@ -18,6 +19,7 @@ export function ProjectCard({ project }: { project: Project }) {
   const colors = useColors();
   const customer = customerOf(project);
   const tone = statusTone[project.status];
+  const problems = useDemo((s) => openProblemCount(project.id, s.media));
   return (
     <Card
       accent={colors[tone]}
@@ -26,7 +28,12 @@ export function ProjectCard({ project }: { project: Project }) {
     >
       <View style={{ flexDirection: 'row', gap: spacing.md }}>
         <View style={{ flex: 1, gap: spacing.xs }}>
-          <Badge label={de.status[project.status]} tone={tone} />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
+            <Badge label={de.status[project.status]} tone={tone} />
+            {problems ? (
+              <Badge label={`! ${de.akte.problemeOffen(problems)}`} tone="danger" />
+            ) : null}
+          </View>
           <AppText variant="title" numberOfLines={2}>
             {project.title}
           </AppText>

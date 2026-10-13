@@ -5,10 +5,11 @@ import { ProjectHero } from './ProjectCover';
 import { statusTone } from './status';
 import { TimeTeamCard } from '@/features/time/TimeTeamCard';
 import { AppText } from '@/components/AppText';
+import { Badge } from '@/components/Badge';
 import { Card } from '@/components/Card';
 import { Chips } from '@/components/Chips';
 import type { IconName } from '@/components/IconCircle';
-import { customerOf, statusOrder } from '@/features/demo/selectors';
+import { customerOf, openProblemCount, statusOrder } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
 import type { Project } from '@/features/demo/types';
 import { de } from '@/i18n/de';
@@ -51,6 +52,7 @@ function QuickButton({
 export function ProjectHeader({ project }: { project: Project }) {
   const colors = useColors();
   const setStatus = useDemo((s) => s.setStatus);
+  const problems = useDemo((s) => openProblemCount(project.id, s.media));
   const customer = customerOf(project);
   const address = `${project.street}, ${project.zipCity}`;
 
@@ -59,6 +61,7 @@ export function ProjectHeader({ project }: { project: Project }) {
       <Card accent={colors[statusTone[project.status]]}>
         <ProjectHero project={project} />
         <AppText variant="heading">{project.title}</AppText>
+        {problems ? <Badge label={`! ${de.akte.problemeOffen(problems)}`} tone="danger" /> : null}
         <View style={{ gap: 2 }}>
           <AppText variant="label">
             {customer.name}

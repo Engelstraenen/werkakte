@@ -1,5 +1,6 @@
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
+import { View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Chips } from '@/components/Chips';
@@ -10,27 +11,30 @@ import { appointments } from '@/features/demo/data';
 import { isOwner } from '@/features/demo/selectors';
 import { CostingView } from '@/features/costing/CostingView';
 import { useDemo } from '@/features/demo/store';
-import { NoteList } from '@/features/projects/NoteList';
-import { PhotoGrid } from '@/features/projects/PhotoGrid';
+import { DocTimeline } from '@/features/projects/DocTimeline';
+import { MaterialList } from '@/features/projects/MaterialList';
 import { ProjectHeader } from '@/features/projects/ProjectHeader';
 import { DocList } from '@/features/quotes/DocList';
 import { de } from '@/i18n/de';
+import { spacing } from '@/theme';
 
-type Tab = 'fotos' | 'notizen' | 'belege' | 'termine' | 'kalkulation';
+type Tab = 'doku' | 'material' | 'belege' | 'termine' | 'kalkulation';
 
 export default function ProjektScreen() {
   const { id, tab } = useLocalSearchParams<{ id: string; tab?: Tab }>();
   const project = useDemo((s) => s.projects.find((p) => p.id === id));
   const allMedia = useDemo((s) => s.media);
   const allNotes = useDemo((s) => s.notes);
+  const allMaterial = useDemo((s) => s.materialRequests);
   const allQuotes = useDemo((s) => s.quotes);
   const allInvoices = useDemo((s) => s.invoices);
-  const [active, setActive] = useState<Tab>(tab ?? 'fotos');
+  const [active, setActive] = useState<Tab>(tab ?? 'doku');
 
   if (!project) return <EmptyState icon="alert-circle" text={de.projekte.keine} />;
 
   const media = allMedia.filter((m) => m.projectId === id);
   const notes = allNotes.filter((n) => n.projectId === id);
+  const material = allMaterial.filter((r) => r.projectId === id);
   const docs = [
     ...allQuotes.filter((q) => q.projectId === id),
     ...allInvoices.filter((i) => i.projectId === id),
@@ -40,14 +44,14 @@ export default function ProjektScreen() {
     .sort((a, b) => a.start.localeCompare(b.start));
 
   const tabs: { value: Tab; label: string }[] = [
-    { value: 'fotos', label: `${de.akte.fotos} ${media.length}` },
-    { value: 'notizen', label: `${de.akte.notizen} ${notes.length}` },
+    { value: 'doku', label: `${de.akte.doku} ${media.length + notes.length}` },
+    { value: 'material', label: `${de.akte.material} ${material.length}` },
     { value: 'belege', label: `${de.akte.belege} ${docs.length}` },
     { value: 'termine', label: `${de.akte.termine} ${dates.length}` },
   ];
   if (isOwner()) tabs.push({ value: 'kalkulation', label: de.akte.kalkulation });
-  const add = (art: 'foto' | 'notiz' | 'angebot') =>
-    router.push({ pathname: '/neu/[art]', params: { art, projectId: project.id } });
+  const add = (art: 'foto' | 'notiz' | 'angebot', tag?: 'mangel' | 'sonstiges') =>
+    router.push({ pathname: '/neu/[art]', params: { art, projectId: project.id, tag } });
 
   return (
     <Screen>
@@ -55,25 +59,34 @@ export default function ProjektScreen() {
       <ProjectHeader project={project} />
       <Chips options={tabs} value={active} onChange={setActive} />
 
-      {active === 'fotos' ? (
+      {active === 'doku' ? (
         <>
-          <Button title={de.akte.fotoHinzu} onPress={() => add('foto')} />
-          {media.length ? (
-            <PhotoGrid media={media} />
-          ) : (
-            <EmptyState icon="camera-outline" text={de.akte.keineFotos} />
-          )}
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+            <View style={{ flex: 1 }}>
+              <Button title={de.akte.fortschritt} onPress={() => add('foto', 'sonstiges')} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Button
+                title={de.akte.problemMelden}
+                variant="secondary"
+                onPress={() => add('foto', 'mangel')}
+              />
+            </View>
+          </View>
+          <Button title={de.akte.notizHinzu} variant="secondary" onPress={() => add('notiz')} />
+          <DocTimeline projectId={project.id} />
         </>
       ) : null}
 
-      {active === 'notizen' ? (
+      {active === 'material' ? (
         <>
-          <Button title={de.akte.notizHinzu} onPress={() => add('notiz')} />
-          {notes.length ? (
-            <NoteList notes={notes} />
-          ) : (
-            <EmptyState icon="create-outline" text={de.akte.keineNotizen} />
-          )}
+          <Button
+            title={de.akte.materialAnfragen}
+            onPress={() =>
+              router.push({ pathname: '/material-neu', params: { projectId: project.id } })
+            }
+          />
+          <MaterialList projectId={project.id} />
         </>
       ) : null}
 

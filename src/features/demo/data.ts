@@ -7,6 +7,7 @@ import type {
   Customer,
   DocItem,
   Invoice,
+  MaterialRequest,
   Media,
   Member,
   Note,
@@ -810,4 +811,27 @@ export const projectCosts: ProjectCost[] = [
     supplierId: 's1',
   },
   ...[-28, -27, -26].map((d) => hours('p5', 'm3', d, d === -26 ? 4 : 8)),
+];
+
+export const materialRequests: MaterialRequest[] = [
+  {
+    id: 'mr1',
+    projectId: 'p7',
+    memberId: 'm3',
+    text: 'Randdämmstreifen 8 mm',
+    quantity: '2 Rollen',
+    urgent: true,
+    status: 'offen',
+    createdAt: at(0, 9, 40),
+  },
+  {
+    id: 'mr2',
+    projectId: 'p1',
+    memberId: 'm2',
+    text: 'Fugenmasse grau',
+    quantity: '2 Eimer à 5 kg',
+    urgent: false,
+    status: 'bestellt',
+    createdAt: at(-1, 15, 10),
+  },
 ];
