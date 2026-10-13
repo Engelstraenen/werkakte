@@ -2,6 +2,18 @@
 
 Projektakte für Handwerksbetriebe. Regeln und Architektur: siehe [CLAUDE.md](CLAUDE.md), Entscheidungen: [docs/ENTSCHEIDUNGEN.md](docs/ENTSCHEIDUNGEN.md).
 
+## Auf einem anderen Rechner weiterarbeiten
+
+Der Code liegt privat auf GitHub: https://github.com/Engelstraenen/werkakte
+
+```bash
+gh repo clone Engelstraenen/werkakte
+cd werkakte
+npm install
+```
+
+Die Datei `.env` (Supabase-Zugang) liegt bewusst **nicht** auf GitHub – auf dem neuen Rechner aus `.env.example` neu anlegen (Werte im Supabase-Dashboard unter _Project Settings › API Keys_). Mit Claude Code einfach den Ordner öffnen; `CLAUDE.md` wird automatisch gelesen.
+
 ## Starten
 
 ```bash
