@@ -42,7 +42,7 @@
 - **Farbvarianten:** Design „Ruhig“ bestätigt (2026-10-12), in **Hell (Standard)** und passender **Dunkel**-Variante. Die Varianten „Hell mit blauen Linien“ und „Blaupause mit Gelb“ wurden verworfen. Gespeicherte alte Auswahl wird automatisch auf Hell umgestellt.
 - **Sprachnachricht 13.10. umgesetzt (Prototyp):** Materialanfragen (Push + E-Mail an Chef/Einkauf), Doku-Zeitleiste mit Problem-Fotos (rotes Ausrufezeichen bis erledigt), automatisches Einstempeln an der Baustelle (Einstellung, Standard aus, Test-Knopf „Ankunft simulieren“).
 - **Rechtlich zu prüfen:** Automatisches Einstempeln per Standort ist Verarbeitung personenbezogener Daten von Beschäftigten (DSGVO/§ 26 BDSG) und ggf. mitbestimmungspflichtig (§ 87 Abs. 1 Nr. 6 BetrVG). Deshalb: Opt-in, nur Geofence um Baustellen, keine Bewegungsprofile. Vor Einsatz mit Datenschutz/Anwalt klären.
-- **Code auf GitHub** (privat): https://github.com/Engelstraenen/werkakte. `.env` wird nicht hochgeladen.
+- **Code auf GitHub, öffentlich** (seit 02.11.2026, auf Wunsch, für den Transfer zu Grok): https://github.com/Engelstraenen/werkakte. `.env` wird nicht hochgeladen. Daher nie Schlüssel oder echte Kundendaten committen. Ohne LICENSE-Datei: lesbar, aber keine Nutzungsrechte für andere.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 
 ## Offene Punkte

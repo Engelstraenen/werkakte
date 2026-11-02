@@ -4,7 +4,7 @@ Projektakte für Handwerksbetriebe. Regeln und Architektur: siehe [CLAUDE.md](CL
 
 ## Auf einem anderen Rechner weiterarbeiten
 
-Der Code liegt privat auf GitHub: https://github.com/Engelstraenen/werkakte
+Der Code liegt öffentlich auf GitHub: https://github.com/Engelstraenen/werkakte
 
 ```bash
 gh repo clone Engelstraenen/werkakte
