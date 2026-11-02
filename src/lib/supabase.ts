@@ -2,10 +2,13 @@ import 'react-native-url-polyfill/auto';
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 
+import { isDemoBuild } from './demo';
 import { secureStorage } from './secure-storage';
 
-const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+// Live-Demo: kein Backend, Platzhalter werden nie angefragt (Anmeldung ist dort abgeschaltet).
+const url =
+  process.env.EXPO_PUBLIC_SUPABASE_URL ?? (isDemoBuild ? 'https://demo.invalid' : undefined);
+const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? (isDemoBuild ? 'demo' : undefined);
 
 if (!url || !anonKey) {
   throw new Error(

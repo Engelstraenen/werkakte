@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
+import { isDemoBuild } from '@/lib/demo';
 import { supabase } from '@/lib/supabase';
 
 // Testmodus über Neuladen hinweg merken (nur Entwicklung).
@@ -38,7 +39,7 @@ const SessionContext = createContext<SessionContextValue>({
 });
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<SessionState>({ session: null, loading: true });
+  const [state, setState] = useState<SessionState>({ session: null, loading: !isDemoBuild });
   const [devMode, setDevModeState] = useState(false);
   const [devLoaded, setDevLoaded] = useState(!__DEV__);
 
@@ -52,11 +53,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setDevMode = (on: boolean) => {
+    if (isDemoBuild) return;
     setDevModeState(on);
     devStore.set(on).catch(() => undefined);
   };
 
   useEffect(() => {
+    if (isDemoBuild) return; // Live-Demo: ohne Anmeldung, nur Beispieldaten
     // onAuthStateChange meldet beim Abonnieren sofort INITIAL_SESSION mit der gespeicherten Session.
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       setState({ session, loading: false });
@@ -69,7 +72,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       value={{
         ...state,
         loading: state.loading || !devLoaded,
-        devMode: __DEV__ && devMode,
+        devMode: isDemoBuild || (__DEV__ && devMode),
         setDevMode,
       }}
     >

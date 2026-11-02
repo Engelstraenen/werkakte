@@ -11,6 +11,7 @@ import { Screen } from '@/components/Screen';
 import { useSession } from '@/features/auth/session';
 import { company, customers, catalog, members, suppliers } from '@/features/demo/data';
 import { de } from '@/i18n/de';
+import { isDemoBuild } from '@/lib/demo';
 import { supabase } from '@/lib/supabase';
 import { useAppearance, type Tone } from '@/theme';
 
@@ -104,12 +105,20 @@ export default function MehrScreen() {
           onChange={appearance.setMode}
         />
       </Card>
-      <AppText muted>{session ? `${t.angemeldetAls} ${session.user.email}` : t.testmodus}</AppText>
-      <Button
-        title={t.abmelden}
-        variant="secondary"
-        onPress={() => (devMode ? setDevMode(false) : supabase.auth.signOut({ scope: 'local' }))}
-      />
+      <AppText muted>
+        {isDemoBuild
+          ? t.liveDemo
+          : session
+            ? `${t.angemeldetAls} ${session.user.email}`
+            : t.testmodus}
+      </AppText>
+      {isDemoBuild ? null : (
+        <Button
+          title={t.abmelden}
+          variant="secondary"
+          onPress={() => (devMode ? setDevMode(false) : supabase.auth.signOut({ scope: 'local' }))}
+        />
+      )}
     </Screen>
   );
 }

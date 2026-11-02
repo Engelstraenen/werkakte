@@ -2,6 +2,10 @@
 
 Projektakte für Handwerksbetriebe. Regeln und Architektur: siehe [CLAUDE.md](CLAUDE.md), Entscheidungen: [docs/ENTSCHEIDUNGEN.md](docs/ENTSCHEIDUNGEN.md).
 
+## Live-Demo
+
+https://engelstraenen.github.io/werkakte/ – Web-Version im **Demo-Modus**: ohne Supabase und ohne Anmeldung, nur mit den Beispieldaten aus `src/features/demo`; Änderungen gehen beim Neuladen verloren. Wird bei jedem Push auf `main` automatisch gebaut (`.github/workflows/pages.yml`, `EXPO_PUBLIC_DEMO_MODE=1`, `EXPO_BASE_URL=/werkakte` über `app.config.js`). Lokal: `EXPO_PUBLIC_DEMO_MODE=1 npx expo export -p web`.
+
 ## Auf einem anderen Rechner weiterarbeiten
 
 Der Code liegt öffentlich auf GitHub: https://github.com/Engelstraenen/werkakte

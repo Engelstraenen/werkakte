@@ -359,6 +359,7 @@ export const de = {
     angemeldetAls: 'Angemeldet als',
     abmelden: 'Abmelden',
     testmodus: 'Testmodus (nicht angemeldet)',
+    liveDemo: 'Live-Demo mit Beispieldaten, Änderungen werden nicht gespeichert.',
     inhaber: 'Inhaber',
     mitarbeiterRolle: 'Mitarbeiter',
     privat: 'Privat',
