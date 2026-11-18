@@ -68,7 +68,8 @@ type DemoState = {
   setStatus: (projectId: string, status: ProjectStatus) => void;
   setCover: (projectId: string, mediaId: string) => void;
   addNote: (projectId: string, text: string) => void;
-  addPhoto: (projectId: string, tag: MediaTag, note: string) => void;
+  /** uri = echtes Foto (Kamera/Galerie); ohne uri ein Beispielfoto (nur Demo/Tests). */
+  addPhoto: (projectId: string, tag: MediaTag, note: string, uri?: string) => void;
   resolveProblem: (mediaId: string) => void;
   materialRequests: MaterialRequest[];
   addMaterialRequest: (
@@ -309,16 +310,16 @@ export const useDemo = create<DemoState>()(
           set((s) => ({
             materialRequests: s.materialRequests.map((r) => (r.id === id ? { ...r, status } : r)),
           })),
-        addPhoto: (projectId, tag, note) =>
+        addPhoto: (projectId, tag, note, uri) =>
           set((s) => {
-            // Ohne Kamera im Prototyp: eines der Beispielfotos wiederverwenden.
+            // Ohne Foto (Tests/alte Aufrufe): eines der Beispielfotos.
             const sample = seed.media[s.media.length % seed.media.length]!;
             return {
               media: [
                 {
                   id: newId('f'),
                   projectId,
-                  source: sample.source,
+                  source: uri ? { uri } : sample.source,
                   tag,
                   note,
                   takenAt: now(),

@@ -9,6 +9,7 @@ import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
 import { useDemo } from '@/features/demo/store';
 import type { MediaTag } from '@/features/demo/types';
+import { PhotoCapture } from '@/features/media/PhotoCapture';
 import { NewProjectForm } from '@/features/quick-actions/NewProjectForm';
 import { RechnungStart } from '@/features/invoices/RechnungStart';
 import { ProjectPicker } from '@/features/quick-actions/ProjectPicker';
@@ -30,6 +31,7 @@ export default function NeuScreen() {
   const [text, setText] = useState('');
   const [tag, setTag] = useState<MediaTag>(params.tag ?? 'sonstiges');
   const [error, setError] = useState<string>();
+  const [photo, setPhoto] = useState<string>();
   const { addNote, addPhoto, addQuote, duplicateQuote, startTimer } = useDemo();
   const from = params.fromQuoteId;
   const art = params.art;
@@ -60,7 +62,8 @@ export default function NeuScreen() {
       addNote(projectId!, text.trim());
       openProject('doku');
     } else {
-      addPhoto(projectId!, tag, text.trim() || de.tag[tag]);
+      if (!photo) return setError(t.fotoFehlt);
+      addPhoto(projectId!, tag, text.trim() || de.tag[tag], photo);
       openProject('doku');
     }
   }
@@ -94,6 +97,7 @@ export default function NeuScreen() {
           {art === 'foto' ? (
             <View style={{ gap: spacing.xs }}>
               <AppText muted>{t.fotoHinweis}</AppText>
+              <PhotoCapture uri={photo} onChange={setPhoto} />
               <AppText variant="label">{t.fotoArt}</AppText>
               <Chips
                 options={tags.map((x) => ({ value: x, label: de.tag[x] }))}
