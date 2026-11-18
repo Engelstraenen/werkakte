@@ -66,3 +66,9 @@ test('Entwurfs-Angebote zählen nicht als Grundlage', () => {
   const inv = buildInvoice('einzel', 'p1', [quote(50000, 'entwurf')], [], 'r4');
   expect(inv.items).toEqual([]);
 });
+
+test('Abschlag-Prozent wählbar: 50 % von 20.000 € = 10.000 €', () => {
+  const inv = buildInvoice('abschlag', 'p1', [quote(2000000)], [], 'r5', new Date(), 50);
+  expect(inv.items[0]!.unitPriceCents).toBe(1000000);
+  expect(inv.items[0]!.name).toContain('(50 %)');
+});

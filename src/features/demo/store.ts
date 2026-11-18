@@ -72,7 +72,7 @@ type DemoState = {
   duplicateQuote: (fromQuoteId: string, projectId: string) => string;
   setQuoteItems: (quoteId: string, items: DocItem[]) => void;
   /** Rechnung der gewählten Art (Abschlag / Schluss / Gesamt), Nummer erst beim Versenden. */
-  addInvoice: (projectId: string, kind: InvoiceKind) => string;
+  addInvoice: (projectId: string, kind: InvoiceKind, percent?: number) => string;
   setInvoiceServiceDate: (invoiceId: string, iso: string) => void;
   setInvoiceItems: (invoiceId: string, items: DocItem[]) => void;
   /**
@@ -331,7 +331,7 @@ export const useDemo = create<DemoState>((set, get) => {
       }));
       return id;
     },
-    addInvoice: (projectId, kind) => {
+    addInvoice: (projectId, kind, percent) => {
       const id = newId('r');
       const { quotes, invoices } = get();
       const invoice = buildInvoice(
@@ -340,6 +340,8 @@ export const useDemo = create<DemoState>((set, get) => {
         quotes.filter((q) => q.projectId === projectId),
         invoices.filter((i) => i.projectId === projectId),
         id,
+        new Date(),
+        percent,
       );
       set((s) => ({
         invoices: [invoice, ...s.invoices],

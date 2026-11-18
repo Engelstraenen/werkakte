@@ -13,6 +13,14 @@ export type InvoiceOption = {
 /** Ab diesem Auftragswert (netto) empfiehlt die App einen Abschlag vorab fürs Material. */
 export const ABSCHLAG_AB_CENTS = 500000;
 export const ABSCHLAG_PROZENT = 30;
+/** Wählbare Abschlagshöhen (Material + Vorbereitung schwanken je Auftrag stark). */
+export const ABSCHLAG_STUFEN = [20, 30, 40, 50] as const;
+
+/** Abschlag in Cent aus dem Angebot (netto). */
+export const abschlagCents = (quotes: Quote[], percent = ABSCHLAG_PROZENT) => {
+  const quote = baseQuote(quotes);
+  return quote ? Math.round((documentTotals(quote.items).netCents * percent) / 100) : 0;
+};
 
 /** Angebot, nach dem abgerechnet wird: angenommen vor versendet, das neueste zuerst. */
 export function baseQuote(quotes: Quote[]): Quote | undefined {
@@ -56,22 +64,22 @@ export function buildInvoice(
   invoices: Invoice[],
   id: string,
   now = new Date(),
+  percent: number = ABSCHLAG_PROZENT,
 ): Invoice {
   const quote = baseQuote(quotes);
   const done = sentAbschlaege(invoices);
   let items: DocItem[] = [];
   if (kind === 'abschlag') {
-    const option = invoiceOptions(quotes, invoices).find((o) => o.kind === 'abschlag')!;
     const n = done.length + 1;
     items = [
       {
         id: `${id}-0`,
         name: quote
-          ? `${n}. Abschlag (${ABSCHLAG_PROZENT} %) zum Angebot ${quote.number} – Material und Vorbereitung`
+          ? `${n}. Abschlag (${percent} %) zum Angebot ${quote.number} – Material und Vorbereitung`
           : `${n}. Abschlag – Material und Vorbereitung`,
         unit: 'pauschal',
         qtyMilli: 1000,
-        unitPriceCents: option.cents,
+        unitPriceCents: abschlagCents(quotes, percent),
         vatRate: 19,
       },
     ];

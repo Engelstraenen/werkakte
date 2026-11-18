@@ -526,8 +526,9 @@ export const de = {
     artFrage: 'Was für eine Rechnung?',
     empfohlen: 'Empfehlung',
     abschlag: 'Abschlag vorab',
-    abschlagText: (euro: string) =>
-      `${euro} netto (30 % vom Angebot) für Material und Vorbereitung. Später machst du daraus die Schlussrechnung.`,
+    abschlagText: (euro: string, percent: number) =>
+      `${euro} netto (${percent} % vom Angebot) für Material und Vorbereitung. Später machst du daraus die Schlussrechnung.`,
+    wieviel: 'Wie viel vorab? (Material teuer → mehr)',
     abschlagFrei: 'Vorab für Material und Vorbereitung – den Betrag trägst du ein.',
     schluss: 'Schlussrechnung',
     schlussText: (euro: string) =>

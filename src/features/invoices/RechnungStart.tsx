@@ -2,7 +2,13 @@ import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { invoiceOptions, type InvoiceKind } from './build';
+import {
+  ABSCHLAG_PROZENT,
+  ABSCHLAG_STUFEN,
+  abschlagCents,
+  invoiceOptions,
+  type InvoiceKind,
+} from './build';
 import { AddButton } from '@/components/AddButton';
 import { AppText } from '@/components/AppText';
 import { Avatar } from '@/components/Avatar';
@@ -15,7 +21,7 @@ import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { formatDate } from '@/lib/date';
 import { formatEuro } from '@/lib/money';
-import { spacing, useColors } from '@/theme';
+import { radius, spacing, touch, useColors } from '@/theme';
 
 const t = de.rechnung;
 
@@ -33,6 +39,7 @@ export function RechnungStart({ projectId: fixedProject }: { projectId?: string 
   const addInvoice = useDemo((s) => s.addInvoice);
   const [customerId, setCustomerId] = useState<string>();
   const [projectId, setProjectId] = useState(fixedProject);
+  const [percent, setPercent] = useState<number>(ABSCHLAG_PROZENT);
 
   // Neu angelegten Kunden (Plus) sofort übernehmen.
   const known = useRef(new Set(customers.map((c) => c.id)));
@@ -43,12 +50,18 @@ export function RechnungStart({ projectId: fixedProject }: { projectId?: string 
   }, [customers]);
 
   const create = (kind: InvoiceKind) =>
-    router.replace({ pathname: '/beleg/[id]', params: { id: addInvoice(projectId!, kind) } });
+    router.replace({
+      pathname: '/beleg/[id]',
+      params: { id: addInvoice(projectId!, kind, percent) },
+    });
 
   if (projectId) {
+    const projectQuotes = quotes.filter((q) => q.projectId === projectId);
     const options = invoiceOptions(
-      quotes.filter((q) => q.projectId === projectId),
+      projectQuotes,
       invoices.filter((i) => i.projectId === projectId),
+    ).map((o) =>
+      o.kind === 'abschlag' ? { ...o, cents: abschlagCents(projectQuotes, percent) } : o,
     );
     const hasQuote = options.some((o) => o.cents > 0);
     const why = options.some((o) => o.kind === 'schluss')
@@ -61,7 +74,7 @@ export function RechnungStart({ projectId: fixedProject }: { projectId?: string 
     const text = (kind: InvoiceKind, cents: number) =>
       kind === 'abschlag'
         ? cents
-          ? t.abschlagText(formatEuro(cents))
+          ? t.abschlagText(formatEuro(cents), percent)
           : t.abschlagFrei
         : kind === 'schluss'
           ? t.schlussText(formatEuro(cents))
@@ -98,6 +111,40 @@ export function RechnungStart({ projectId: fixedProject }: { projectId?: string 
                 {o.recommended ? <Badge label={t.empfohlen} tone="info" /> : null}
               </View>
               <AppText muted>{text(o.kind, o.cents)}</AppText>
+              {o.kind === 'abschlag' && hasQuote ? (
+                <View style={{ gap: spacing.xs }}>
+                  <AppText variant="small" muted>
+                    {t.wieviel}
+                  </AppText>
+                  <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                    {ABSCHLAG_STUFEN.map((p) => {
+                      const on = p === percent;
+                      return (
+                        <Pressable
+                          key={p}
+                          accessibilityRole="radio"
+                          accessibilityState={{ selected: on }}
+                          onPress={() => setPercent(p)}
+                          style={{
+                            flex: 1,
+                            minHeight: touch.min,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: radius.md,
+                            borderWidth: 2,
+                            borderColor: on ? colors.primary : colors.border,
+                            backgroundColor: on ? colors.primary : 'transparent',
+                          }}
+                        >
+                          <AppText variant="label" color={on ? colors.onPrimary : colors.text}>
+                            {p} %
+                          </AppText>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+              ) : null}
             </Card>
           </Pressable>
         ))}
