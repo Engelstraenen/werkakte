@@ -36,3 +36,20 @@ Regel: Anlegen immer über das orange **Plus** oben rechts (nie „Neu“-Text).
 - Rechnung aus dem Angebot als PDF prüfen (Hinweise müssen im PDF stehen) – kommt mit dem PDF-Export.
 - Nach dem Anlegen eines Termins springt der Kalender noch nicht auf den gewählten Tag.
 - Löschen von Kunden/Artikeln fehlt bewusst (Belege hängen daran).
+
+## Ausbau 19.11.2026 (alles außer D-U-N-S)
+| Funktion | Stand | Geprüft |
+|---|---|---|
+| PDF Angebot/Rechnung | A4, Briefkopf, Positionen, netto/MwSt/brutto, Pflichthinweise, Fußzeile Steuernr./IBAN, Hausschrift IBM Plex eingebettet | ✅ Browser-Download, Layout gerendert |
+| Teilen | Handy: Teilen-Menü (WhatsApp, Mail, „In Dateien sichern“); Browser: Web-Share oder Download | ✅ Browser |
+| Ablage | Mehr › Belegarchiv (alle versendeten Belege, unveränderbar); Handy: PDF zusätzlich im App-Ordner „Belege“ | ✅ Browser (Handy-Ordner nur Code) |
+| Kundenunterschrift | Angebot auf dem Handy unterschreiben = angenommen, Unterschrift im PDF | ✅ |
+| Zahlungserinnerung/Mahnung | 3 Stufen als PDF-Brief, neue Frist, Verlauf + Überfällig-Tage | ✅ Layout gerendert |
+| Daten bleiben gespeichert | Gerätespeicher; Mehr › Beispieldaten zurücksetzen | ✅ Neuladen + Zurücksetzen |
+| Echte Fotos | Kamera/Galerie, verkleinert (~20 KB im Browser), dauerhaft | ✅ Browser (Kamera am Handy nur Code) |
+| E-Rechnung | XRechnung 3.0 (UBL) für Firmenkunden: im PDF eingebettet + einzeln teilbar | ✅ XML wohlgeformt, Summen getestet; offizieller KoSIT-Validator noch offen (kein Java auf dem Mac) |
+
+## Braucht Zugänge / Kosten (nicht gebaut)
+- Automatischer Mailversand (an Kunde, Kopie an Kontoinhaber, DATEV): Server (Supabase Edge Function) + EU-Maildienst.
+- Abgleich mehrerer Geräte (Supabase-Tabellen + RLS + Sync), Fotos in privatem Speicher.
+- Push-Erinnerungen, Testversionen (Expo-Konto, EAS), App Store / Play Store (D-U-N-S, Entwicklerkonten).

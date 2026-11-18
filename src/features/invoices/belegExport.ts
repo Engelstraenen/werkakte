@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 
 import { laborGrossCents } from './checklist';
 import { DUNNING_TITLE, dunningLetter } from './dunning';
+import { buildXRechnung, xrechnungFileName } from './xrechnung';
 import { company } from '@/features/demo/data';
 import { customerOf } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
@@ -9,7 +10,7 @@ import type { Invoice, Project, Quote } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { buildBelegPdf, belegFileName, type BelegPdfInput } from '@/lib/pdf/belegPdf';
 import { loadPdfFonts } from '@/lib/pdf/fonts';
-import { savePdf, sharePdf } from '@/lib/pdf/save';
+import { savePdf, shareFile, sharePdf } from '@/lib/pdf/save';
 import { formatEuro } from '@/lib/money';
 
 const title = (doc: Quote | Invoice) =>
@@ -49,6 +50,17 @@ export function belegInput(doc: Quote | Invoice, project: Project): BelegPdfInpu
     notes,
     signedAt: isInvoice ? undefined : doc.signedAt,
     signature: isInvoice ? undefined : doc.signature,
+    attachments:
+      isInvoice && hasXRechnung(doc, project)
+        ? [
+            {
+              name: xrechnungFileName(doc.number),
+              bytes: xrechnungBytes(doc, project),
+              mimeType: 'application/xml',
+              description: 'E-Rechnung (XRechnung 3.0)',
+            },
+          ]
+        : undefined,
   };
 }
 
@@ -92,4 +104,23 @@ export async function shareDunning(
     bytes,
     belegFileName(DUNNING_TITLE[d.level], inv.number, customerOf(project).name),
   );
+}
+
+/** E-Rechnung gibt es für versendete Rechnungen an Firmenkunden (Nummer vergeben). */
+export const hasXRechnung = (doc: Quote | Invoice, project: Project): doc is Invoice =>
+  !('validUntil' in doc) && !!doc.number && customerOf(project).type === 'gewerblich';
+
+const xrechnungBytes = (inv: Invoice, project: Project) =>
+  new TextEncoder().encode(
+    buildXRechnung({
+      invoice: inv,
+      company,
+      customer: customerOf(project),
+      buyerReference: project.title,
+    }),
+  );
+
+/** XRechnung (XML) einzeln teilen – z. B. für das Rechnungsportal des Kunden. */
+export async function shareXRechnung(inv: Invoice, project: Project): Promise<void> {
+  await shareFile(xrechnungBytes(inv, project), xrechnungFileName(inv.number), 'application/xml');
 }

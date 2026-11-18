@@ -24,6 +24,8 @@ export type BelegPdfInput = {
   signature?: { paths: string[]; name: string };
   /** Brief statt Positionen (Zahlungserinnerung/Mahnung): eigene Eckdaten, Beträge, Absätze. */
   letter?: { meta: [string, string][]; amounts: [string, string][]; paragraphs: string[] };
+  /** Eingebettete Dateien, z. B. die XRechnung (Hybrid-Rechnung: PDF zum Lesen + XML für die Buchhaltung). */
+  attachments?: { name: string; bytes: Uint8Array; mimeType: string; description: string }[];
 };
 
 const A4: [number, number] = [595.28, 841.89];
@@ -240,7 +242,14 @@ export async function buildBelegPdf(
 
   return finish();
 
-  function finish() {
+  async function finish() {
+    for (const a of input.attachments ?? [])
+      await doc.attach(a.bytes, a.name, {
+        mimeType: a.mimeType,
+        description: a.description,
+        creationDate: new Date(input.date),
+        modificationDate: new Date(input.date),
+      });
     // Fußzeile auf jeder Seite.
     const pages = doc.getPages();
     pages.forEach((p, i) => {

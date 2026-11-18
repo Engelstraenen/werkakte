@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
 
-import { shareBeleg } from './belegExport';
+import { hasXRechnung, shareBeleg, shareXRechnung } from './belegExport';
 import { Button } from '@/components/Button';
 import type { Invoice, Project, Quote } from '@/features/demo/types';
 import { de } from '@/i18n/de';
@@ -23,12 +23,24 @@ export function PdfButton({ doc, project }: { doc: Quote | Invoice; project: Pro
     }
   }
   return (
-    <Button
-      title={de.pdf.teilen}
-      variant="secondary"
-      loading={busy}
-      icon={<Ionicons name="document-text-outline" size={20} color={colors.text} />}
-      onPress={run}
-    />
+    <>
+      <Button
+        title={de.pdf.teilen}
+        variant="secondary"
+        loading={busy}
+        icon={<Ionicons name="document-text-outline" size={20} color={colors.text} />}
+        onPress={run}
+      />
+      {hasXRechnung(doc, project) ? (
+        <Button
+          title={de.pdf.xml}
+          variant="secondary"
+          icon={<Ionicons name="code-slash-outline" size={20} color={colors.text} />}
+          onPress={() =>
+            shareXRechnung(doc, project).catch(() => notice(de.pdf.xml, de.pdf.fehler))
+          }
+        />
+      ) : null}
+    </>
   );
 }

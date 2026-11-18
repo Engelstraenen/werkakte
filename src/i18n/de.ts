@@ -582,10 +582,11 @@ export const de = {
   pdf: {
     teilen: 'PDF ansehen & teilen',
     teilenHinweis: 'WhatsApp, Mail oder „In Dateien sichern“',
+    xml: 'E-Rechnung (XRechnung) teilen',
     erstellt: 'PDF wird erstellt …',
     fehler: 'Das PDF konnte nicht erstellt werden. Bitte noch einmal versuchen.',
     eRechnungHinweis:
-      'Die elektronische Rechnung (XRechnung) wird zusammen mit diesem PDF übermittelt.',
+      'Die elektronische Rechnung (XRechnung 3.0) ist in dieser PDF-Datei eingebettet und wird zusätzlich als XML-Datei übermittelt.',
   },
   archiv: {
     titel: 'Belegarchiv',

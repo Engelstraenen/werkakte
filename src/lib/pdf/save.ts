@@ -6,6 +6,10 @@ import * as Sharing from 'expo-sharing';
 import { bytesToBase64 } from './base64';
 
 export async function savePdf(bytes: Uint8Array, fileName: string): Promise<string> {
+  return saveFile(bytes, fileName);
+}
+
+async function saveFile(bytes: Uint8Array, fileName: string): Promise<string> {
   const dir = `${FileSystem.documentDirectory}belege/`;
   await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
   const uri = dir + fileName;
@@ -16,7 +20,14 @@ export async function savePdf(bytes: Uint8Array, fileName: string): Promise<stri
 }
 
 export async function sharePdf(bytes: Uint8Array, fileName: string): Promise<void> {
-  const uri = await savePdf(bytes, fileName);
+  return shareFile(bytes, fileName, 'application/pdf');
+}
+
+export async function shareFile(bytes: Uint8Array, fileName: string, mimeType: string) {
+  const uri = await saveFile(bytes, fileName);
   if (await Sharing.isAvailableAsync())
-    await Sharing.shareAsync(uri, { mimeType: 'application/pdf', UTI: 'com.adobe.pdf' });
+    await Sharing.shareAsync(uri, {
+      mimeType,
+      UTI: mimeType === 'application/pdf' ? 'com.adobe.pdf' : 'public.xml',
+    });
 }
