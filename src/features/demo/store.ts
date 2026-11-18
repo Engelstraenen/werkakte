@@ -1,6 +1,7 @@
 // shortcut: Prototyp-Daten im Speicher (gehen beim Neuladen verloren); ab Phase 1 SQLite + Sync.
 import { create } from 'zustand';
 
+import { buildInvoice, type InvoiceKind } from '@/features/invoices/build';
 import { invoiceFromQuote } from '@/features/invoices/fromQuote';
 import { formatNumber, type NumberFormat } from '@/lib/numbering';
 
@@ -70,6 +71,10 @@ type DemoState = {
   addQuote: (projectId: string) => string;
   duplicateQuote: (fromQuoteId: string, projectId: string) => string;
   setQuoteItems: (quoteId: string, items: DocItem[]) => void;
+  /** Rechnung der gewählten Art (Abschlag / Schluss / Gesamt), Nummer erst beim Versenden. */
+  addInvoice: (projectId: string, kind: InvoiceKind) => string;
+  setInvoiceServiceDate: (invoiceId: string, iso: string) => void;
+  setInvoiceItems: (invoiceId: string, items: DocItem[]) => void;
   /**
    * Startet die Zeit einer Person in einem Projekt – nur wenn sie zum Projekt-Team gehört.
    * Läuft ihre Zeit schon woanders, wird die vorher gestoppt und gespeichert.
@@ -326,6 +331,32 @@ export const useDemo = create<DemoState>((set, get) => {
       }));
       return id;
     },
+    addInvoice: (projectId, kind) => {
+      const id = newId('r');
+      const { quotes, invoices } = get();
+      const invoice = buildInvoice(
+        kind,
+        projectId,
+        quotes.filter((q) => q.projectId === projectId),
+        invoices.filter((i) => i.projectId === projectId),
+        id,
+      );
+      set((s) => ({
+        invoices: [invoice, ...s.invoices],
+        projects: touch(s.projects, projectId),
+      }));
+      return id;
+    },
+    setInvoiceServiceDate: (invoiceId, iso) =>
+      set((s) => ({
+        invoices: s.invoices.map((i) => (i.id === invoiceId ? { ...i, serviceDate: iso } : i)),
+      })),
+    setInvoiceItems: (invoiceId, items) =>
+      set((s) => ({
+        invoices: s.invoices.map((i) =>
+          i.id === invoiceId && i.status === 'entwurf' ? { ...i, items } : i,
+        ),
+      })),
     setQuoteItems: (quoteId, items) =>
       set((s) => ({ quotes: s.quotes.map((q) => (q.id === quoteId ? { ...q, items } : q)) })),
     startTimer: (projectId, memberId = seed.CURRENT_MEMBER_ID) => {
