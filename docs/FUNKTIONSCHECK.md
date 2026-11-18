@@ -22,7 +22,7 @@ Regel: Anlegen immer über das orange **Plus** oben rechts (nie „Neu“-Text).
 |---|---|---|
 | 1. Kunde | „An wen geht die Rechnung?“ – Liste + Plus für neuen Kunden (wird direkt gewählt) | ✅ |
 | 2. Auftrag | offene Aufträge des Kunden + „Neuer Auftrag (Reparatur, Notdienst)“ | ✅ |
-| 3. Art | App empfiehlt: Abschlag vorab (≥ 5.000 € netto, 30 % vom Angebot), Gesamtrechnung (kleiner/ohne Angebot), Schlussrechnung (wenn Abschlag raus – zieht ihn automatisch ab) | ✅ Abschlag 1.629,48 € aus 5.431,60 € |
+| 3. Art | App empfiehlt: Abschlag vorab (≥ 5.000 € netto, Höhe wählbar 20/30/40/50 %, Standard 30 %), Gesamtrechnung (kleiner/ohne Angebot), Schlussrechnung (wenn Abschlag raus – zieht ihn automatisch ab) | ✅ Abschlag 1.629,48 € aus 5.431,60 € |
 | 4. Schreiben | Schnellknöpfe Stunde/Anfahrt/Material, Gewerk-Vorschläge ab dem 1. Buchstaben („sp“ → Spannholz, Spanplatte, Sperrholz), freie Positionen | ✅ |
 | 5. Checkliste | Pflichtangaben § 14 UStG (Anschrift, Leistungsdatum, Leistung, Preise, Steuernummer, Nummer automatisch); Privatkunde: § 35a-Arbeitskosten + 2-Jahre-Aufbewahrungshinweis automatisch; Senden erst, wenn alles grün | ✅ |
 | Gewerk | Firmendaten → „Dein Gewerk“ (SHK, Elektro, Schreiner, Maler, Fliesen, Trockenbau) | ✅ |
