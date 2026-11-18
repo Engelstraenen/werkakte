@@ -9,10 +9,12 @@ import { IconCircle, type IconName } from '@/components/IconCircle';
 import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
 import { useSession } from '@/features/auth/session';
+import { resetToSample } from '@/features/demo/reset';
 import { company } from '@/features/demo/data';
 import { useStamm } from '@/features/demo/stamm';
 import { de } from '@/i18n/de';
 import { isDemoBuild } from '@/lib/demo';
+import { confirm } from '@/lib/notice';
 import { supabase } from '@/lib/supabase';
 import { useAppearance, type Tone } from '@/theme';
 
@@ -136,6 +138,15 @@ export default function MehrScreen() {
             ? `${t.angemeldetAls} ${session.user.email}`
             : t.testmodus}
       </AppText>
+      <Button
+        title={t.zuruecksetzen}
+        variant="secondary"
+        onPress={() =>
+          confirm(t.zuruecksetzen, t.zuruecksetzenFrage, t.zuruecksetzenJa, () => {
+            resetToSample().catch(() => undefined);
+          })
+        }
+      />
       {isDemoBuild ? null : (
         <Button
           title={t.abmelden}

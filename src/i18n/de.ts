@@ -408,6 +408,10 @@ export const de = {
   },
   mehr: {
     titel: 'Mehr',
+    zuruecksetzen: 'Beispieldaten zurücksetzen',
+    zuruecksetzenFrage:
+      'Alles, was du angelegt oder geändert hast, wird gelöscht und die Beispieldaten kommen zurück.',
+    zuruecksetzenJa: 'Zurücksetzen',
     gewerk: 'Dein Gewerk',
     gewerkHinweis:
       'Danach schlägt die App beim Schreiben passende Positionen vor – schon ab dem ersten Buchstaben.',

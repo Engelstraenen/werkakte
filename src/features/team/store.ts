@@ -1,5 +1,8 @@
 // shortcut: Prototyp im Speicher (wie features/demo/store); später SQLite + Sync, Bewerber nur für Inhaber (RLS).
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+import { persistOptions } from '@/lib/persist';
 
 import * as seed from './data';
 import type { Applicant, ApplicantStatus, JobOpening, WeekStatus } from './types';
@@ -32,44 +35,52 @@ export const slugify = (text: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-export const useTeam = create<TeamState>((set) => ({
-  jobs: seed.jobs,
-  applicants: seed.applicants,
-  addJob: (j) => {
-    const id = newId('j');
-    set((s) => ({ jobs: [...s.jobs, { ...j, id, slug: slugify(j.title), open: true }] }));
-    return id;
-  },
-  addApplicant: (a) => {
-    const id = newId('b');
-    set((s) => ({
-      applicants: [
-        ...s.applicants,
-        { ...a, id, status: 'neu', createdAt: now(), answers: [], notes: [] },
-      ],
-    }));
-    return id;
-  },
-  weekStatus: {},
-  shares: { m2: 3, m3: 1 },
-  setApplicantStatus: (id, status) =>
-    set((s) => ({ applicants: s.applicants.map((a) => (a.id === id ? { ...a, status } : a)) })),
-  addApplicantNote: (id, text) =>
-    set((s) => ({
-      applicants: s.applicants.map((a) =>
-        a.id === id
-          ? {
-              ...a,
-              notes: [...a.notes, { id: `n${Date.now().toString(36)}`, text, createdAt: now() }],
-            }
-          : a,
-      ),
-    })),
-  setWeekStatus: (azubiId, weekKey, status) =>
-    set((s) => ({ weekStatus: { ...s.weekStatus, [`${azubiId}:${weekKey}`]: status } })),
-  countShare: (memberId) =>
-    set((s) => ({ shares: { ...s.shares, [memberId]: (s.shares[memberId] ?? 0) + 1 } })),
-}));
+export const useTeam = create<TeamState>()(
+  persist(
+    (set) => ({
+      jobs: seed.jobs,
+      applicants: seed.applicants,
+      addJob: (j) => {
+        const id = newId('j');
+        set((s) => ({ jobs: [...s.jobs, { ...j, id, slug: slugify(j.title), open: true }] }));
+        return id;
+      },
+      addApplicant: (a) => {
+        const id = newId('b');
+        set((s) => ({
+          applicants: [
+            ...s.applicants,
+            { ...a, id, status: 'neu', createdAt: now(), answers: [], notes: [] },
+          ],
+        }));
+        return id;
+      },
+      weekStatus: {},
+      shares: { m2: 3, m3: 1 },
+      setApplicantStatus: (id, status) =>
+        set((s) => ({ applicants: s.applicants.map((a) => (a.id === id ? { ...a, status } : a)) })),
+      addApplicantNote: (id, text) =>
+        set((s) => ({
+          applicants: s.applicants.map((a) =>
+            a.id === id
+              ? {
+                  ...a,
+                  notes: [
+                    ...a.notes,
+                    { id: `n${Date.now().toString(36)}`, text, createdAt: now() },
+                  ],
+                }
+              : a,
+          ),
+        })),
+      setWeekStatus: (azubiId, weekKey, status) =>
+        set((s) => ({ weekStatus: { ...s.weekStatus, [`${azubiId}:${weekKey}`]: status } })),
+      countShare: (memberId) =>
+        set((s) => ({ shares: { ...s.shares, [memberId]: (s.shares[memberId] ?? 0) + 1 } })),
+    }),
+    persistOptions<TeamState>('team'),
+  ),
+);
 
 /** Empfehlungen, die zu einer Zusage geführt haben = fällige Prämien, je Mitarbeiter. */
 export function bonusesDue(applicants: Applicant[]): Record<string, number> {
