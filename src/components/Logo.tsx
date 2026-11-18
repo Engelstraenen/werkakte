@@ -5,7 +5,7 @@ import { AppText } from './AppText';
 import { de } from '@/i18n/de';
 import { fonts, spacing, useColors } from '@/theme';
 
-/** App-Icon: aufgeklappter Zollstock als „W“ auf Blaupause. */
+/** App-Icon: aufgeklappter Zollstock als „W“ in Signal-Orange auf Schwarz (Design „Signal“). */
 export function LogoMark({ size = 56 }: { size?: number }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 72 72" accessibilityLabel={de.app.name}>
@@ -15,8 +15,8 @@ export function LogoMark({ size = 56 }: { size?: number }) {
         width="70"
         height="70"
         rx="14"
-        fill="#0D1F3C"
-        stroke="#2B4A7E"
+        fill="#0E0E0E"
+        stroke="#2E2E2E"
         strokeWidth={2}
       />
       <Path
@@ -28,19 +28,19 @@ export function LogoMark({ size = 56 }: { size?: number }) {
       <Path
         d="M14 22 L26 46 L38 22 L50 46 L58 30"
         fill="none"
-        stroke="#F6C445"
+        stroke="#FF5B1F"
         strokeWidth={7}
         strokeLinejoin="round"
         strokeLinecap="square"
       />
-      <Circle cx="26" cy="46" r="2.2" fill="#0D1F3C" />
-      <Circle cx="38" cy="22" r="2.2" fill="#0D1F3C" />
-      <Circle cx="50" cy="46" r="2.2" fill="#0D1F3C" />
+      <Circle cx="26" cy="46" r="2.2" fill="#0E0E0E" />
+      <Circle cx="38" cy="22" r="2.2" fill="#0E0E0E" />
+      <Circle cx="50" cy="46" r="2.2" fill="#0E0E0E" />
     </Svg>
   );
 }
 
-/** Logo + Schriftzug „WERKAKTE“ mit gelbem Strich. */
+/** Logo + Schriftzug „WERKAKTE“ mit orangem Strich. */
 export function Logo({ size = 48 }: { size?: number }) {
   const colors = useColors();
   return (

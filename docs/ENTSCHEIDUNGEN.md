@@ -45,6 +45,9 @@
 - **Code auf GitHub, öffentlich** (seit 02.11.2026, auf Wunsch, für den Transfer zu Grok): https://github.com/Engelstraenen/werkakte. `.env` wird nicht hochgeladen. Daher nie Schlüssel oder echte Kundendaten committen. Ohne LICENSE-Datei: lesbar, aber keine Nutzungsrechte für andere.
 - **Produktkonzept** (Versand, KVA → Rechnung, Nummernkreis, Bindung): siehe `docs/PRODUKTKONZEPT.md`.
 
+- **17.11.2026 (Eugen):** App läuft unter **Engelstränen UG** (später PROJEKT EX UG) – Store-Konten unter dieser Firma (D-U-N-S nötig). Das helle Design „Ruhig“ wirkt nicht mehr → neues, wärmeres Design (Vorschläge folgen). Neuer Bereich **„Team & Nachwuchs“** geplant: Job-Link teilen mit Prämie, Bewerbung als Akte, Baustellenfotos für Karriereseite (mit Freigabe), digitales Berichtsheft für Azubis. Webseite-Demo dazu: Projekt WARMHERZ (Dropbox).
+- **18.11.2026 (Eugen): Design „Signal“** – App bekommt dieselben Farben wie die Webseite: Schwarz, Weiß, Signal-Orange #FF5B1F, Schrift IBM Plex (wie bisher). Dunkel ist jetzt Standard. Kontrast geprüft (Orange-Knöpfe mit schwarzer Schrift 6,2:1; im hellen Modus Orange #C2410C mit weißer Schrift 5,2:1). Logo/Icons neu: Zollstock-W in Orange auf Schwarz. Branch `design/signal-farben`. Typecheck, 30 Tests, Lint grün; Screens Heute/Projekte/Kalender/Mehr in Dunkel und Hell im Browser geprüft.
+
 ## Offene Punkte
 
 - Supabase-Projekt (Frankfurt) anlegen und Einrichtung laut README durchführen → danach Login auf echtem Gerät testen.

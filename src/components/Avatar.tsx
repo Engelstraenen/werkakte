@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { AppText } from './AppText';
 import { fonts, useColors } from '@/theme';
 
-const palette = ['#C2410C', '#1D4ED8', '#15803D', '#7C3AED', '#B45309', '#0E7490'];
+const palette = ['#C2410C', '#0E7490', '#15803D', '#7C3AED', '#B45309', '#BE185D'];
 
 const initials = (name: string) =>
   name

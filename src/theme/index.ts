@@ -9,62 +9,64 @@ import { Platform, useColorScheme } from 'react-native';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-// Design „Bauplan Ruhig“ (siehe docs/ENTSCHEIDUNGEN.md): ruhige Flächen, eine Aktionsfarbe (Blau),
-// Signalfarben nur für Status (immer mit Wort). Kontrast: Text mind. 7:1, Aktionen mind. 4.5:1.
+// Design „Signal“ (18.11.2026, siehe docs/ENTSCHEIDUNGEN.md): gleiche Farbwelt wie die Webseiten von
+// PROJEKT EX – Schwarz, Weiß, EINE Aktionsfarbe Signal-Orange. Signalfarben nur für Status (immer mit Wort).
+// Kontrast geprüft: Text mind. 7:1, Aktionen mind. 4.5:1 (sonnenlesbar auf der Baustelle).
 
-// Hell (Standard): leicht getöntes Weiß, weiße Karten, zarte Ränder, Raster kaum sichtbar.
-const light = {
-  background: '#F4F7FB',
-  grid: 'rgba(59, 130, 246, 0.045)',
-  card: '#FFFFFF',
-  surface: '#EDF2F9',
-  text: '#0F1F3D',
-  textMuted: '#46597A',
-  border: '#D3DDEB',
+// Dunkel (Standard): fast Schwarz, Karten etwas heller, Signal-Orange #FF5B1F.
+// Weiß auf #FF5B1F hätte nur 3,1:1 – deshalb schwarze Schrift auf Orange (6,2:1).
+const dark = {
+  background: '#0E0E0E',
+  grid: 'rgba(255, 255, 255, 0.03)',
+  card: '#1A1A1A',
+  surface: '#232323',
+  text: '#FFFFFF',
+  textMuted: '#A3A3A3',
+  border: '#2E2E2E',
   /** Hauptaktion (Buttons, aktiver Tab). */
-  primary: '#1D4ED8',
-  primarySoft: '#E3ECFF',
-  onPrimary: '#FFFFFF',
+  primary: '#FF5B1F',
+  primarySoft: '#3A1D12',
+  onPrimary: '#0E0E0E',
   /** Plus-Button, Abschnitts-Balken. */
-  accent: '#1D4ED8',
+  accent: '#FF5B1F',
+  onAccent: '#0E0E0E',
+  danger: '#F97066',
+  success: '#4ADE80',
+  warning: '#FACC15',
+  info: '#7EC8E3',
+  neutral: '#A3A3A3',
+  /** Text auf farbigen Status-Flächen (Grün/Rot/Gelb …). */
+  onTone: '#0E0E0E',
+  tabBar: '#121212',
+  shadow: '0px 4px 14px rgba(0, 0, 0, 0.45)',
+};
+
+// Hell: warmes Papier-Weiß wie die hellen Abschnitte der Webseite, weiße Karten.
+// Orange etwas dunkler (#C2410C), damit weiße Schrift und Orange-Text auf Weiß 5,2:1 erreichen.
+const light: typeof dark = {
+  background: '#F2EFEA',
+  grid: 'rgba(14, 14, 14, 0.03)',
+  card: '#FFFFFF',
+  surface: '#E9E5DE',
+  text: '#0E0E0E',
+  textMuted: '#5C5750',
+  border: '#DCD7CF',
+  primary: '#C2410C',
+  primarySoft: '#FBE3D8',
+  onPrimary: '#FFFFFF',
+  accent: '#C2410C',
   onAccent: '#FFFFFF',
   danger: '#B42318',
   success: '#15803D',
   warning: '#9A5B00',
-  info: '#1D4ED8',
-  neutral: '#46597A',
-  /** Text auf farbigen Status-Flächen (Grün/Rot/Gelb …). */
+  info: '#0E7490',
+  neutral: '#5C5750',
   onTone: '#FFFFFF',
   tabBar: '#FFFFFF',
-  shadow: '0px 1px 2px rgba(15, 31, 61, 0.06), 0px 4px 14px rgba(15, 31, 61, 0.07)',
+  shadow: '0px 1px 2px rgba(14, 14, 14, 0.06), 0px 4px 14px rgba(14, 14, 14, 0.07)',
 };
 
-// Dunkel: dieselbe Ruhe – dunkles Blaugrau statt Schwarz, gebrochenes Weiß statt Reinweiß,
-// gedämpfte Farben (blenden nicht), Karten heller als der Grund.
-const dark: typeof light = {
-  background: '#0E1525',
-  grid: 'rgba(148, 163, 184, 0.035)',
-  card: '#172036',
-  surface: '#1F2A44',
-  text: '#E7ECF5',
-  textMuted: '#A7B3C8',
-  border: '#2B3857',
-  primary: '#7AA2FF',
-  primarySoft: '#1E2D52',
-  onPrimary: '#0E1525',
-  accent: '#7AA2FF',
-  onAccent: '#0E1525',
-  danger: '#F2877A',
-  success: '#5CC98C',
-  warning: '#E3B341',
-  info: '#7AA2FF',
-  neutral: '#A7B3C8',
-  onTone: '#0E1525',
-  tabBar: '#121A2C',
-  shadow: '0px 4px 14px rgba(0, 0, 0, 0.35)',
-};
-
-export type Colors = typeof light;
+export type Colors = typeof dark;
 export type Tone = 'primary' | 'danger' | 'success' | 'warning' | 'info' | 'neutral';
 
 export const spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;
@@ -114,18 +116,16 @@ const appearanceStorage = createJSONStorage(() =>
 
 type AppearanceState = { mode: Appearance; setMode: (mode: Appearance) => void };
 
-/** Darstellung (Mehr › Darstellung). Standard: hell. */
+/** Darstellung (Mehr › Darstellung). Standard: dunkel (Design „Signal“). */
 export const useAppearance = create<AppearanceState>()(
-  persist((set) => ({ mode: 'hell', setMode: (mode) => set({ mode }) }), {
+  persist((set) => ({ mode: 'dunkel', setMode: (mode) => set({ mode }) }), {
     name: 'appearance',
     storage: appearanceStorage,
-    // v0 kannte noch „ruhig“ (jetzt = hell) und „hell“ mit blauen Linien.
-    version: 1,
+    // v2 (18.11.2026): neues Design „Signal“ – alle starten einmal in Dunkel, „automatisch“ bleibt erhalten.
+    version: 2,
     migrate: (old) => {
       const mode = (old as { mode?: string } | undefined)?.mode;
-      return {
-        mode: mode === 'dunkel' || mode === 'automatisch' ? mode : 'hell',
-      } as AppearanceState;
+      return { mode: mode === 'automatisch' ? 'automatisch' : 'dunkel' } as AppearanceState;
     },
   }),
 );

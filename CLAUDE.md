@@ -27,11 +27,12 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 5. **Kein Feature ohne Grund:** Lieber eine Funktion weglassen als den Screen überladen.
 6. **Hoher Kontrast**, gut lesbar bei Sonnenlicht; Dark Mode unterstützt.
 
-### Marke & Design „Bauplan“ (verbindlich)
-- Name **Werkakte**, Claim „Eine Akte pro Auftrag.“ Logo: aufgeklappter Zollstock als „W“ in Warngelb auf Blaupausen-Blau (`src/components/Logo.tsx`, App-Icon in `assets/images`).
-- Farben/Schriften nur über `src/theme` (Tokens). Design **„Ruhig“** in zwei Varianten: **Hell (Standard)** – leicht getöntes Weiß, weiße Karten, zarte Ränder, Blau nur für Aktionen, Raster kaum sichtbar; **Dunkel** – dunkles Blaugrau statt Schwarz, gebrochenes Weiß, gedämpfte Farben. Wählbar unter Mehr › Darstellung (Hell / Dunkel / Wie Handy), wird gespeichert.
-- Schriften (in der App gebündelt, offline): IBM Plex Sans (Text), IBM Plex Sans Condensed (Überschriften, Buttons), IBM Plex Mono (Beschriftungen wie Datum/Uhrzeit, Großbuchstaben).
-- Eher eckige Kanten (4–12 px), Karten mit blauer Umrandung, Abschnitte mit farbigem Balken, Plus-Button als blaue Raute. Gelb nur noch im Logo.
+### Marke & Design „Signal“ (verbindlich, seit 18.11.2026)
+- Name **Werkakte**, Claim „Eine Akte pro Auftrag.“ Logo: aufgeklappter Zollstock als „W“ in Signal-Orange #FF5B1F auf Schwarz #0E0E0E (`src/components/Logo.tsx`, App-Icons in `assets/images`, Splash-Hintergrund #0E0E0E).
+- Gleiche Farbwelt wie die Webseiten von PROJEKT EX (z. B. Demo WARMHERZ): Schwarz, Weiß, EINE Aktionsfarbe Orange.
+- Farben/Schriften nur über `src/theme` (Tokens). Zwei Varianten: **Dunkel (Standard)** – #0E0E0E Grund, #1A1A1A Karten, Orange #FF5B1F mit **schwarzer** Schrift darauf (Weiß hätte nur 3,1:1); **Hell** – Papier #F2EFEA, weiße Karten, dunkleres Orange #C2410C mit weißer Schrift (5,2:1). Wählbar unter Mehr › Darstellung, wird gespeichert (Migration v2 setzt alle einmal auf Dunkel).
+- Schriften (in der App gebündelt, offline): IBM Plex Sans (Text), IBM Plex Sans Condensed (Überschriften, Buttons), IBM Plex Mono (Beschriftungen wie Datum/Uhrzeit, Großbuchstaben). Dieselbe Familie nutzt die Webseite.
+- Eher eckige Kanten (4–12 px), Abschnitte mit orangem Balken, Plus-Button als orange Raute. Kein Blau, kein Gelb mehr (außer Status „Warnung“).
 
 ### Navigation (Bottom Tabs, max. 5)
 `Heute` · `Projekte` · `+ (Schnellaktion)` · `Kalender` · `Mehr`
