@@ -46,6 +46,7 @@ export function belegInput(doc: Quote | Invoice, project: Project): BelegPdfInpu
     items: doc.items,
     notes,
     signedAt: isInvoice ? undefined : doc.signedAt,
+    signature: isInvoice ? undefined : doc.signature,
   };
 }
 

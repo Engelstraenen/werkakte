@@ -21,6 +21,7 @@ export type BelegPdfInput = {
   /** Pflicht- und Zusatzhinweise (§ 35a, Aufbewahrung, § 19 …), je ein Absatz. */
   notes: string[];
   signedAt?: string;
+  signature?: { paths: string[]; name: string };
 };
 
 const A4: [number, number] = [595.28, 841.89];
@@ -198,6 +199,26 @@ export async function buildBelegPdf(input: BelegPdfInput): Promise<Uint8Array> {
       y -= 12;
     });
     y -= 6;
+  }
+
+  // Unterschrift des Kunden (Pfade aus dem 320 × 160-Feld, verkleinert auf 160 × 80 pt).
+  if (input.signature?.paths.length) {
+    if (y < 190) newPage();
+    y -= 4;
+    for (const d of input.signature.paths)
+      page.drawSvgPath(d, { x: M, y, scale: 0.5, borderColor: DARK, borderWidth: 1.4 });
+    y -= 70;
+    page.drawLine({ start: { x: M, y }, end: { x: M + 180, y }, thickness: 0.6, color: GREY });
+    y -= 11;
+    text(
+      `${input.signature.name}${input.signedAt ? `, ${formatDate(input.signedAt)}` : ''}`,
+      M,
+      y,
+      8.5,
+      font,
+      GREY,
+    );
+    y -= 16;
   }
 
   // Fußzeile auf jeder Seite.

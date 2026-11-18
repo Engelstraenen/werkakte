@@ -84,7 +84,11 @@ export function DocActions({ doc }: { doc: Quote | Invoice }) {
         )
       ) : null}
       {!doc.signedAt && doc.status !== 'angenommen' ? (
-        <Button title={de.beleg.unterschreiben} variant="secondary" onPress={soon(4)} />
+        <Button
+          title={de.beleg.unterschreiben}
+          variant="secondary"
+          onPress={() => router.push({ pathname: '/unterschrift', params: { id: doc.id } })}
+        />
       ) : null}
       {template}
     </>

@@ -51,3 +51,22 @@ test('Base64 wie btoa', () => {
   const b = new Uint8Array([77, 97, 110, 0, 255]);
   expect(bytesToBase64(b)).toBe(btoa(String.fromCharCode(...b)));
 });
+
+test('Angebot mit Kundenunterschrift', async () => {
+  const bytes = await buildBelegPdf({
+    title: 'Angebot',
+    number: 'A-2026-0041',
+    isInvoice: false,
+    date: '2026-11-09T00:00:00.000Z',
+    validUntil: '2026-12-09T00:00:00.000Z',
+    company,
+    customer: customers[3]!,
+    projectTitle: 'Gäste-WC erneuern',
+    projectAddress: 'Rosenweg 9, 76137 Karlsruhe',
+    items: items.slice(0, 3),
+    notes: [],
+    signedAt: '2026-11-18T00:00:00.000Z',
+    signature: { paths: ['M20,120 L80,60 L140,130 L200,70'], name: 'Sabine Becker' },
+  });
+  expect(bytes.length).toBeGreaterThan(2000);
+});

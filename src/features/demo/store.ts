@@ -41,6 +41,8 @@ type DemoState = {
   setSending: (patch: Partial<SendSettings>) => void;
   setReminders: (patch: Partial<Reminders>) => void;
   acceptQuote: (quoteId: string) => void;
+  /** Kunde unterschreibt auf dem Handy = Auftrag erteilt. */
+  signQuote: (quoteId: string, signature: { paths: string[]; name: string }) => void;
   createInvoice: (quoteId: string) => string;
   /** Versenden: Rechnungen bekommen erst jetzt ihre Nummer; danach gesperrt. */
   sendDoc: (docId: string) => void;
@@ -137,6 +139,18 @@ export const useDemo = create<DemoState>((set, get) => {
         return {
           quotes: s.quotes.map((x) =>
             x.id === quoteId ? { ...x, status: 'angenommen' as const } : x,
+          ),
+          projects: touch(s.projects, q.projectId, { status: 'beauftragt' }),
+        };
+      }),
+    signQuote: (quoteId, signature) =>
+      set((s) => {
+        const q = s.quotes.find((x) => x.id === quoteId)!;
+        return {
+          quotes: s.quotes.map((x) =>
+            x.id === quoteId
+              ? { ...x, status: 'angenommen' as const, signedAt: now(), signature }
+              : x,
           ),
           projects: touch(s.projects, q.projectId, { status: 'beauftragt' }),
         };

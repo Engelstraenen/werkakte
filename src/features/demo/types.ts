@@ -144,6 +144,8 @@ export type Quote = {
   status: 'entwurf' | 'versendet' | 'angenommen' | 'abgelehnt';
   items: DocItem[];
   signedAt?: string;
+  /** Unterschrift des Kunden auf dem Handy: SVG-Pfade (Feld 320 × 160) + Name in Druckschrift. */
+  signature?: { paths: string[]; name: string };
   sentAt?: string;
 };
 

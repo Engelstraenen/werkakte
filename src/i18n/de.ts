@@ -583,6 +583,17 @@ export const de = {
     rechnungen: 'Rechnungen',
     angebote: 'Angebote',
   },
+  unterschrift: {
+    titel: 'Kunde unterschreibt',
+    auftrag: (firma: string, nummer: string, euro: string) =>
+      `Hiermit beauftrage ich ${firma} mit den Leistungen aus dem Angebot ${nummer} zum Gesamtpreis von ${euro} (brutto).`,
+    name: 'Name in Druckschrift',
+    feld: 'Hier mit dem Finger unterschreiben',
+    loeschen: 'Neu unterschreiben',
+    fertig: 'Unterschreiben & beauftragen',
+    fehlt: 'Bitte erst unterschreiben.',
+    danke: 'Auftrag erteilt – danke! Das Angebot ist jetzt angenommen.',
+  },
   prototyp: {
     titel: 'Nur Vorschau',
     bald: (phase: number) => `Diese Funktion kommt in Phase ${phase}.`,
