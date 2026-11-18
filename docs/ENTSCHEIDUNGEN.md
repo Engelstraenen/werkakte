@@ -61,3 +61,8 @@
 - Firma anlegen nach erstem Login (Phase 1/2).
 - App-Name und Icon final festlegen (Phase 7).
 - Xcode ist auf dem Entwickler-Mac nicht installiert → Test bisher über Web-Vorschau; native Prüfung mit Expo Go auf dem Handy.
+
+## 19.11.2026 – Plus überall
+- Anlegen immer über orange Plus (AddButton) oben rechts bzw. neben der Abschnittsüberschrift, nie „Neu“-Text (Eugen).
+- Stammdaten (Kunden, Katalog, Lieferanten, Mitarbeiter, Termine) im Zustand-Store `useStamm` statt fest in data.ts.
+- Neues Angebot startet leer; Positionen frei schreibbar und vollständig änderbar (Text, Einheit, Preis, MwSt).
