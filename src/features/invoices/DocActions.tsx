@@ -5,14 +5,15 @@ import { Button } from '@/components/Button';
 import { company } from '@/features/demo/data';
 import { customerOf } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
+import { shareDunning } from './belegExport';
 import { invoiceChecks, missingRequired } from './checklist';
+import { DUNNING_TITLE, nextDunningLevel } from './dunning';
 import type { Invoice, Quote } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { notice } from '@/lib/notice';
 import { useColors } from '@/theme';
 
 const a = de.ablauf;
-const soon = (phase: number) => () => notice(de.prototyp.titel, de.prototyp.bald(phase));
 const open = (id: string) => router.push({ pathname: '/beleg/[id]', params: { id } });
 const toSend = (id: string) => router.push({ pathname: '/senden', params: { id } });
 
@@ -22,7 +23,16 @@ const toSend = (id: string) => router.push({ pathname: '/senden', params: { id }
  */
 export function DocActions({ doc }: { doc: Quote | Invoice }) {
   const colors = useColors();
-  const { invoices, projects, acceptQuote, markPaid } = useDemo();
+  const { invoices, projects, acceptQuote, markPaid, remindInvoice } = useDemo();
+  // Mahnstufe anlegen, dann den Brief als PDF teilen (Mail/WhatsApp), bis der Mailversand aktiv ist.
+  const remind = (inv: Invoice) => {
+    remindInvoice(inv.id);
+    const fresh = useDemo.getState().invoices.find((i) => i.id === inv.id)!;
+    const project = projects.find((p) => p.id === inv.projectId)!;
+    shareDunning(fresh, project, fresh.dunning!.at(-1)!).catch(() =>
+      notice(de.pdf.teilen, de.pdf.fehler),
+    );
+  };
   const send = (
     <Button
       title={de.senden.senden}
@@ -45,7 +55,13 @@ export function DocActions({ doc }: { doc: Quote | Invoice }) {
       return (
         <>
           <Button title={a.bezahlt} onPress={() => markPaid(doc.id)} />
-          <Button title={a.mahnen} variant="secondary" onPress={soon(5)} />
+          {nextDunningLevel(doc) ? (
+            <Button
+              title={a.mahnStufe(DUNNING_TITLE[nextDunningLevel(doc)!])}
+              variant="secondary"
+              onPress={() => remind(doc)}
+            />
+          ) : null}
         </>
       );
     return null;

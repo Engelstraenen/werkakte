@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 
 import { buildInvoice, type InvoiceKind } from '@/features/invoices/build';
+import { newDunning, nextDunningLevel } from '@/features/invoices/dunning';
 import { invoiceFromQuote } from '@/features/invoices/fromQuote';
 import { formatNumber, type NumberFormat } from '@/lib/numbering';
 
@@ -47,6 +48,8 @@ type DemoState = {
   /** Versenden: Rechnungen bekommen erst jetzt ihre Nummer; danach gesperrt. */
   sendDoc: (docId: string) => void;
   markPaid: (invoiceId: string) => void;
+  /** Nächste Mahnstufe anlegen (1 Erinnerung, 2 Mahnung, 3 letzte Mahnung). */
+  remindInvoice: (invoiceId: string) => void;
   numbering: { angebot: NumberFormat; rechnung: NumberFormat };
   setNumbering: (kind: 'angebot' | 'rechnung', format: NumberFormat) => void;
   supplierPrices: SupplierPrice[];
@@ -187,6 +190,13 @@ export const useDemo = create<DemoState>((set, get) => {
         ),
       }));
     },
+    remindInvoice: (invoiceId) =>
+      set((s) => ({
+        invoices: s.invoices.map((i) => {
+          const level = i.id === invoiceId ? nextDunningLevel(i) : null;
+          return level ? { ...i, dunning: [...(i.dunning ?? []), newDunning(level)] } : i;
+        }),
+      })),
     markPaid: (invoiceId) =>
       set((s) => ({
         invoices: s.invoices.map((i) =>

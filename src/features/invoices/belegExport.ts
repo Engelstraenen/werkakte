@@ -1,12 +1,14 @@
 import { Platform } from 'react-native';
 
 import { laborGrossCents } from './checklist';
+import { DUNNING_TITLE, dunningLetter } from './dunning';
 import { company } from '@/features/demo/data';
 import { customerOf } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
 import type { Invoice, Project, Quote } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { buildBelegPdf, belegFileName, type BelegPdfInput } from '@/lib/pdf/belegPdf';
+import { loadPdfFonts } from '@/lib/pdf/fonts';
 import { savePdf, sharePdf } from '@/lib/pdf/save';
 import { formatEuro } from '@/lib/money';
 
@@ -55,7 +57,7 @@ export const belegName = (doc: Quote | Invoice, project: Project) =>
 
 /** PDF erzeugen und teilen (WhatsApp, Mail, Dateien) – auf dem Handy wird es zusätzlich abgelegt. */
 export async function shareBeleg(doc: Quote | Invoice, project: Project): Promise<void> {
-  const bytes = await buildBelegPdf(belegInput(doc, project));
+  const bytes = await buildBelegPdf(belegInput(doc, project), await loadPdfFonts());
   await sharePdf(bytes, belegName(doc, project));
 }
 
@@ -69,7 +71,25 @@ export function archiveOnDevice(docId: string): void {
   const doc = s.quotes.find((q) => q.id === docId) ?? s.invoices.find((i) => i.id === docId);
   const project = s.projects.find((p) => p.id === doc?.projectId);
   if (!doc || !project) return;
-  buildBelegPdf(belegInput(doc, project))
+  loadPdfFonts()
+    .then((fonts) => buildBelegPdf(belegInput(doc, project), fonts))
     .then((bytes) => savePdf(bytes, belegName(doc, project)))
     .catch(() => undefined); // Ablage ist zusätzlich – Fehler blockieren den Versand nicht
+}
+
+/** Zahlungserinnerung / Mahnung als PDF erzeugen und teilen. */
+export async function shareDunning(
+  inv: Invoice,
+  project: Project,
+  d: NonNullable<Invoice['dunning']>[number],
+): Promise<void> {
+  const base = belegInput(inv, project);
+  const bytes = await buildBelegPdf(
+    { ...base, title: DUNNING_TITLE[d.level], letter: dunningLetter(inv, d, company) },
+    await loadPdfFonts(),
+  );
+  await sharePdf(
+    bytes,
+    belegFileName(DUNNING_TITLE[d.level], inv.number, customerOf(project).name),
+  );
 }

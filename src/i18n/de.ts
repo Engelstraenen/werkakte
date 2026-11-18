@@ -280,6 +280,12 @@ export const de = {
     rechnungErstellen: 'Rechnung erstellen',
     bezahlt: 'Als bezahlt markieren',
     mahnen: 'Zahlungserinnerung senden',
+    mahnStufe: (titel: string) => `${titel} senden`,
+    ueberfaellig: (tage: number) =>
+      tage === 0 ? 'Noch nicht fällig' : `Seit ${tage} Tagen überfällig`,
+    mahnVerlauf: 'Erinnerungen & Mahnungen',
+    mahnZeile: (titel: string, am: string, frist: string) => `${titel} am ${am} · Frist ${frist}`,
+    mahnErneut: 'PDF erneut teilen',
     entwurfNummer: 'Entwurf – Nummer beim Senden',
     zurRechnung: 'Zur Rechnung',
   },

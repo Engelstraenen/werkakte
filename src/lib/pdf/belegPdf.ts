@@ -22,6 +22,8 @@ export type BelegPdfInput = {
   notes: string[];
   signedAt?: string;
   signature?: { paths: string[]; name: string };
+  /** Brief statt Positionen (Zahlungserinnerung/Mahnung): eigene Eckdaten, Beträge, Absätze. */
+  letter?: { meta: [string, string][]; amounts: [string, string][]; paragraphs: string[] };
 };
 
 const A4: [number, number] = [595.28, 841.89];
@@ -51,9 +53,16 @@ function wrap(text: string, font: PDFFont, size: number, width: number): string[
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const loadPdfLib = () => require('pdf-lib/cjs/index') as typeof import('pdf-lib');
+type Fontkit = Parameters<import('pdf-lib').PDFDocument['registerFontkit']>[0];
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const loadFontkit = () => require('@pdf-lib/fontkit/dist/fontkit.umd.js') as Fontkit;
 
 /** Erzeugt das PDF (A4) als Bytes – funktioniert auf iPhone, Android und im Browser. */
-export async function buildBelegPdf(input: BelegPdfInput): Promise<Uint8Array> {
+export async function buildBelegPdf(
+  input: BelegPdfInput,
+  /** IBM Plex (Hausschrift, eingebettet). Ohne: Helvetica – nur für Tests. */
+  fonts?: { regular: Uint8Array; bold: Uint8Array },
+): Promise<Uint8Array> {
   // CommonJS-Fassung: Die ESM-Fassung bricht in Metro (tslib-Interop). require() im Funktionsrumpf
   // wird erst beim ersten PDF ausgeführt – der App-Start bleibt schlank.
   const lib = loadPdfLib();
@@ -65,8 +74,13 @@ export async function buildBelegPdf(input: BelegPdfInput): Promise<Uint8Array> {
   doc.setTitle(pdfSafe(`${input.title} ${input.number}`.trim()));
   doc.setAuthor(pdfSafe(input.company.name));
   doc.setCreator('Werkakte');
-  const font = await doc.embedFont(StandardFonts.Helvetica);
-  const bold = await doc.embedFont(StandardFonts.HelveticaBold);
+  if (fonts) doc.registerFontkit(loadFontkit());
+  const font = await doc.embedFont(fonts ? fonts.regular : StandardFonts.Helvetica, {
+    subset: true,
+  });
+  const bold = await doc.embedFont(fonts ? fonts.bold : StandardFonts.HelveticaBold, {
+    subset: true,
+  });
   const c = input.company;
 
   let page: PDFPage = doc.addPage(A4);
@@ -93,13 +107,14 @@ export async function buildBelegPdf(input: BelegPdfInput): Promise<Uint8Array> {
     .forEach((l, i) => text(l, M, y - 16 - i * 13, 10.5));
 
   // Eckdaten rechts.
-  const meta: [string, string][] = [
+  const meta: [string, string][] = input.letter?.meta ?? [
     [input.isInvoice ? 'Rechnungsnummer' : 'Angebotsnummer', input.number || 'ENTWURF'],
     ['Datum', formatDate(input.date)],
   ];
-  if (input.serviceDate) meta.push(['Leistungsdatum', formatDate(input.serviceDate)]);
-  if (input.validUntil) meta.push(['Gültig bis', formatDate(input.validUntil)]);
-  if (input.dueDate) meta.push(['Zahlbar bis', formatDate(input.dueDate)]);
+  if (!input.letter && input.serviceDate)
+    meta.push(['Leistungsdatum', formatDate(input.serviceDate)]);
+  if (!input.letter && input.validUntil) meta.push(['Gültig bis', formatDate(input.validUntil)]);
+  if (!input.letter && input.dueDate) meta.push(['Zahlbar bis', formatDate(input.dueDate)]);
   meta.forEach(([k, v], i) => {
     text(k, 360, y - 16 - i * 13, 9, font, GREY);
     right(v, A4[0] - M, y - 16 - i * 13, 9.5, bold);
@@ -110,6 +125,8 @@ export async function buildBelegPdf(input: BelegPdfInput): Promise<Uint8Array> {
   y -= 16;
   text(`Bauvorhaben: ${input.projectTitle}, ${input.projectAddress}`, M, y, 9.5, font, GREY);
   y -= 26;
+
+  if (input.letter) return finishLetter();
 
   // Tabelle.
   const col = { pos: M, desc: M + 24, qty: 360, unit: 366, price: 470, sum: A4[0] - M };
@@ -221,33 +238,56 @@ export async function buildBelegPdf(input: BelegPdfInput): Promise<Uint8Array> {
     y -= 16;
   }
 
-  // Fußzeile auf jeder Seite.
-  const pages = doc.getPages();
-  pages.forEach((p, i) => {
-    const foot = [
-      `${c.name} · ${c.street} · ${c.zipCity} · Tel. ${c.phone} · ${c.email}`,
-      `Steuernummer ${c.taxNumber} · IBAN ${c.iban}${c.kleinunternehmer ? ' · Kleinunternehmer § 19 UStG' : ''}`,
-    ];
-    p.drawLine({
-      start: { x: M, y: 52 },
-      end: { x: A4[0] - M, y: 52 },
-      thickness: 0.4,
-      color: GREY,
-    });
-    foot.forEach((l, n) =>
-      p.drawText(pdfSafe(l), { x: M, y: 40 - n * 10, size: 7, font, color: GREY }),
-    );
-    const label = `Seite ${i + 1} von ${pages.length}`;
-    p.drawText(label, {
-      x: A4[0] - M - font.widthOfTextAtSize(label, 7),
-      y: 40,
-      size: 7,
-      font,
-      color: GREY,
-    });
-  });
+  return finish();
 
-  return doc.save();
+  function finish() {
+    // Fußzeile auf jeder Seite.
+    const pages = doc.getPages();
+    pages.forEach((p, i) => {
+      const foot = [
+        `${c.name} · ${c.street} · ${c.zipCity} · Tel. ${c.phone} · ${c.email}`,
+        `Steuernummer ${c.taxNumber} · IBAN ${c.iban}${c.kleinunternehmer ? ' · Kleinunternehmer § 19 UStG' : ''}`,
+      ];
+      p.drawLine({
+        start: { x: M, y: 52 },
+        end: { x: A4[0] - M, y: 52 },
+        thickness: 0.4,
+        color: GREY,
+      });
+      foot.forEach((l, n) =>
+        p.drawText(pdfSafe(l), { x: M, y: 40 - n * 10, size: 7, font, color: GREY }),
+      );
+      const label = `Seite ${i + 1} von ${pages.length}`;
+      p.drawText(label, {
+        x: A4[0] - M - font.widthOfTextAtSize(label, 7),
+        y: 40,
+        size: 7,
+        font,
+        color: GREY,
+      });
+    });
+
+    return doc.save();
+  }
+
+  function finishLetter() {
+    const l = input.letter!;
+    for (const [k, v] of l.amounts) {
+      const strong = k === l.amounts[l.amounts.length - 1]![0];
+      text(k, M, y, strong ? 11 : 9.5, strong ? bold : font);
+      right(v, A4[0] - M, y, strong ? 11 : 9.5, strong ? bold : font);
+      y -= strong ? 22 : 15;
+    }
+    y -= 6;
+    for (const p of l.paragraphs) {
+      wrap(p, font, 10, A4[0] - 2 * M).forEach((line) => {
+        text(line, M, y, 10);
+        y -= 14;
+      });
+      y -= 8;
+    }
+    return finish();
+  }
 }
 
 /** Dateiname wie ihn Steuerberater mögen: Rechnung_R-2026-0012_Mueller.pdf */

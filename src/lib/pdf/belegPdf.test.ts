@@ -1,4 +1,4 @@
-import { bytesToBase64 } from './base64';
+import { base64ToBytes, bytesToBase64 } from './base64';
 import { belegFileName, buildBelegPdf, pdfSafe } from './belegPdf';
 import { company, customers } from '@/features/demo/data';
 
@@ -69,4 +69,29 @@ test('Angebot mit Kundenunterschrift', async () => {
     signature: { paths: ['M20,120 L80,60 L140,130 L200,70'], name: 'Sabine Becker' },
   });
   expect(bytes.length).toBeGreaterThan(2000);
+});
+
+test('PDF mit eingebetteter Hausschrift (IBM Plex) und Base64-Rundweg', async () => {
+  const { readFileSync } = jest.requireActual('fs') as { readFileSync: (p: string) => Uint8Array };
+  const dir = 'node_modules/@expo-google-fonts/ibm-plex-sans';
+  const regular = new Uint8Array(readFileSync(`${dir}/400Regular/IBMPlexSans_400Regular.ttf`));
+  const bold = new Uint8Array(readFileSync(`${dir}/600SemiBold/IBMPlexSans_600SemiBold.ttf`));
+  expect(base64ToBytes(bytesToBase64(regular.slice(0, 1001)))).toEqual(regular.slice(0, 1001));
+  const bytes = await buildBelegPdf(
+    {
+      title: 'Rechnung',
+      number: 'R-1',
+      isInvoice: true,
+      date: '2026-11-19T00:00:00.000Z',
+      dueDate: '2026-12-03T00:00:00.000Z',
+      company,
+      customer: customers[0]!,
+      projectTitle: 'Bad → neu',
+      projectAddress: 'Lindenallee 4',
+      items: items.slice(0, 2),
+      notes: ['Bitte überweisen Sie 442,92 € bis zum 25.11.2026.'],
+    },
+    { regular, bold },
+  );
+  expect(bytes.length).toBeGreaterThan(5000);
 });

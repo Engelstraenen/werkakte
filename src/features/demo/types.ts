@@ -162,6 +162,8 @@ export type Invoice = {
   status: 'entwurf' | 'versendet' | 'bezahlt';
   items: DocItem[];
   sentAt?: string;
+  /** Zahlungserinnerung / Mahnungen in Reihenfolge. */
+  dunning?: { level: 1 | 2 | 3; sentAt: string; deadline: string }[];
 };
 
 /** Laufende Zeit einer Person (pro Person höchstens eine). */
