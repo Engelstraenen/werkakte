@@ -39,7 +39,7 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 
 - **Heute:** Termine des Tages, offene Aufgaben, zuletzt bearbeitete Projekte
 - **+ Schnellaktion:** Foto · Notiz/Sprachnotiz · Angebot · Projekt · Material anfragen · Problem melden · Zeit starten
-- **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Firmendaten, Nummernkreise, Versand & DATEV, Erinnerungen, Mitarbeiter
+- **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Firmendaten, Nummernkreise, Versand & DATEV, Erinnerungen, Mitarbeiter, **Team & Nachwuchs** (Stellen teilen mit Prämien-Link, Bewerber-Akten, digitales Berichtsheft)
 
 ## 4. Tech-Stack (festgelegt)
 
@@ -81,6 +81,15 @@ Firma (company)                 Gewerk, Fixkosten-Zuschlag %, Nummernkreise (Ang
 ```
 
 Projekt-Status: `anfrage → angebot → beauftragt → in_arbeit → abgeschlossen → bezahlt`
+
+**Team & Nachwuchs (seit 19.11.2026, Prototyp in `src/features/team`):**
+```
+Stelle (job_opening)      Titel, Kurzname, Gehalt (offen genannt), Arbeitszeit, offen ja/nein, Slug für den Webseiten-Link
+Bewerber (applicant)      Name, Telefon, Stelle, Quelle (webseite | foto-check | empfehlung + Mitarbeiter), Chat-Antworten,
+                          Status neu → angerufen → probearbeiten → zusage | absage, Notizen   (nur Inhaber sieht Bewerber – RLS)
+Berichtsheft-Woche (report_week)  Azubi, KW, Status offen → abgeschlossen (Azubi) → abgezeichnet (Ausbilder)
+```
+Berichtsheft-Einträge werden NICHT doppelt erfasst: Sie entstehen aus Zeiteinträgen + Fotos der Projekte (Azubi-Zeiten) und Berufsschultagen. Prämie: Empfehlung mit Status Zusage = fällige Prämie (1.000 €).
 
 Alle Tabellen: `id (uuid)`, `company_id`, `created_at`, `updated_at`, `deleted_at` (Soft Delete).
 RLS: Nutzer sehen nur Daten ihrer Firma; Mitarbeiter nur Projekte, denen sie zugewiesen sind.

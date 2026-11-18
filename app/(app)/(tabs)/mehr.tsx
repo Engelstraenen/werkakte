@@ -66,6 +66,13 @@ const entries: { href: Href; title: string; subtitle: string; icon: IconName; to
     icon: 'construct',
     tone: 'success',
   },
+  {
+    href: '/team',
+    title: de.team.titel,
+    subtitle: de.team.untertitel,
+    icon: 'rocket',
+    tone: 'primary',
+  },
 ];
 
 export default function MehrScreen() {
