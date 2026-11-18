@@ -8,7 +8,6 @@ import { CURRENT_MEMBER_ID, company } from '@/features/demo/data';
 import { de } from '@/i18n/de';
 import { spacing, useColors } from '@/theme';
 
-import { jobs } from './data';
 import { jobMessage, shareText } from './share';
 import { useTeam } from './store';
 
@@ -16,6 +15,7 @@ const t = de.team;
 
 /** Offene Stellen mit „Teilen“: persönlicher Link per WhatsApp & Co. */
 export function JobShareList() {
+  const jobs = useTeam((s) => s.jobs);
   const colors = useColors();
   const countShare = useTeam((s) => s.countShare);
   const [sharedId, setSharedId] = useState<string>();

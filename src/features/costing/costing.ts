@@ -1,4 +1,5 @@
-import { catalog, company, members } from '@/features/demo/data';
+import { company } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import type { DocItem, Invoice, ProjectCost, Quote, SupplierPrice } from '@/features/demo/types';
 import { bestOffer, breakdown, laborCents, type CostBreakdown } from '@/lib/calc';
 import { documentTotals } from '@/lib/money';
@@ -14,7 +15,7 @@ export function plannedCosting(items: DocItem[], prices: SupplierPrice[]): Costi
   let labor = 0;
   let minutes = 0;
   for (const it of items) {
-    const c = catalog.find((k) => k.id === it.catalogId);
+    const c = useStamm.getState().catalog.find((k) => k.id === it.catalogId);
     if (!c) continue; // Freitext/Abschlag ohne Katalogbezug: keine Kosten bekannt
     if (c.type === 'material') {
       const best = bestOffer(offersFor(c.id, prices));
@@ -44,7 +45,7 @@ export function actualCosting(costs: ProjectCost[], revenueCents: number): Costi
   for (const c of costs) {
     if (c.kind === 'material') material += c.amountCents;
     else {
-      const m = members.find((x) => x.id === c.memberId);
+      const m = useStamm.getState().members.find((x) => x.id === c.memberId);
       labor += laborCents(c.minutes, m?.hourlyCostCents ?? 0);
       minutes += c.minutes;
     }

@@ -1,17 +1,20 @@
 import type { ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 
+import { AddButton } from './AddButton';
 import { AppText } from './AppText';
 import { spacing, useColors } from '@/theme';
 
 type Props = {
   title: string;
   action?: { label: string; onPress: () => void };
+  /** Plus rechts zum Anlegen (Text = Bildschirmleser-Name). */
+  onAdd?: { label: string; onPress: () => void };
   children: ReactNode;
 };
 
 /** Überschrift + Inhalt, optional mit Link rechts ("Alle"). */
-export function Section({ title, action, children }: Props) {
+export function Section({ title, action, onAdd, children }: Props) {
   const colors = useColors();
   return (
     <View style={{ gap: spacing.sm + 4, marginTop: spacing.lg }}>
@@ -33,6 +36,7 @@ export function Section({ title, action, children }: Props) {
             </AppText>
           </Pressable>
         ) : null}
+        {onAdd ? <AddButton label={onAdd.label} onPress={onAdd.onPress} /> : null}
       </View>
       {children}
     </View>

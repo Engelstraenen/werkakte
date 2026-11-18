@@ -14,10 +14,12 @@ import { TaskList } from '@/features/today/TaskList';
 import { TimerCard } from '@/features/today/TimerCard';
 import { de } from '@/i18n/de';
 import { formatDayLong } from '@/lib/date';
+import { useStamm } from '@/features/demo/stamm';
 
 const greeting = (h: number) => (h < 11 ? de.heute.morgen : h < 18 ? de.heute.tag : de.heute.abend);
 
 export default function HeuteScreen() {
+  useStamm((s) => s.appointments); // neu angelegte Termine sofort anzeigen
   const { projects, quotes, invoices, media, materialRequests, reminders } = useDemo();
   const now = new Date();
   const me = memberById(CURRENT_MEMBER_ID);

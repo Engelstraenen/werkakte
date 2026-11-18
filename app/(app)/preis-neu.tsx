@@ -7,13 +7,15 @@ import { Button } from '@/components/Button';
 import { Chips } from '@/components/Chips';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
-import { catalog, suppliers } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { parseEuro } from '@/lib/money';
 import { spacing } from '@/theme';
 
 export default function PreisNeuScreen() {
+  const catalog = useStamm((s) => s.catalog);
+  const suppliers = useStamm((s) => s.suppliers);
   const { catalogItemId } = useLocalSearchParams<{ catalogItemId: string }>();
   const item = catalog.find((c) => c.id === catalogItemId);
   const addSupplierPrice = useDemo((s) => s.addSupplierPrice);

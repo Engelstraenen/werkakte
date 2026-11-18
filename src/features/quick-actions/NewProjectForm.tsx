@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
+import { AddButton } from '@/components/AddButton';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Chips } from '@/components/Chips';
 import { TextField } from '@/components/TextField';
-import { customers } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { spacing } from '@/theme';
@@ -14,6 +15,7 @@ import { spacing } from '@/theme';
 const t = de.neu;
 
 export function NewProjectForm() {
+  const customers = useStamm((s) => s.customers);
   const addProject = useDemo((s) => s.addProject);
   const [title, setTitle] = useState('');
   const [customerId, setCustomerId] = useState(customers[0]!.id);
@@ -29,6 +31,15 @@ export function NewProjectForm() {
     setStreet(c.street);
     setZipCity(c.zipCity);
   }
+
+  // Neu angelegten Kunden (Plus neben „Kunde“) direkt auswählen.
+  const known = useRef(new Set(customers.map((c) => c.id)));
+  useEffect(() => {
+    const fresh = customers.find((c) => !known.current.has(c.id));
+    customers.forEach((c) => known.current.add(c.id));
+    if (fresh) pickCustomer(fresh.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customers]);
 
   function save() {
     if (!title.trim()) return setError(t.pflicht);
@@ -47,7 +58,12 @@ export function NewProjectForm() {
         autoFocus
       />
       <View style={{ gap: spacing.xs }}>
-        <AppText variant="label">{t.kunde}</AppText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          <AppText variant="label" style={{ flex: 1 }}>
+            {t.kunde}
+          </AppText>
+          <AddButton label={de.anlegen.kunde} onPress={() => router.push('/kunde')} />
+        </View>
         <Chips
           options={customers.map((c) => ({ value: c.id, label: c.name }))}
           value={customerId}

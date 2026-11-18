@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { Section } from '@/components/Section';
 import { offersFor } from '@/features/costing/costing';
-import { catalog } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { isOwner, supplierById } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
 import { OnlineSearch } from '@/features/purchasing/OnlineSearch';
@@ -35,6 +35,7 @@ function Figure({ label, value, color }: { label: string; value: string; color?:
 }
 
 export default function ArtikelScreen() {
+  const catalog = useStamm((s) => s.catalog);
   const colors = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const item = catalog.find((c) => c.id === id);

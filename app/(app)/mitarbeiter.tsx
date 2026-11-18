@@ -1,18 +1,30 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 
+import { AddButton } from '@/components/AddButton';
 import { Avatar } from '@/components/Avatar';
 import { Badge } from '@/components/Badge';
 import { Card } from '@/components/Card';
 import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
-import { members } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { de } from '@/i18n/de';
 import { call } from '@/lib/links';
 
 export default function MitarbeiterScreen() {
+  const members = useStamm((s) => s.members);
   return (
     <Screen>
-      <Stack.Screen options={{ title: de.mehr.mitarbeiter }} />
+      <Stack.Screen
+        options={{
+          title: de.mehr.mitarbeiter,
+          headerRight: () => (
+            <AddButton
+              label={de.anlegen.mitarbeiter}
+              onPress={() => router.push('/mitarbeiter-neu')}
+            />
+          ),
+        }}
+      />
       <Card style={{ paddingVertical: 4 }}>
         {members.map((m, i) => (
           <ListRow

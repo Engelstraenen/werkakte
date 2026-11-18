@@ -9,10 +9,13 @@ import { useDemo } from '@/features/demo/store';
 export function ProjectPicker({
   onPick,
   onlyMine,
+  onNew,
 }: {
   onPick: (projectId: string) => void;
   /** Nur Projekte, in deren Team ich bin (z. B. für Zeit starten). */
   onlyMine?: boolean;
+  /** Erste Zeile „Neues Projekt anlegen“ (z. B. beim Angebot). */
+  onNew?: { label: string; onPress: () => void };
 }) {
   const projects = useDemo((s) => s.projects)
     .filter((p) => p.status !== 'bezahlt' && p.status !== 'abgeschlossen')
@@ -20,10 +23,17 @@ export function ProjectPicker({
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   return (
     <Card style={{ paddingVertical: 4 }}>
+      {onNew ? (
+        <ListRow
+          title={onNew.label}
+          left={<IconCircle name="add" size={40} />}
+          onPress={onNew.onPress}
+        />
+      ) : null}
       {projects.map((p, i) => (
         <ListRow
           key={p.id}
-          divider={i > 0}
+          divider={i > 0 || !!onNew}
           title={p.title}
           subtitle={`${customerOf(p).name} · ${p.street}`}
           left={<IconCircle name="folder-open" size={40} />}

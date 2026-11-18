@@ -7,7 +7,8 @@ import { Button } from '@/components/Button';
 import { Chips } from '@/components/Chips';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
-import { CURRENT_MEMBER_ID, members, suppliers } from '@/features/demo/data';
+import { CURRENT_MEMBER_ID } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { parseEuro } from '@/lib/money';
@@ -18,6 +19,8 @@ const quickHours = [1, 2, 4, 8];
 
 /** Kosten von Hand: Material = Betrag eintippen; Stunden = Schnelltaste antippen. */
 export default function KostenNeuScreen() {
+  const members = useStamm((s) => s.members);
+  const suppliers = useStamm((s) => s.suppliers);
   const colors = useColors();
   const { projectId, kind } = useLocalSearchParams<{
     projectId: string;

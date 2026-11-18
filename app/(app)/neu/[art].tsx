@@ -71,8 +71,20 @@ export default function NeuScreen() {
         <NewProjectForm />
       ) : !projectId ? (
         <>
-          <AppText variant="title">{t.welchesProjekt}</AppText>
-          <ProjectPicker onPick={setProjectId} onlyMine={art === 'zeit'} />
+          <AppText variant="title">{art === 'angebot' ? t.angebotFuer : t.welchesProjekt}</AppText>
+          <ProjectPicker
+            onPick={setProjectId}
+            onlyMine={art === 'zeit'}
+            onNew={
+              art === 'angebot'
+                ? {
+                    label: t.neuesProjektZuerst,
+                    onPress: () =>
+                      router.replace({ pathname: '/neu/[art]', params: { art: 'projekt' } }),
+                  }
+                : undefined
+            }
+          />
         </>
       ) : art === 'notiz' || art === 'foto' ? (
         <>

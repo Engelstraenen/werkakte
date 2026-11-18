@@ -11,12 +11,14 @@ import { de } from '@/i18n/de';
 import { radius, spacing, useColors, type Tone } from '@/theme';
 
 const t = de.schnellaktion;
-type Art = 'foto' | 'notiz' | 'angebot' | 'projekt' | 'zeit' | 'material';
+type Art = 'foto' | 'notiz' | 'angebot' | 'projekt' | 'zeit' | 'material' | 'kunde' | 'termin';
 const tiles: { art: Art; label: string; icon: IconName; tone: Tone; tag?: 'mangel' }[] = [
   { art: 'foto', label: t.foto, icon: 'camera', tone: 'primary' },
   { art: 'notiz', label: t.notiz, icon: 'mic', tone: 'info' },
   { art: 'angebot', label: t.angebot, icon: 'document-text', tone: 'warning' },
   { art: 'projekt', label: t.projekt, icon: 'folder-open', tone: 'success' },
+  { art: 'kunde', label: de.anlegen.kundeKurz, icon: 'person-add', tone: 'info' },
+  { art: 'termin', label: de.anlegen.terminKurz, icon: 'calendar', tone: 'warning' },
   { art: 'material', label: t.material, icon: 'cube', tone: 'danger' },
   {
     art: 'foto',
@@ -39,6 +41,8 @@ export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClo
   const open = (art: Art, tag?: 'mangel') => {
     onClose();
     if (art === 'material') router.push('/material-neu');
+    else if (art === 'kunde') router.push('/kunde');
+    else if (art === 'termin') router.push('/termin-neu');
     else router.push({ pathname: '/neu/[art]', params: { art, tag } });
   };
 

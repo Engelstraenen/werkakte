@@ -3,6 +3,7 @@ import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
+import { AddButton } from '@/components/AddButton';
 import { AppText } from '@/components/AppText';
 import { Avatar } from '@/components/Avatar';
 import { Card } from '@/components/Card';
@@ -11,7 +12,7 @@ import { Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
 import { Section } from '@/components/Section';
 import { offersFor } from '@/features/costing/costing';
-import { catalog, suppliers } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { isOwner, supplierById } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
 import { OnlineSearch } from '@/features/purchasing/OnlineSearch';
@@ -23,6 +24,8 @@ import { radius, spacing, touch, useColors } from '@/theme';
 const t = de.einkauf;
 
 export default function EinkaufScreen() {
+  const catalog = useStamm((s) => s.catalog);
+  const suppliers = useStamm((s) => s.suppliers);
   const colors = useColors();
   const prices = useDemo((s) => s.supplierPrices);
   const [query, setQuery] = useState('');
@@ -31,7 +34,14 @@ export default function EinkaufScreen() {
 
   return (
     <Screen>
-      <Stack.Screen options={{ title: t.titel }} />
+      <Stack.Screen
+        options={{
+          title: t.titel,
+          headerRight: () => (
+            <AddButton label={de.anlegen.lieferant} onPress={() => router.push('/lieferant-neu')} />
+          ),
+        }}
+      />
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <View style={{ flex: 1 }}>
           <SearchField value={query} onChange={setQuery} placeholder={t.suche} />

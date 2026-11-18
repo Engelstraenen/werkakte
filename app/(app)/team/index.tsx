@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
 import { Section } from '@/components/Section';
-import { azubis, jobs } from '@/features/team/data';
+import { azubis } from '@/features/team/data';
 import { JobShareList } from '@/features/team/JobShareList';
 import { statusLabel, statusTone } from '@/features/team/labels';
 import { bonusesDue, useTeam } from '@/features/team/store';
@@ -33,6 +33,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 }
 
 export default function TeamScreen() {
+  const jobs = useTeam((s) => s.jobs);
   const applicants = useTeam((s) => s.applicants);
   const shares = useTeam((s) => s.shares);
   const fresh = applicants.filter((a) => a.status === 'neu').length;
@@ -49,7 +50,10 @@ export default function TeamScreen() {
       </View>
       {due > 0 && <Badge label={`${due} × ${t.praemieOffen}`} tone="success" />}
 
-      <Section title={t.bewerbungen}>
+      <Section
+        title={t.bewerbungen}
+        onAdd={{ label: de.anlegen.bewerber, onPress: () => router.push('/team/bewerber-neu') }}
+      >
         <Card style={{ paddingVertical: 4 }}>
           {sorted.length === 0 && <EmptyState icon="person-add" text={t.keineBewerbungen} />}
           {sorted.map((a, i) => (
@@ -70,7 +74,10 @@ export default function TeamScreen() {
         </Card>
       </Section>
 
-      <Section title={t.stellen}>
+      <Section
+        title={t.stellen}
+        onAdd={{ label: de.anlegen.stelle, onPress: () => router.push('/team/stelle-neu') }}
+      >
         <JobShareList />
       </Section>
 

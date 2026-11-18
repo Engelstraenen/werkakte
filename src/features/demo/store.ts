@@ -293,9 +293,8 @@ export const useDemo = create<DemoState>((set, get) => {
       const id = newId('q');
       const number = takeQuoteNumber();
       const due = in30Days();
-      const items = seed.catalog
-        .filter((c) => c.id === 'k1' || c.id === 'k4')
-        .map((c, i) => ({ ...c, id: `${id}-${i}`, qtyMilli: c.id === 'k1' ? 8000 : 1000 }));
+      // Leeres Angebot: Positionen schreibt der Nutzer frei oder holt sie aus dem Katalog.
+      const items: DocItem[] = [];
       set((s) => ({
         quotes: [
           { id, projectId, number, date: now(), validUntil: due, status: 'entwurf', items },
