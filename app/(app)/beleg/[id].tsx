@@ -11,6 +11,7 @@ import { company } from '@/features/demo/data';
 import { customerOf, isOwner } from '@/features/demo/selectors';
 import { ProfitCard } from '@/features/costing/ProfitCard';
 import { DocActions } from '@/features/invoices/DocActions';
+import { InvoiceHelp, InvoiceNotes } from '@/features/invoices/InvoiceHelp';
 import { useDemo } from '@/features/demo/store';
 import { DocItems } from '@/features/quotes/DocItems';
 import { QuoteEditor } from '@/features/quotes/QuoteEditor';
@@ -84,14 +85,26 @@ export default function BelegScreen() {
             </AppText>
             <AppText variant="label">{formatDate(isQuote ? doc.validUntil : doc.dueDate)}</AppText>
           </View>
+          {!isQuote ? (
+            <View>
+              <AppText variant="small" muted>
+                {de.rechnung.leistungsdatum}
+              </AppText>
+              <AppText variant="label">{formatDate(doc.serviceDate ?? doc.date)}</AppText>
+            </View>
+          ) : null}
         </View>
       </Card>
 
-      {isQuote && doc.status === 'entwurf' ? (
+      {doc.status === 'entwurf' ? (
         <QuoteEditor quote={doc} />
       ) : (
         <DocItems items={doc.items} kleinunternehmer={company.kleinunternehmer} />
       )}
+      {!isQuote ? <InvoiceNotes invoice={doc} customer={customer} /> : null}
+      {!isQuote && doc.status === 'entwurf' ? (
+        <InvoiceHelp invoice={doc} customer={customer} />
+      ) : null}
       {isQuote && isOwner() ? <ProfitCard items={doc.items} /> : null}
 
       {isQuote && doc.signedAt ? (

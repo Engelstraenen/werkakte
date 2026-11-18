@@ -10,11 +10,12 @@ import { TextField } from '@/components/TextField';
 import { useDemo } from '@/features/demo/store';
 import type { MediaTag } from '@/features/demo/types';
 import { NewProjectForm } from '@/features/quick-actions/NewProjectForm';
+import { RechnungStart } from '@/features/invoices/RechnungStart';
 import { ProjectPicker } from '@/features/quick-actions/ProjectPicker';
 import { de } from '@/i18n/de';
 import { spacing } from '@/theme';
 
-export type Art = 'projekt' | 'notiz' | 'foto' | 'angebot' | 'zeit';
+export type Art = 'projekt' | 'notiz' | 'foto' | 'angebot' | 'rechnung' | 'zeit';
 const t = de.neu;
 const tags: MediaTag[] = ['vorher', 'nachher', 'mangel', 'sonstiges'];
 
@@ -69,6 +70,8 @@ export default function NeuScreen() {
       <Stack.Screen options={{ title: from ? t.vorlage : t[art] }} />
       {art === 'projekt' ? (
         <NewProjectForm />
+      ) : art === 'rechnung' ? (
+        <RechnungStart projectId={params.projectId} />
       ) : !projectId ? (
         <>
           <AppText variant="title">{art === 'angebot' ? t.angebotFuer : t.welchesProjekt}</AppText>

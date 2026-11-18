@@ -154,6 +154,8 @@ export type Invoice = {
   number: string;
   date: string;
   dueDate: string;
+  /** Leistungsdatum (Pflichtangabe § 14 UStG); fehlt es, gilt das Rechnungsdatum. */
+  serviceDate?: string;
   type: 'abschlag' | 'schluss' | 'einzel';
   status: 'entwurf' | 'versendet' | 'bezahlt';
   items: DocItem[];

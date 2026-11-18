@@ -5,11 +5,15 @@ import { create } from 'zustand';
 
 import * as seed from './data';
 import type { Appointment, CatalogItem, Customer, Member, Supplier } from './types';
+import type { Trade } from '@/features/quotes/trades';
 
 const newId = (prefix: string) =>
   `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
 
 type StammState = {
+  /** Gewerk des Betriebs – steuert Wortvorschläge in Angebot und Rechnung. */
+  trade: Trade;
+  setTrade: (trade: Trade) => void;
   customers: Customer[];
   catalog: CatalogItem[];
   suppliers: Supplier[];
@@ -27,6 +31,8 @@ type StammState = {
 };
 
 export const useStamm = create<StammState>((set) => ({
+  trade: 'shk',
+  setTrade: (trade) => set({ trade }),
   customers: seed.customers,
   catalog: seed.catalog,
   suppliers: seed.suppliers,

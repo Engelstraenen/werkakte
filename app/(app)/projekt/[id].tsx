@@ -53,7 +53,7 @@ export default function ProjektScreen() {
     { value: 'termine', label: `${de.akte.termine} ${dates.length}` },
   ];
   if (isOwner()) tabs.push({ value: 'kalkulation', label: de.akte.kalkulation });
-  const add = (art: 'foto' | 'notiz' | 'angebot', tag?: 'mangel' | 'sonstiges') =>
+  const add = (art: 'foto' | 'notiz' | 'angebot' | 'rechnung', tag?: 'mangel' | 'sonstiges') =>
     router.push({ pathname: '/neu/[art]', params: { art, projectId: project.id, tag } });
 
   return (
@@ -96,6 +96,11 @@ export default function ProjektScreen() {
       {active === 'belege' ? (
         <>
           <Button title={de.akte.angebotHinzu} onPress={() => add('angebot')} />
+          <Button
+            title={de.akte.rechnungHinzu}
+            variant="secondary"
+            onPress={() => add('rechnung')}
+          />
           {docs.length ? (
             <DocList docs={docs} />
           ) : (

@@ -2,7 +2,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 
 import { Button } from '@/components/Button';
+import { company } from '@/features/demo/data';
+import { customerOf } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
+import { invoiceChecks, missingRequired } from './checklist';
 import type { Invoice, Quote } from '@/features/demo/types';
 import { de } from '@/i18n/de';
 import { notice } from '@/lib/notice';
@@ -19,7 +22,7 @@ const toSend = (id: string) => router.push({ pathname: '/senden', params: { id }
  */
 export function DocActions({ doc }: { doc: Quote | Invoice }) {
   const colors = useColors();
-  const { invoices, acceptQuote, createInvoice, markPaid } = useDemo();
+  const { invoices, projects, acceptQuote, markPaid } = useDemo();
   const send = (
     <Button
       title={de.senden.senden}
@@ -29,7 +32,15 @@ export function DocActions({ doc }: { doc: Quote | Invoice }) {
   );
 
   if (!('validUntil' in doc)) {
-    if (doc.status === 'entwurf') return send;
+    if (doc.status === 'entwurf') {
+      const project = projects.find((p) => p.id === doc.projectId)!;
+      const missing = missingRequired(invoiceChecks(doc, customerOf(project), company));
+      return missing.length ? (
+        <Button title={de.rechnung.erstCheckliste} disabled onPress={() => undefined} />
+      ) : (
+        send
+      );
+    }
     if (doc.status === 'versendet')
       return (
         <>
@@ -61,7 +72,15 @@ export function DocActions({ doc }: { doc: Quote | Invoice }) {
         draftInvoice ? (
           <Button title={a.zurRechnung} onPress={() => open(draftInvoice.id)} />
         ) : (
-          <Button title={a.rechnungErstellen} onPress={() => open(createInvoice(doc.id))} />
+          <Button
+            title={a.rechnungErstellen}
+            onPress={() =>
+              router.push({
+                pathname: '/neu/[art]',
+                params: { art: 'rechnung', projectId: doc.projectId },
+              })
+            }
+          />
         )
       ) : null}
       {!doc.signedAt && doc.status !== 'angenommen' ? (
