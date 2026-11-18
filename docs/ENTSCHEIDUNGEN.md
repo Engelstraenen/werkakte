@@ -66,3 +66,6 @@
 - Anlegen immer über orange Plus (AddButton) oben rechts bzw. neben der Abschnittsüberschrift, nie „Neu“-Text (Eugen).
 - Stammdaten (Kunden, Katalog, Lieferanten, Mitarbeiter, Termine) im Zustand-Store `useStamm` statt fest in data.ts.
 - Neues Angebot startet leer; Positionen frei schreibbar und vollständig änderbar (Text, Einheit, Preis, MwSt).
+
+## 19.11.2026 – Netto-Eingabe
+- Handwerker geben immer Nettopreise ein; MwSt wird je Satz separat ausgewiesen („zzgl. MwSt 19 %“), unten „Gesamtbetrag (brutto)“ in Angebot und Rechnung. Kleinunternehmer: „Gesamtbetrag“ + Hinweis § 19 UStG.

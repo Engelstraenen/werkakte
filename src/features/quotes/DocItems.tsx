@@ -31,7 +31,7 @@ export function DocItems({
     <>
       <Card style={{ paddingVertical: spacing.sm }}>
         <AppText variant="small" muted>
-          {de.beleg.positionen} ({items.length})
+          {de.beleg.positionen} ({items.length}) · {de.beleg.preiseNetto}
         </AppText>
         {items.map((it, i) => (
           <View
@@ -79,7 +79,16 @@ export function DocTotals({
         <Row key={v.rate} label={de.beleg.mwst(v.rate)} value={formatEuro(v.vatCents)} />
       ))}
       <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing.xs }} />
-      <Row label={de.beleg.brutto} value={formatEuro(totals.grossCents)} strong />
+      <Row
+        label={kleinunternehmer ? de.beleg.gesamtKlein : de.beleg.brutto}
+        value={formatEuro(totals.grossCents)}
+        strong
+      />
+      {kleinunternehmer ? (
+        <AppText variant="small" muted>
+          {de.beleg.kleinHinweis}
+        </AppText>
+      ) : null}
     </Card>
   );
 }

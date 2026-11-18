@@ -87,7 +87,7 @@ export function QuoteEditor({ quote }: { quote: Quote | Invoice }) {
     <>
       <Card style={{ paddingVertical: spacing.sm }}>
         <AppText variant="small" muted>
-          {de.beleg.positionen} ({items.length}) · {t.hinweis}
+          {de.beleg.positionen} ({items.length}) · {de.beleg.preiseNetto} · {t.hinweis}
         </AppText>
         {items.length === 0 ? (
           <AppText muted style={{ paddingVertical: spacing.md }}>
@@ -124,7 +124,8 @@ export function QuoteEditor({ quote }: { quote: Quote | Invoice }) {
               >
                 <AppText variant="label">{it.name}</AppText>
                 <AppText variant="small" muted>
-                  {it.unit} × {formatEuro(it.unitPriceCents)} = {formatEuro(lineTotalCents(it))}
+                  {it.unit} × {formatEuro(it.unitPriceCents)} = {formatEuro(lineTotalCents(it))}{' '}
+                  netto
                 </AppText>
               </Pressable>
               <QtyInput
@@ -183,7 +184,7 @@ export function QuoteEditor({ quote }: { quote: Quote | Invoice }) {
               divider={i > 0}
               left={<Ionicons name="add-circle" size={28} color={colors.primary} />}
               title={s.name}
-              subtitle={`${formatEuro(s.unitPriceCents)} / ${s.unit}${s.hint ? ` · ${t.richtwert}` : s.uses ? ` · ${t.genutzt(s.uses)}` : ''}`}
+              subtitle={`${formatEuro(s.unitPriceCents)} netto / ${s.unit}${s.hint ? ` · ${t.richtwert}` : s.uses ? ` · ${t.genutzt(s.uses)}` : ''}`}
               onPress={() => addItem(s)}
             />
           ))}
