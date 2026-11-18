@@ -268,10 +268,12 @@ export const de = {
       'Netto, Steuersatz, Steuerbetrag, Brutto',
     ],
     offline: 'Ohne Netz wird automatisch gesendet, sobald wieder Netz da ist.',
-    teilen: 'Über WhatsApp oder Mail-App teilen',
+    teilen: 'PDF über WhatsApp, Mail oder Dateien teilen',
     gesendet: 'Gesendet',
     gesendetAn: (list: string) => `Gesendet an: ${list}`,
-    prototyp: 'Im Prototyp wird nichts wirklich verschickt.',
+    prototyp:
+      'Das PDF liegt jetzt im Belegarchiv. Der automatische Mailversand wird mit dem Server freigeschaltet – bis dahin über „PDF teilen“ verschicken.',
+    imArchiv: 'Im Belegarchiv abgelegt.',
   },
   ablauf: {
     zugesagt: 'Kunde hat zugesagt',
@@ -562,6 +564,24 @@ export const de = {
     lohnText: (euro: string) =>
       `Enthaltene Arbeitskosten inkl. MwSt.: ${euro} (steuerlich absetzbar nach § 35a EStG).`,
     erstCheckliste: 'Erst die Checkliste erledigen',
+  },
+  pdf: {
+    teilen: 'PDF ansehen & teilen',
+    teilenHinweis: 'WhatsApp, Mail oder „In Dateien sichern“',
+    erstellt: 'PDF wird erstellt …',
+    fehler: 'Das PDF konnte nicht erstellt werden. Bitte noch einmal versuchen.',
+    eRechnungHinweis:
+      'Die elektronische Rechnung (XRechnung) wird zusammen mit diesem PDF übermittelt.',
+  },
+  archiv: {
+    titel: 'Belegarchiv',
+    untertitel: 'Alle versendeten Angebote und Rechnungen',
+    hinweis: (mail: string) =>
+      `Versendete Belege liegen hier unveränderbar (Rechnungen 8 Jahre aufbewahren). Jede Rechnung geht automatisch als Kopie an ${mail}.`,
+    leer: 'Noch nichts versendet. Sobald du ein Angebot oder eine Rechnung sendest, liegt das PDF hier.',
+    versendet: (d: string) => `versendet am ${d}`,
+    rechnungen: 'Rechnungen',
+    angebote: 'Angebote',
   },
   prototyp: {
     titel: 'Nur Vorschau',

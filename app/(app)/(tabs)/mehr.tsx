@@ -42,6 +42,13 @@ const entriesFor = (
     icon: 'pricetags',
     tone: 'warning',
   },
+  {
+    href: '/archiv',
+    title: de.archiv.titel,
+    subtitle: de.archiv.untertitel,
+    icon: 'archive',
+    tone: 'neutral',
+  },
   { href: '/firma', title: t.firma, subtitle: company.name, icon: 'business', tone: 'primary' },
   {
     href: '/nummernkreise',
