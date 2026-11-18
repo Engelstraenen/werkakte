@@ -8,7 +8,7 @@ import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
-import { catalog } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { OnlineSearch } from '@/features/purchasing/OnlineSearch';
 import { de } from '@/i18n/de';
 import { radius, spacing, useColors } from '@/theme';
@@ -16,11 +16,11 @@ import { radius, spacing, useColors } from '@/theme';
 const t = de.einkauf;
 // shortcut: Prototyp zeigt nur den Ablauf; echte KI-Erkennung kommt in Version 1.x.
 const sample = require('../../assets/demo/f08.jpg');
-const recognized = catalog.find((c) => c.id === 'k12')!;
 
 type Step = 'aufnahme' | 'erkennen' | 'erkannt';
 
 export default function EinkaufFotoScreen() {
+  const recognized = useStamm((s) => s.catalog.find((c) => c.id === 'k12'))!;
   const colors = useColors();
   const [step, setStep] = useState<Step>('aufnahme');
 

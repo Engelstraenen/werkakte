@@ -5,13 +5,14 @@ import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
 import { ToggleRow } from '@/components/ToggleRow';
-import { members } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 
 const t = de.versand;
 
 export default function VersandScreen() {
+  const members = useStamm((s) => s.members);
   const sending = useDemo((s) => s.sending);
   const setSending = useDemo((s) => s.setSending);
   return (

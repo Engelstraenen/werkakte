@@ -1,4 +1,5 @@
-import { appointments, CURRENT_MEMBER_ID, customers, members, suppliers } from './data';
+import { CURRENT_MEMBER_ID } from './data';
+import { useStamm } from './stamm';
 import type {
   Invoice,
   MaterialRequest,
@@ -12,14 +13,16 @@ import type {
 import { isSameDay } from '@/lib/date';
 import { documentTotals } from '@/lib/money';
 
-export const customerOf = (p: Project) => customers.find((c) => c.id === p.customerId)!;
-export const memberById = (id: string) => members.find((m) => m.id === id)!;
-export const supplierById = (id: string) => suppliers.find((s) => s.id === id)!;
+// Stammdaten kommen aus dem Stamm-Store (anlegbar); getState(), damit die Selektoren keine Hooks sind.
+const stamm = () => useStamm.getState();
+export const customerOf = (p: Project) => stamm().customers.find((c) => c.id === p.customerId)!;
+export const memberById = (id: string) => stamm().members.find((m) => m.id === id)!;
+export const supplierById = (id: string) => stamm().suppliers.find((s) => s.id === id)!;
 /** Einkaufspreise, Kosten und Gewinn sieht nur der Inhaber. */
 export const isOwner = () => memberById(CURRENT_MEMBER_ID).role === 'inhaber';
 export const appointmentsOn = (day: Date) =>
-  appointments
-    .filter((a) => isSameDay(new Date(a.start), day))
+  stamm()
+    .appointments.filter((a) => isSameDay(new Date(a.start), day))
     .sort((a, b) => a.start.localeCompare(b.start));
 
 export const docTotal = (d: Quote | Invoice) => documentTotals(d.items).grossCents;

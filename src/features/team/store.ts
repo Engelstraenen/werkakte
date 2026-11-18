@@ -2,10 +2,13 @@
 import { create } from 'zustand';
 
 import * as seed from './data';
-import type { Applicant, ApplicantStatus, WeekStatus } from './types';
+import type { Applicant, ApplicantStatus, JobOpening, WeekStatus } from './types';
 
 type TeamState = {
+  jobs: JobOpening[];
   applicants: Applicant[];
+  addJob: (j: Omit<JobOpening, 'id' | 'slug' | 'open'>) => string;
+  addApplicant: (a: Pick<Applicant, 'name' | 'phone' | 'jobId' | 'source'>) => string;
   /** Status je Berichtsheft-Woche, Schlüssel „azubiId:JJJJ-KW“. */
   weekStatus: Record<string, WeekStatus>;
   /** Wie oft jemand einen Job-Link geteilt hat, je Mitarbeiter-ID. */
@@ -17,9 +20,36 @@ type TeamState = {
 };
 
 const now = () => new Date().toISOString();
+const newId = (p: string) => `${p}${Date.now().toString(36)}`;
+/** „Anlagenmechaniker/in SHK“ → „anlagenmechaniker-in-shk“ (für den Link auf der Webseite). */
+export const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 
 export const useTeam = create<TeamState>((set) => ({
+  jobs: seed.jobs,
   applicants: seed.applicants,
+  addJob: (j) => {
+    const id = newId('j');
+    set((s) => ({ jobs: [...s.jobs, { ...j, id, slug: slugify(j.title), open: true }] }));
+    return id;
+  },
+  addApplicant: (a) => {
+    const id = newId('b');
+    set((s) => ({
+      applicants: [
+        ...s.applicants,
+        { ...a, id, status: 'neu', createdAt: now(), answers: [], notes: [] },
+      ],
+    }));
+    return id;
+  },
   weekStatus: {},
   shares: { m2: 3, m3: 1 },
   setApplicantStatus: (id, status) =>

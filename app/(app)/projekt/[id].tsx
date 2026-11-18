@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
@@ -7,7 +8,7 @@ import { Chips } from '@/components/Chips';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { AppointmentCard } from '@/features/calendar/AppointmentCard';
-import { appointments } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { isOwner } from '@/features/demo/selectors';
 import { CostingView } from '@/features/costing/CostingView';
 import { useDemo } from '@/features/demo/store';
@@ -16,11 +17,13 @@ import { MaterialList } from '@/features/projects/MaterialList';
 import { ProjectHeader } from '@/features/projects/ProjectHeader';
 import { DocList } from '@/features/quotes/DocList';
 import { de } from '@/i18n/de';
-import { spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 type Tab = 'doku' | 'material' | 'belege' | 'termine' | 'kalkulation';
 
 export default function ProjektScreen() {
+  const colors = useColors();
+  const appointments = useStamm((s) => s.appointments);
   const { id, tab } = useLocalSearchParams<{ id: string; tab?: Tab }>();
   const project = useDemo((s) => s.projects.find((p) => p.id === id));
   const allMedia = useDemo((s) => s.media);
@@ -102,11 +105,21 @@ export default function ProjektScreen() {
       ) : null}
 
       {active === 'termine' ? (
-        dates.length ? (
-          dates.map((a) => <AppointmentCard key={a.id} appointment={a} />)
-        ) : (
-          <EmptyState icon="calendar-outline" text={de.akte.keineTermine} />
-        )
+        <>
+          <Button
+            title={de.anlegen.terminHinzu}
+            icon={<Ionicons name="add" size={24} color={colors.primary} />}
+            variant="secondary"
+            onPress={() =>
+              router.push({ pathname: '/termin-neu', params: { projectId: project.id } })
+            }
+          />
+          {dates.length ? (
+            dates.map((a) => <AppointmentCard key={a.id} appointment={a} />)
+          ) : (
+            <EmptyState icon="calendar-outline" text={de.akte.keineTermine} />
+          )}
+        </>
       ) : null}
       {active === 'kalkulation' ? <CostingView projectId={project.id} /> : null}
     </Screen>

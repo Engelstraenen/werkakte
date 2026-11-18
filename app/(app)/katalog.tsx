@@ -1,24 +1,33 @@
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 
+import { AddButton } from '@/components/AddButton';
 import { AppText } from '@/components/AppText';
 import { Card } from '@/components/Card';
 import { Chips } from '@/components/Chips';
 import { IconCircle } from '@/components/IconCircle';
 import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
-import { catalog } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { de } from '@/i18n/de';
 import { formatEuro } from '@/lib/money';
 
 type Filter = 'alle' | 'arbeit' | 'material';
 
 export default function KatalogScreen() {
+  const catalog = useStamm((s) => s.catalog);
   const [filter, setFilter] = useState<Filter>('alle');
   const list = catalog.filter((c) => filter === 'alle' || c.type === filter);
   return (
     <Screen>
-      <Stack.Screen options={{ title: de.mehr.katalog }} />
+      <Stack.Screen
+        options={{
+          title: de.mehr.katalog,
+          headerRight: () => (
+            <AddButton label={de.anlegen.artikel} onPress={() => router.push('/artikel-neu')} />
+          ),
+        }}
+      />
       <Chips
         segmented
         options={[

@@ -11,8 +11,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { Section } from '@/components/Section';
 import { TextField } from '@/components/TextField';
-import { members } from '@/features/demo/data';
-import { jobs } from '@/features/team/data';
+import { useStamm } from '@/features/demo/stamm';
 import { statusLabel } from '@/features/team/labels';
 import { useTeam } from '@/features/team/store';
 import type { Applicant, ApplicantStatus } from '@/features/team/types';
@@ -27,7 +26,7 @@ function sourceText(a: Applicant) {
   if (a.source.kind === 'webseite') return t.quelleWebseite;
   if (a.source.kind === 'foto-check') return t.quelleFoto;
   const { memberId } = a.source;
-  return `${t.quelleEmpfehlung} ${members.find((m) => m.id === memberId)?.name ?? '–'} (Prämie 1.000 €)`;
+  return `${t.quelleEmpfehlung} ${useStamm.getState().members.find((m) => m.id === memberId)?.name ?? '–'} (Prämie 1.000 €)`;
 }
 
 const when = (iso: string) =>
@@ -45,7 +44,7 @@ export default function BewerberScreen() {
   const addNote = useTeam((s) => s.addApplicantNote);
   const [note, setNote] = useState('');
   if (!a) return <EmptyState icon="person" text="–" />;
-  const job = jobs.find((j) => j.id === a.jobId);
+  const job = useTeam.getState().jobs.find((j) => j.id === a.jobId);
   return (
     <Screen>
       <Stack.Screen options={{ title: t.akte }} />

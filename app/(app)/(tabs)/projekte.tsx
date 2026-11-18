@@ -1,5 +1,7 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 
+import { AddButton } from '@/components/AddButton';
 import { AppText } from '@/components/AppText';
 import { Chips } from '@/components/Chips';
 import { EmptyState } from '@/components/EmptyState';
@@ -33,6 +35,12 @@ export default function ProjekteScreen() {
   return (
     <Screen
       title={de.tabs.projekte}
+      right={
+        <AddButton
+          label={de.neu.projekt}
+          onPress={() => router.push({ pathname: '/neu/[art]', params: { art: 'projekt' } })}
+        />
+      }
       header={
         <>
           <SearchField value={query} onChange={setQuery} placeholder={de.projekte.suche} />

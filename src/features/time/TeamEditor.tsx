@@ -2,7 +2,7 @@ import { Pressable, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Avatar } from '@/components/Avatar';
-import { members } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { useDemo } from '@/features/demo/store';
 import type { Project } from '@/features/demo/types';
 import { de } from '@/i18n/de';
@@ -10,6 +10,7 @@ import { radius, spacing, touch, useColors } from '@/theme';
 
 /** Wer gehört zum Projekt (= darf es sehen und dort Zeit erfassen). Nur für den Inhaber. */
 export function TeamEditor({ project }: { project: Project }) {
+  const members = useStamm((s) => s.members);
   const colors = useColors();
   const { timers, setTeam, stopTimer } = useDemo();
 

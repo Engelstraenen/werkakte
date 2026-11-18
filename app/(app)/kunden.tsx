@@ -1,23 +1,31 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { useState } from 'react';
 
+import { AddButton } from '@/components/AddButton';
 import { Avatar } from '@/components/Avatar';
 import { Badge } from '@/components/Badge';
 import { Card } from '@/components/Card';
 import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
-import { customers } from '@/features/demo/data';
+import { useStamm } from '@/features/demo/stamm';
 import { de } from '@/i18n/de';
-import { call } from '@/lib/links';
 
 export default function KundenScreen() {
+  const customers = useStamm((s) => s.customers);
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
   const list = customers.filter((c) => `${c.name} ${c.zipCity}`.toLowerCase().includes(q));
   return (
     <Screen>
-      <Stack.Screen options={{ title: de.mehr.kunden }} />
+      <Stack.Screen
+        options={{
+          title: de.mehr.kunden,
+          headerRight: () => (
+            <AddButton label={de.anlegen.kunde} onPress={() => router.push('/kunde')} />
+          ),
+        }}
+      />
       <SearchField value={query} onChange={setQuery} placeholder={de.projekte.suche} />
       <Card style={{ paddingVertical: 4 }}>
         {list.map((c, i) => (
@@ -33,7 +41,7 @@ export default function KundenScreen() {
                 tone={c.type === 'privat' ? 'neutral' : 'info'}
               />
             }
-            onPress={() => call(c.phone)}
+            onPress={() => router.push({ pathname: '/kunde', params: { id: c.id } })}
           />
         ))}
       </Card>
