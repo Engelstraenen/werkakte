@@ -37,7 +37,15 @@
       ],
       "expo-secure-store",
       "expo-web-browser",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Werkakte braucht Zugriff auf deine Fotos, damit du Baustellenfotos in die Projektakte übernehmen kannst.",
+          "cameraPermission": "Werkakte braucht die Kamera, damit du Baustellenfotos direkt in die Projektakte aufnehmen kannst.",
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

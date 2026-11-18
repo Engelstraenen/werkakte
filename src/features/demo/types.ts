@@ -144,6 +144,8 @@ export type Quote = {
   status: 'entwurf' | 'versendet' | 'angenommen' | 'abgelehnt';
   items: DocItem[];
   signedAt?: string;
+  /** Unterschrift des Kunden auf dem Handy: SVG-Pfade (Feld 320 × 160) + Name in Druckschrift. */
+  signature?: { paths: string[]; name: string };
   sentAt?: string;
 };
 
@@ -160,6 +162,8 @@ export type Invoice = {
   status: 'entwurf' | 'versendet' | 'bezahlt';
   items: DocItem[];
   sentAt?: string;
+  /** Zahlungserinnerung / Mahnungen in Reihenfolge. */
+  dunning?: { level: 1 | 2 | 3; sentAt: string; deadline: string }[];
 };
 
 /** Laufende Zeit einer Person (pro Person höchstens eine). */

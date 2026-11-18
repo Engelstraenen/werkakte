@@ -1,7 +1,10 @@
 // shortcut: Prototyp-Daten im Speicher (gehen beim Neuladen verloren); ab Phase 1 SQLite + Sync.
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { persistOptions } from '@/lib/persist';
 
 import { buildInvoice, type InvoiceKind } from '@/features/invoices/build';
+import { newDunning, nextDunningLevel } from '@/features/invoices/dunning';
 import { invoiceFromQuote } from '@/features/invoices/fromQuote';
 import { formatNumber, type NumberFormat } from '@/lib/numbering';
 
@@ -41,10 +44,14 @@ type DemoState = {
   setSending: (patch: Partial<SendSettings>) => void;
   setReminders: (patch: Partial<Reminders>) => void;
   acceptQuote: (quoteId: string) => void;
+  /** Kunde unterschreibt auf dem Handy = Auftrag erteilt. */
+  signQuote: (quoteId: string, signature: { paths: string[]; name: string }) => void;
   createInvoice: (quoteId: string) => string;
   /** Versenden: Rechnungen bekommen erst jetzt ihre Nummer; danach gesperrt. */
   sendDoc: (docId: string) => void;
   markPaid: (invoiceId: string) => void;
+  /** Nächste Mahnstufe anlegen (1 Erinnerung, 2 Mahnung, 3 letzte Mahnung). */
+  remindInvoice: (invoiceId: string) => void;
   numbering: { angebot: NumberFormat; rechnung: NumberFormat };
   setNumbering: (kind: 'angebot' | 'rechnung', format: NumberFormat) => void;
   supplierPrices: SupplierPrice[];
@@ -61,7 +68,8 @@ type DemoState = {
   setStatus: (projectId: string, status: ProjectStatus) => void;
   setCover: (projectId: string, mediaId: string) => void;
   addNote: (projectId: string, text: string) => void;
-  addPhoto: (projectId: string, tag: MediaTag, note: string) => void;
+  /** uri = echtes Foto (Kamera/Galerie); ohne uri ein Beispielfoto (nur Demo/Tests). */
+  addPhoto: (projectId: string, tag: MediaTag, note: string, uri?: string) => void;
   resolveProblem: (mediaId: string) => void;
   materialRequests: MaterialRequest[];
   addMaterialRequest: (
@@ -89,297 +97,341 @@ const in30Days = () => new Date(Date.now() + 30 * 86400000).toISOString();
 const touch = (projects: Project[], id: string, patch: Partial<Project> = {}) =>
   projects.map((p) => (p.id === id ? { ...p, ...patch, updatedAt: now() } : p));
 
-export const useDemo = create<DemoState>((set, get) => {
-  /** Nächste Angebotsnummer vergeben und Zähler erhöhen. */
-  const takeQuoteNumber = () => {
-    const f = get().numbering.angebot;
-    set((s) => ({ numbering: { ...s.numbering, angebot: { ...f, next: f.next + 1 } } }));
-    return formatNumber(f);
-  };
-  const takeInvoiceNumber = () => {
-    const f = get().numbering.rechnung;
-    set((s) => ({ numbering: { ...s.numbering, rechnung: { ...f, next: f.next + 1 } } }));
-    return formatNumber(f);
-  };
-  return {
-    projects: seed.projects,
-    media: seed.media,
-    notes: seed.notes,
-    quotes: seed.quotes,
-    invoices: seed.invoices,
-    timers: {
-      m2: { projectId: 'p1', startedAt: new Date(Date.now() - 65 * 60000).toISOString() },
-      m3: { projectId: 'p7', startedAt: new Date(Date.now() - 95 * 60000).toISOString() },
-    },
-    setTeam: (projectId, memberIds) =>
-      set((s) => ({ projects: touch(s.projects, projectId, { memberIds }) })),
-    sending: {
-      copyToMe: true,
-      myEmail: seed.company.email,
-      toDatev: true,
-      datevEmail: 'weber-belege@upload.example',
-      materialRecipients: [seed.CURRENT_MEMBER_ID],
-      purchasingEmail: '',
-    },
-    reminders: {
-      followUp: true,
-      followUpDays: 7,
-      overdue: true,
-      dailyWrapUp: true,
-      wrapUpHour: 17,
-      autoClockIn: false,
-    },
-    setSending: (patch) => set((s) => ({ sending: { ...s.sending, ...patch } })),
-    setReminders: (patch) => set((s) => ({ reminders: { ...s.reminders, ...patch } })),
-    acceptQuote: (quoteId) =>
-      set((s) => {
-        const q = s.quotes.find((x) => x.id === quoteId)!;
-        return {
-          quotes: s.quotes.map((x) =>
-            x.id === quoteId ? { ...x, status: 'angenommen' as const } : x,
-          ),
-          projects: touch(s.projects, q.projectId, { status: 'beauftragt' }),
-        };
-      }),
-    createInvoice: (quoteId) => {
-      const id = newId('r');
-      const quote = get().quotes.find((q) => q.id === quoteId)!;
-      const invoice = invoiceFromQuote(quote, get().invoices, id);
-      set((s) => ({
-        invoices: [invoice, ...s.invoices],
-        projects: touch(s.projects, quote.projectId),
-      }));
-      return id;
-    },
-    sendDoc: (docId) => {
-      const inv = get().invoices.find((i) => i.id === docId);
-      if (inv) {
-        if (inv.status !== 'entwurf') return;
-        const number = takeInvoiceNumber();
-        set((s) => ({
-          invoices: s.invoices.map((i) =>
-            i.id === docId
-              ? { ...i, number, status: 'versendet' as const, date: now(), sentAt: now() }
-              : i,
-          ),
-        }));
-        return;
-      }
-      set((s) => ({
-        quotes: s.quotes.map((q) =>
-          q.id === docId && q.status === 'entwurf'
-            ? { ...q, status: 'versendet' as const, sentAt: now() }
-            : q,
-        ),
-      }));
-    },
-    markPaid: (invoiceId) =>
-      set((s) => ({
-        invoices: s.invoices.map((i) =>
-          i.id === invoiceId ? { ...i, status: 'bezahlt' as const } : i,
-        ),
-      })),
-    numbering: {
-      angebot: { prefix: 'A-{Jahr}-', next: 45, digits: 4, suffix: '' },
-      rechnung: { prefix: 'R-{Jahr}-', next: 30, digits: 4, suffix: '' },
-    },
-    setNumbering: (kind, format) => set((s) => ({ numbering: { ...s.numbering, [kind]: format } })),
-    supplierPrices: seed.supplierPrices,
-    projectCosts: seed.projectCosts,
+export const useDemo = create<DemoState>()(
+  persist(
+    (set, get) => {
+      /** Nächste Angebotsnummer vergeben und Zähler erhöhen. */
+      const takeQuoteNumber = () => {
+        const f = get().numbering.angebot;
+        set((s) => ({ numbering: { ...s.numbering, angebot: { ...f, next: f.next + 1 } } }));
+        return formatNumber(f);
+      };
+      const takeInvoiceNumber = () => {
+        const f = get().numbering.rechnung;
+        set((s) => ({ numbering: { ...s.numbering, rechnung: { ...f, next: f.next + 1 } } }));
+        return formatNumber(f);
+      };
+      return {
+        projects: seed.projects,
+        media: seed.media,
+        notes: seed.notes,
+        quotes: seed.quotes,
+        invoices: seed.invoices,
+        timers: {
+          m2: { projectId: 'p1', startedAt: new Date(Date.now() - 65 * 60000).toISOString() },
+          m3: { projectId: 'p7', startedAt: new Date(Date.now() - 95 * 60000).toISOString() },
+        },
+        setTeam: (projectId, memberIds) =>
+          set((s) => ({ projects: touch(s.projects, projectId, { memberIds }) })),
+        sending: {
+          copyToMe: true,
+          myEmail: seed.company.email,
+          toDatev: true,
+          datevEmail: 'weber-belege@upload.example',
+          materialRecipients: [seed.CURRENT_MEMBER_ID],
+          purchasingEmail: '',
+        },
+        reminders: {
+          followUp: true,
+          followUpDays: 7,
+          overdue: true,
+          dailyWrapUp: true,
+          wrapUpHour: 17,
+          autoClockIn: false,
+        },
+        setSending: (patch) => set((s) => ({ sending: { ...s.sending, ...patch } })),
+        setReminders: (patch) => set((s) => ({ reminders: { ...s.reminders, ...patch } })),
+        acceptQuote: (quoteId) =>
+          set((s) => {
+            const q = s.quotes.find((x) => x.id === quoteId)!;
+            return {
+              quotes: s.quotes.map((x) =>
+                x.id === quoteId ? { ...x, status: 'angenommen' as const } : x,
+              ),
+              projects: touch(s.projects, q.projectId, { status: 'beauftragt' }),
+            };
+          }),
+        signQuote: (quoteId, signature) =>
+          set((s) => {
+            const q = s.quotes.find((x) => x.id === quoteId)!;
+            return {
+              quotes: s.quotes.map((x) =>
+                x.id === quoteId
+                  ? { ...x, status: 'angenommen' as const, signedAt: now(), signature }
+                  : x,
+              ),
+              projects: touch(s.projects, q.projectId, { status: 'beauftragt' }),
+            };
+          }),
+        createInvoice: (quoteId) => {
+          const id = newId('r');
+          const quote = get().quotes.find((q) => q.id === quoteId)!;
+          const invoice = invoiceFromQuote(quote, get().invoices, id);
+          set((s) => ({
+            invoices: [invoice, ...s.invoices],
+            projects: touch(s.projects, quote.projectId),
+          }));
+          return id;
+        },
+        sendDoc: (docId) => {
+          const inv = get().invoices.find((i) => i.id === docId);
+          if (inv) {
+            if (inv.status !== 'entwurf') return;
+            const number = takeInvoiceNumber();
+            set((s) => ({
+              invoices: s.invoices.map((i) =>
+                i.id === docId
+                  ? { ...i, number, status: 'versendet' as const, date: now(), sentAt: now() }
+                  : i,
+              ),
+            }));
+            return;
+          }
+          set((s) => ({
+            quotes: s.quotes.map((q) =>
+              q.id === docId && q.status === 'entwurf'
+                ? { ...q, status: 'versendet' as const, sentAt: now() }
+                : q,
+            ),
+          }));
+        },
+        remindInvoice: (invoiceId) =>
+          set((s) => ({
+            invoices: s.invoices.map((i) => {
+              const level = i.id === invoiceId ? nextDunningLevel(i) : null;
+              return level ? { ...i, dunning: [...(i.dunning ?? []), newDunning(level)] } : i;
+            }),
+          })),
+        markPaid: (invoiceId) =>
+          set((s) => ({
+            invoices: s.invoices.map((i) =>
+              i.id === invoiceId ? { ...i, status: 'bezahlt' as const } : i,
+            ),
+          })),
+        numbering: {
+          angebot: { prefix: 'A-{Jahr}-', next: 45, digits: 4, suffix: '' },
+          rechnung: { prefix: 'R-{Jahr}-', next: 30, digits: 4, suffix: '' },
+        },
+        setNumbering: (kind, format) =>
+          set((s) => ({ numbering: { ...s.numbering, [kind]: format } })),
+        supplierPrices: seed.supplierPrices,
+        projectCosts: seed.projectCosts,
 
-    // Neuer Preis ersetzt den alten desselben Lieferanten für diesen Artikel.
-    addSupplierPrice: (catalogItemId, supplierId, priceCents) =>
-      set((s) => ({
-        supplierPrices: [
-          { id: newId('sp'), catalogItemId, supplierId, priceCents, updatedAt: now() },
-          ...s.supplierPrices.filter(
-            (p) => !(p.catalogItemId === catalogItemId && p.supplierId === supplierId),
-          ),
-        ],
-      })),
-    addMaterialCost: (projectId, text, amountCents, supplierId) =>
-      set((s) => ({
-        projectCosts: [
-          {
-            id: newId('pc'),
-            projectId,
-            kind: 'material',
-            date: now(),
-            text,
-            amountCents,
-            supplierId,
-          },
-          ...s.projectCosts,
-        ],
-        projects: touch(s.projects, projectId),
-      })),
-    addHours: (projectId, memberId, minutes) =>
-      set((s) => ({
-        projectCosts: [
-          { id: newId('h'), projectId, kind: 'stunden', date: now(), memberId, minutes },
-          ...s.projectCosts,
-        ],
-        projects: touch(s.projects, projectId),
-      })),
+        // Neuer Preis ersetzt den alten desselben Lieferanten für diesen Artikel.
+        addSupplierPrice: (catalogItemId, supplierId, priceCents) =>
+          set((s) => ({
+            supplierPrices: [
+              { id: newId('sp'), catalogItemId, supplierId, priceCents, updatedAt: now() },
+              ...s.supplierPrices.filter(
+                (p) => !(p.catalogItemId === catalogItemId && p.supplierId === supplierId),
+              ),
+            ],
+          })),
+        addMaterialCost: (projectId, text, amountCents, supplierId) =>
+          set((s) => ({
+            projectCosts: [
+              {
+                id: newId('pc'),
+                projectId,
+                kind: 'material',
+                date: now(),
+                text,
+                amountCents,
+                supplierId,
+              },
+              ...s.projectCosts,
+            ],
+            projects: touch(s.projects, projectId),
+          })),
+        addHours: (projectId, memberId, minutes) =>
+          set((s) => ({
+            projectCosts: [
+              { id: newId('h'), projectId, kind: 'stunden', date: now(), memberId, minutes },
+              ...s.projectCosts,
+            ],
+            projects: touch(s.projects, projectId),
+          })),
 
-    addProject: (p) => {
-      const id = newId('p');
-      set((s) => ({
-        projects: [
-          { ...p, id, status: 'anfrage', memberIds: [seed.CURRENT_MEMBER_ID], updatedAt: now() },
-          ...s.projects,
-        ],
-      }));
-      return id;
-    },
-    setStatus: (projectId, status) =>
-      set((s) => ({ projects: touch(s.projects, projectId, { status }) })),
-    setCover: (projectId, mediaId) =>
-      set((s) => ({ projects: touch(s.projects, projectId, { coverMediaId: mediaId }) })),
-    addNote: (projectId, text) =>
-      set((s) => ({
-        notes: [
-          {
-            id: newId('n'),
+        addProject: (p) => {
+          const id = newId('p');
+          set((s) => ({
+            projects: [
+              {
+                ...p,
+                id,
+                status: 'anfrage',
+                memberIds: [seed.CURRENT_MEMBER_ID],
+                updatedAt: now(),
+              },
+              ...s.projects,
+            ],
+          }));
+          return id;
+        },
+        setStatus: (projectId, status) =>
+          set((s) => ({ projects: touch(s.projects, projectId, { status }) })),
+        setCover: (projectId, mediaId) =>
+          set((s) => ({ projects: touch(s.projects, projectId, { coverMediaId: mediaId }) })),
+        addNote: (projectId, text) =>
+          set((s) => ({
+            notes: [
+              {
+                id: newId('n'),
+                projectId,
+                kind: 'text',
+                text,
+                createdAt: now(),
+                authorId: seed.CURRENT_MEMBER_ID,
+              },
+              ...s.notes,
+            ],
+            projects: touch(s.projects, projectId),
+          })),
+        resolveProblem: (mediaId) =>
+          set((s) => ({
+            media: s.media.map((m) => (m.id === mediaId ? { ...m, resolvedAt: now() } : m)),
+          })),
+        materialRequests: seed.materialRequests,
+        addMaterialRequest: (r) =>
+          set((s) => ({
+            materialRequests: [
+              {
+                ...r,
+                id: newId('mr'),
+                memberId: seed.CURRENT_MEMBER_ID,
+                status: 'offen',
+                createdAt: now(),
+              },
+              ...s.materialRequests,
+            ],
+            projects: touch(s.projects, r.projectId),
+          })),
+        setMaterialStatus: (id, status) =>
+          set((s) => ({
+            materialRequests: s.materialRequests.map((r) => (r.id === id ? { ...r, status } : r)),
+          })),
+        addPhoto: (projectId, tag, note, uri) =>
+          set((s) => {
+            // Ohne Foto (Tests/alte Aufrufe): eines der Beispielfotos.
+            const sample = seed.media[s.media.length % seed.media.length]!;
+            return {
+              media: [
+                {
+                  id: newId('f'),
+                  projectId,
+                  source: uri ? { uri } : sample.source,
+                  tag,
+                  note,
+                  takenAt: now(),
+                  authorId: seed.CURRENT_MEMBER_ID,
+                },
+                ...s.media,
+              ],
+              projects: touch(s.projects, projectId),
+            };
+          }),
+        addQuote: (projectId) => {
+          const id = newId('q');
+          const number = takeQuoteNumber();
+          const due = in30Days();
+          // Leeres Angebot: Positionen schreibt der Nutzer frei oder holt sie aus dem Katalog.
+          const items: DocItem[] = [];
+          set((s) => ({
+            quotes: [
+              { id, projectId, number, date: now(), validUntil: due, status: 'entwurf', items },
+              ...s.quotes,
+            ],
+            projects: touch(s.projects, projectId),
+          }));
+          return id;
+        },
+        duplicateQuote: (fromQuoteId, projectId) => {
+          const from = get().quotes.find((q) => q.id === fromQuoteId)!;
+          const id = newId('q');
+          const items = from.items.map((it, i) => ({ ...it, id: `${id}-${i}` }));
+          const number = takeQuoteNumber();
+          set((s) => ({
+            quotes: [
+              {
+                id,
+                projectId,
+                number,
+                date: now(),
+                validUntil: in30Days(),
+                status: 'entwurf',
+                items,
+              },
+              ...s.quotes,
+            ],
+            projects: touch(s.projects, projectId),
+          }));
+          return id;
+        },
+        addInvoice: (projectId, kind, percent) => {
+          const id = newId('r');
+          const { quotes, invoices } = get();
+          const invoice = buildInvoice(
+            kind,
             projectId,
-            kind: 'text',
-            text,
-            createdAt: now(),
-            authorId: seed.CURRENT_MEMBER_ID,
-          },
-          ...s.notes,
-        ],
-        projects: touch(s.projects, projectId),
-      })),
-    resolveProblem: (mediaId) =>
-      set((s) => ({
-        media: s.media.map((m) => (m.id === mediaId ? { ...m, resolvedAt: now() } : m)),
-      })),
-    materialRequests: seed.materialRequests,
-    addMaterialRequest: (r) =>
-      set((s) => ({
-        materialRequests: [
-          {
-            ...r,
-            id: newId('mr'),
-            memberId: seed.CURRENT_MEMBER_ID,
-            status: 'offen',
-            createdAt: now(),
-          },
-          ...s.materialRequests,
-        ],
-        projects: touch(s.projects, r.projectId),
-      })),
-    setMaterialStatus: (id, status) =>
-      set((s) => ({
-        materialRequests: s.materialRequests.map((r) => (r.id === id ? { ...r, status } : r)),
-      })),
-    addPhoto: (projectId, tag, note) =>
-      set((s) => {
-        // Ohne Kamera im Prototyp: eines der Beispielfotos wiederverwenden.
-        const sample = seed.media[s.media.length % seed.media.length]!;
-        return {
-          media: [
-            {
-              id: newId('f'),
-              projectId,
-              source: sample.source,
-              tag,
-              note,
-              takenAt: now(),
-              authorId: seed.CURRENT_MEMBER_ID,
-            },
-            ...s.media,
-          ],
-          projects: touch(s.projects, projectId),
-        };
-      }),
-    addQuote: (projectId) => {
-      const id = newId('q');
-      const number = takeQuoteNumber();
-      const due = in30Days();
-      // Leeres Angebot: Positionen schreibt der Nutzer frei oder holt sie aus dem Katalog.
-      const items: DocItem[] = [];
-      set((s) => ({
-        quotes: [
-          { id, projectId, number, date: now(), validUntil: due, status: 'entwurf', items },
-          ...s.quotes,
-        ],
-        projects: touch(s.projects, projectId),
-      }));
-      return id;
-    },
-    duplicateQuote: (fromQuoteId, projectId) => {
-      const from = get().quotes.find((q) => q.id === fromQuoteId)!;
-      const id = newId('q');
-      const items = from.items.map((it, i) => ({ ...it, id: `${id}-${i}` }));
-      const number = takeQuoteNumber();
-      set((s) => ({
-        quotes: [
-          {
+            quotes.filter((q) => q.projectId === projectId),
+            invoices.filter((i) => i.projectId === projectId),
             id,
-            projectId,
-            number,
-            date: now(),
-            validUntil: in30Days(),
-            status: 'entwurf',
-            items,
-          },
-          ...s.quotes,
-        ],
-        projects: touch(s.projects, projectId),
-      }));
-      return id;
+            new Date(),
+            percent,
+          );
+          set((s) => ({
+            invoices: [invoice, ...s.invoices],
+            projects: touch(s.projects, projectId),
+          }));
+          return id;
+        },
+        setInvoiceServiceDate: (invoiceId, iso) =>
+          set((s) => ({
+            invoices: s.invoices.map((i) => (i.id === invoiceId ? { ...i, serviceDate: iso } : i)),
+          })),
+        setInvoiceItems: (invoiceId, items) =>
+          set((s) => ({
+            invoices: s.invoices.map((i) =>
+              i.id === invoiceId && i.status === 'entwurf' ? { ...i, items } : i,
+            ),
+          })),
+        setQuoteItems: (quoteId, items) =>
+          set((s) => ({ quotes: s.quotes.map((q) => (q.id === quoteId ? { ...q, items } : q)) })),
+        startTimer: (projectId, memberId = seed.CURRENT_MEMBER_ID) => {
+          const project = get().projects.find((p) => p.id === projectId);
+          if (!project?.memberIds.includes(memberId)) return false;
+          if (get().timers[memberId]) get().stopTimer(memberId);
+          set((s) => ({ timers: { ...s.timers, [memberId]: { projectId, startedAt: now() } } }));
+          return true;
+        },
+        stopTimer: (memberId = seed.CURRENT_MEMBER_ID) => {
+          const timer = get().timers[memberId];
+          if (!timer) return;
+          const minutes = Math.max(
+            1,
+            Math.round((Date.now() - new Date(timer.startedAt).getTime()) / 60000),
+          );
+          set((s) => {
+            const { [memberId]: _stopped, ...rest } = s.timers;
+            return { timers: rest };
+          });
+          get().addHours(timer.projectId, memberId, minutes);
+        },
+      };
     },
-    addInvoice: (projectId, kind, percent) => {
-      const id = newId('r');
-      const { quotes, invoices } = get();
-      const invoice = buildInvoice(
-        kind,
-        projectId,
-        quotes.filter((q) => q.projectId === projectId),
-        invoices.filter((i) => i.projectId === projectId),
-        id,
-        new Date(),
-        percent,
-      );
-      set((s) => ({
-        invoices: [invoice, ...s.invoices],
-        projects: touch(s.projects, projectId),
-      }));
-      return id;
-    },
-    setInvoiceServiceDate: (invoiceId, iso) =>
-      set((s) => ({
-        invoices: s.invoices.map((i) => (i.id === invoiceId ? { ...i, serviceDate: iso } : i)),
-      })),
-    setInvoiceItems: (invoiceId, items) =>
-      set((s) => ({
-        invoices: s.invoices.map((i) =>
-          i.id === invoiceId && i.status === 'entwurf' ? { ...i, items } : i,
-        ),
-      })),
-    setQuoteItems: (quoteId, items) =>
-      set((s) => ({ quotes: s.quotes.map((q) => (q.id === quoteId ? { ...q, items } : q)) })),
-    startTimer: (projectId, memberId = seed.CURRENT_MEMBER_ID) => {
-      const project = get().projects.find((p) => p.id === projectId);
-      if (!project?.memberIds.includes(memberId)) return false;
-      if (get().timers[memberId]) get().stopTimer(memberId);
-      set((s) => ({ timers: { ...s.timers, [memberId]: { projectId, startedAt: now() } } }));
-      return true;
-    },
-    stopTimer: (memberId = seed.CURRENT_MEMBER_ID) => {
-      const timer = get().timers[memberId];
-      if (!timer) return;
-      const minutes = Math.max(
-        1,
-        Math.round((Date.now() - new Date(timer.startedAt).getTime()) / 60000),
-      );
-      set((s) => {
-        const { [memberId]: _stopped, ...rest } = s.timers;
-        return { timers: rest };
-      });
-      get().addHours(timer.projectId, memberId, minutes);
-    },
-  };
-});
+    persistOptions<DemoState>('demo', {
+      // Beispielfotos sind im App-Paket (Modul-Nummer ändert sich je Version) → beim Laden neu zuordnen.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<DemoState>;
+        const media = (p.media ?? current.media)
+          .map((m) => {
+            if (typeof m.source !== 'number') return m;
+            const seedMedia = current.media.find((x) => x.id === m.id);
+            return seedMedia ? { ...m, source: seedMedia.source } : null;
+          })
+          .filter((m): m is Media => m !== null);
+        return { ...current, ...p, media };
+      },
+    }),
+  ),
+);

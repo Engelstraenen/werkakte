@@ -11,6 +11,8 @@ import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { ToggleRow } from '@/components/ToggleRow';
 import { customerOf } from '@/features/demo/selectors';
+import { archiveOnDevice } from '@/features/invoices/belegExport';
+import { PdfButton } from '@/features/invoices/PdfButton';
 import { useDemo } from '@/features/demo/store';
 import { de } from '@/i18n/de';
 import { notice } from '@/lib/notice';
@@ -41,6 +43,7 @@ export default function SendenScreen() {
 
   function send() {
     sendDoc(doc!.id);
+    archiveOnDevice(doc!.id);
     notice(t.gesendet, `${t.gesendetAn(recipients.join(', '))}\n\n${t.prototyp}`);
     router.back();
   }
@@ -117,11 +120,7 @@ export default function SendenScreen() {
         icon={<Ionicons name="paper-plane" size={20} color={colors.onPrimary} />}
         onPress={send}
       />
-      <Button
-        title={t.teilen}
-        variant="secondary"
-        onPress={() => notice(de.prototyp.titel, de.prototyp.bald(4))}
-      />
+      <PdfButton doc={doc} project={project} />
     </Screen>
   );
 }

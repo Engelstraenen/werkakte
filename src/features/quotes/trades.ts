@@ -120,4 +120,6 @@ export const tradeWords = (trade: Trade): Suggestion[] =>
 /** Arbeitskosten-Positionen (für den Hinweis nach § 35a EStG auf Privatrechnungen). */
 export const isLabor = (name: string, unit: string) =>
   unit === 'Std' ||
-  /stunde|anfahrt|montage|montieren|einbauen|verlegen|streichen|wartung|abgleich/i.test(name);
+  /stunde|anfahrt|montage|montieren|einbauen|verlegen|streichen|wartung|abgleich|zuschlag|notdienst|reparatur|lohn|einweisung|entlüft|demontage/i.test(
+    name,
+  );

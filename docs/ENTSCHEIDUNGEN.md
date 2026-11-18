@@ -69,3 +69,9 @@
 
 ## 19.11.2026 – Netto-Eingabe
 - Handwerker geben immer Nettopreise ein; MwSt wird je Satz separat ausgewiesen („zzgl. MwSt 19 %“), unten „Gesamtbetrag (brutto)“ in Angebot und Rechnung. Kleinunternehmer: „Gesamtbetrag“ + Hinweis § 19 UStG.
+
+## 19.11.2026 – Ausbau ohne Server
+- PDF mit pdf-lib (CommonJS, erst bei Bedarf geladen; ESM-Fassung bricht in Metro), Hausschrift IBM Plex per fontkit eingebettet.
+- Teilen statt Mailversand, bis Server + EU-Maildienst stehen. Belegarchiv = versendete Belege (unveränderbar).
+- Daten: zustand persist (AsyncStorage/localStorage) als Zwischenschritt vor SQLite + Sync (Phase 1).
+- Mahnwesen 3 Stufen ohne Gebühren (rechtlich unkritisch). E-Rechnung XRechnung 3.0 UBL, im PDF eingebettet.

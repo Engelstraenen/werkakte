@@ -268,16 +268,24 @@ export const de = {
       'Netto, Steuersatz, Steuerbetrag, Brutto',
     ],
     offline: 'Ohne Netz wird automatisch gesendet, sobald wieder Netz da ist.',
-    teilen: 'Über WhatsApp oder Mail-App teilen',
+    teilen: 'PDF über WhatsApp, Mail oder Dateien teilen',
     gesendet: 'Gesendet',
     gesendetAn: (list: string) => `Gesendet an: ${list}`,
-    prototyp: 'Im Prototyp wird nichts wirklich verschickt.',
+    prototyp:
+      'Das PDF liegt jetzt im Belegarchiv. Der automatische Mailversand wird mit dem Server freigeschaltet – bis dahin über „PDF teilen“ verschicken.',
+    imArchiv: 'Im Belegarchiv abgelegt.',
   },
   ablauf: {
     zugesagt: 'Kunde hat zugesagt',
     rechnungErstellen: 'Rechnung erstellen',
     bezahlt: 'Als bezahlt markieren',
     mahnen: 'Zahlungserinnerung senden',
+    mahnStufe: (titel: string) => `${titel} senden`,
+    ueberfaellig: (tage: number) =>
+      tage === 0 ? 'Noch nicht fällig' : `Seit ${tage} Tagen überfällig`,
+    mahnVerlauf: 'Erinnerungen & Mahnungen',
+    mahnZeile: (titel: string, am: string, frist: string) => `${titel} am ${am} · Frist ${frist}`,
+    mahnErneut: 'PDF erneut teilen',
     entwurfNummer: 'Entwurf – Nummer beim Senden',
     zurRechnung: 'Zur Rechnung',
   },
@@ -400,6 +408,10 @@ export const de = {
   },
   mehr: {
     titel: 'Mehr',
+    zuruecksetzen: 'Beispieldaten zurücksetzen',
+    zuruecksetzenFrage:
+      'Alles, was du angelegt oder geändert hast, wird gelöscht und die Beispieldaten kommen zurück.',
+    zuruecksetzenJa: 'Zurücksetzen',
     gewerk: 'Dein Gewerk',
     gewerkHinweis:
       'Danach schlägt die App beim Schreiben passende Positionen vor – schon ab dem ersten Buchstaben.',
@@ -451,7 +463,11 @@ export const de = {
     notizFeld: 'Notiz',
     notizBeispiel: 'Was ist wichtig?',
     fotoArt: 'Was zeigt das Foto?',
-    fotoHinweis: 'Im Prototyp gibt es noch keine Kamera – es wird ein Beispielfoto gespeichert.',
+    fotoHinweis: 'Foto machen oder aus der Galerie wählen.',
+    kamera: 'Foto aufnehmen',
+    galerie: 'Aus Galerie wählen',
+    fotoFehlt: 'Bitte erst ein Foto aufnehmen oder auswählen.',
+    anderesFoto: 'Anderes Foto',
     speichern: 'Speichern',
     anlegen: 'Anlegen',
     starten: 'Starten',
@@ -562,6 +578,36 @@ export const de = {
     lohnText: (euro: string) =>
       `Enthaltene Arbeitskosten inkl. MwSt.: ${euro} (steuerlich absetzbar nach § 35a EStG).`,
     erstCheckliste: 'Erst die Checkliste erledigen',
+  },
+  pdf: {
+    teilen: 'PDF ansehen & teilen',
+    teilenHinweis: 'WhatsApp, Mail oder „In Dateien sichern“',
+    xml: 'E-Rechnung (XRechnung) teilen',
+    erstellt: 'PDF wird erstellt …',
+    fehler: 'Das PDF konnte nicht erstellt werden. Bitte noch einmal versuchen.',
+    eRechnungHinweis:
+      'Die elektronische Rechnung (XRechnung 3.0) ist in dieser PDF-Datei eingebettet und wird zusätzlich als XML-Datei übermittelt.',
+  },
+  archiv: {
+    titel: 'Belegarchiv',
+    untertitel: 'Alle versendeten Angebote und Rechnungen',
+    hinweis: (mail: string) =>
+      `Versendete Belege liegen hier unveränderbar (Rechnungen 8 Jahre aufbewahren). Jede Rechnung geht automatisch als Kopie an ${mail}.`,
+    leer: 'Noch nichts versendet. Sobald du ein Angebot oder eine Rechnung sendest, liegt das PDF hier.',
+    versendet: (d: string) => `versendet am ${d}`,
+    rechnungen: 'Rechnungen',
+    angebote: 'Angebote',
+  },
+  unterschrift: {
+    titel: 'Kunde unterschreibt',
+    auftrag: (firma: string, nummer: string, euro: string) =>
+      `Hiermit beauftrage ich ${firma} mit den Leistungen aus dem Angebot ${nummer} zum Gesamtpreis von ${euro} (brutto).`,
+    name: 'Name in Druckschrift',
+    feld: 'Hier mit dem Finger unterschreiben',
+    loeschen: 'Neu unterschreiben',
+    fertig: 'Unterschreiben & beauftragen',
+    fehlt: 'Bitte erst unterschreiben.',
+    danke: 'Auftrag erteilt – danke! Das Angebot ist jetzt angenommen.',
   },
   prototyp: {
     titel: 'Nur Vorschau',

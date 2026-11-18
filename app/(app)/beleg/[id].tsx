@@ -11,6 +11,8 @@ import { company } from '@/features/demo/data';
 import { customerOf, isOwner } from '@/features/demo/selectors';
 import { ProfitCard } from '@/features/costing/ProfitCard';
 import { DocActions } from '@/features/invoices/DocActions';
+import { PdfButton } from '@/features/invoices/PdfButton';
+import { DunningCard } from '@/features/invoices/DunningCard';
 import { InvoiceHelp, InvoiceNotes } from '@/features/invoices/InvoiceHelp';
 import { useDemo } from '@/features/demo/store';
 import { DocItems } from '@/features/quotes/DocItems';
@@ -124,7 +126,9 @@ export default function BelegScreen() {
         </Card>
       ) : null}
 
+      {!isQuote ? <DunningCard invoice={doc} project={project} /> : null}
       <DocActions doc={doc} />
+      <PdfButton doc={doc} project={project} />
     </Screen>
   );
 }

@@ -2,10 +2,12 @@
 // Vorher feste Listen aus data.ts; jetzt anlegen und ändern möglich (19.11.2026, „überall ein Plus“).
 // Ab Phase 1: Tabellen customer, catalog_item, supplier, member, appointment in SQLite + Sync.
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import * as seed from './data';
 import type { Appointment, CatalogItem, Customer, Member, Supplier } from './types';
 import type { Trade } from '@/features/quotes/trades';
+import { persistOptions } from '@/lib/persist';
 
 const newId = (prefix: string) =>
   `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
@@ -30,48 +32,53 @@ type StammState = {
   removeAppointment: (id: string) => void;
 };
 
-export const useStamm = create<StammState>((set) => ({
-  trade: 'shk',
-  setTrade: (trade) => set({ trade }),
-  customers: seed.customers,
-  catalog: seed.catalog,
-  suppliers: seed.suppliers,
-  members: seed.members,
-  appointments: seed.appointments,
-  addCustomer: (c) => {
-    const id = newId('c');
-    set((s) => ({ customers: [...s.customers, { ...c, id }] }));
-    return id;
-  },
-  updateCustomer: (id, patch) =>
-    set((s) => ({ customers: s.customers.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
-  addCatalogItem: (c) => {
-    const id = newId('k');
-    set((s) => ({ catalog: [...s.catalog, { ...c, id }] }));
-    return id;
-  },
-  updateCatalogItem: (id, patch) =>
-    set((s) => ({ catalog: s.catalog.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
-  addSupplier: (sup) => {
-    const id = newId('s');
-    set((s) => ({ suppliers: [...s.suppliers, { ...sup, id }] }));
-    return id;
-  },
-  addMember: (m) => {
-    const id = newId('m');
-    set((s) => ({ members: [...s.members, { ...m, id }] }));
-    return id;
-  },
-  updateMember: (id, patch) =>
-    set((s) => ({ members: s.members.map((m) => (m.id === id ? { ...m, ...patch } : m)) })),
-  addAppointment: (a) => {
-    const id = newId('t');
-    set((s) => ({ appointments: [...s.appointments, { ...a, id }] }));
-    return id;
-  },
-  removeAppointment: (id) =>
-    set((s) => ({ appointments: s.appointments.filter((a) => a.id !== id) })),
-}));
+export const useStamm = create<StammState>()(
+  persist(
+    (set) => ({
+      trade: 'shk',
+      setTrade: (trade) => set({ trade }),
+      customers: seed.customers,
+      catalog: seed.catalog,
+      suppliers: seed.suppliers,
+      members: seed.members,
+      appointments: seed.appointments,
+      addCustomer: (c) => {
+        const id = newId('c');
+        set((s) => ({ customers: [...s.customers, { ...c, id }] }));
+        return id;
+      },
+      updateCustomer: (id, patch) =>
+        set((s) => ({ customers: s.customers.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
+      addCatalogItem: (c) => {
+        const id = newId('k');
+        set((s) => ({ catalog: [...s.catalog, { ...c, id }] }));
+        return id;
+      },
+      updateCatalogItem: (id, patch) =>
+        set((s) => ({ catalog: s.catalog.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
+      addSupplier: (sup) => {
+        const id = newId('s');
+        set((s) => ({ suppliers: [...s.suppliers, { ...sup, id }] }));
+        return id;
+      },
+      addMember: (m) => {
+        const id = newId('m');
+        set((s) => ({ members: [...s.members, { ...m, id }] }));
+        return id;
+      },
+      updateMember: (id, patch) =>
+        set((s) => ({ members: s.members.map((m) => (m.id === id ? { ...m, ...patch } : m)) })),
+      addAppointment: (a) => {
+        const id = newId('t');
+        set((s) => ({ appointments: [...s.appointments, { ...a, id }] }));
+        return id;
+      },
+      removeAppointment: (id) =>
+        set((s) => ({ appointments: s.appointments.filter((a) => a.id !== id) })),
+    }),
+    persistOptions<StammState>('stamm'),
+  ),
+);
 
 /** Euro-Eingabe („68,50“ oder „68.5“) in Cent; null bei ungültiger Eingabe. */
 export function parseEuroToCents(text: string): number | null {
