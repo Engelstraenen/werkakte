@@ -20,7 +20,7 @@ export function persistOptions<T, P = Partial<T>>(
   };
 }
 
-const KEYS = ['demo', 'stamm', 'team'].map((k) => `werkakte-${k}`);
+const KEYS = ['demo', 'stamm', 'team', 'netzwerk'].map((k) => `werkakte-${k}`);
 
 /** Alle gespeicherten Arbeitsdaten löschen (Beispieldaten zurücksetzen). */
 export const clearAppData = () => AsyncStorage.multiRemove(KEYS);

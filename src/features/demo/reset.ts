@@ -1,5 +1,6 @@
 import { useStamm } from './stamm';
 import { useDemo } from './store';
+import { useNetwork } from '@/features/network/store';
 import { useTeam } from '@/features/team/store';
 import { clearAppData } from '@/lib/persist';
 
@@ -9,4 +10,5 @@ export async function resetToSample(): Promise<void> {
   useDemo.setState(useDemo.getInitialState(), true);
   useStamm.setState(useStamm.getInitialState(), true);
   useTeam.setState(useTeam.getInitialState(), true);
+  useNetwork.setState(useNetwork.getInitialState(), true);
 }

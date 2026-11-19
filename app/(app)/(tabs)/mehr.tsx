@@ -87,6 +87,13 @@ const entriesFor = (
     icon: 'rocket',
     tone: 'primary',
   },
+  {
+    href: '/netzwerk',
+    title: de.netzwerk.titel,
+    subtitle: de.netzwerk.untertitel,
+    icon: 'swap-horizontal',
+    tone: 'primary',
+  },
 ];
 
 export default function MehrScreen() {

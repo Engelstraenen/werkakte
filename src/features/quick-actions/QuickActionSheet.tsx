@@ -12,7 +12,16 @@ import { radius, spacing, useColors, type Tone } from '@/theme';
 
 const t = de.schnellaktion;
 type Art =
-  'foto' | 'notiz' | 'angebot' | 'rechnung' | 'projekt' | 'zeit' | 'material' | 'kunde' | 'termin';
+  | 'foto'
+  | 'notiz'
+  | 'angebot'
+  | 'rechnung'
+  | 'projekt'
+  | 'zeit'
+  | 'material'
+  | 'kunde'
+  | 'termin'
+  | 'netzwerk';
 const tiles: { art: Art; label: string; icon: IconName; tone: Tone; tag?: 'mangel' }[] = [
   { art: 'foto', label: t.foto, icon: 'camera', tone: 'primary' },
   { art: 'notiz', label: t.notiz, icon: 'mic', tone: 'info' },
@@ -29,6 +38,7 @@ const tiles: { art: Art; label: string; icon: IconName; tone: Tone; tag?: 'mange
     tone: 'danger',
     tag: 'mangel',
   },
+  { art: 'netzwerk', label: de.netzwerk.jobWeitergeben, icon: 'swap-horizontal', tone: 'primary' },
 ];
 
 export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClose: () => void }) {
@@ -45,6 +55,7 @@ export function QuickActionSheet({ visible, onClose }: { visible: boolean; onClo
     if (art === 'material') router.push('/material-neu');
     else if (art === 'kunde') router.push('/kunde');
     else if (art === 'termin') router.push('/termin-neu');
+    else if (art === 'netzwerk') router.push('/netzwerk/job-neu');
     else router.push({ pathname: '/neu/[art]', params: { art, tag } });
   };
 
