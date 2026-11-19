@@ -39,7 +39,7 @@ Sie ersetzt Zettelwirtschaft, WhatsApp-Fotos und Word-Angebote durch **eine Proj
 
 - **Heute:** Termine des Tages, offene Aufgaben, zuletzt bearbeitete Projekte
 - **+ Schnellaktion:** Foto · Notiz/Sprachnotiz · Angebot · Projekt · Material anfragen · Problem melden · Zeit starten
-- **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Firmendaten, Nummernkreise, Versand & DATEV, Erinnerungen, Mitarbeiter, **Team & Nachwuchs** (Stellen teilen mit Prämien-Link, Bewerber-Akten, digitales Berichtsheft)
+- **Mehr:** Einkauf & Preise, Kunden, Artikelkatalog, Firmendaten, Nummernkreise, Versand & DATEV, Erinnerungen, Mitarbeiter, **Team & Nachwuchs** (Stellen teilen mit Prämien-Link, Bewerber-Akten, digitales Berichtsheft), **Handwerker-Netzwerk** (mit E-Mail eintragen, Webseite verlinken, Jobs an andere Gewerke zuschieben)
 
 ## 4. Tech-Stack (festgelegt)
 
@@ -89,6 +89,14 @@ Bewerber (applicant)      Name, Telefon, Stelle, Quelle (webseite | foto-check |
                           Status neu → angerufen → probearbeiten → zusage | absage, Notizen   (nur Inhaber sieht Bewerber – RLS)
 Berichtsheft-Woche (report_week)  Azubi, KW, Status offen → abgeschlossen (Azubi) → abgezeichnet (Ausbilder)
 ```
+**Handwerker-Netzwerk (seit 19.11.2026, Prototyp in `src/features/network`, Tabellen in `supabase/migrations/20261119120000_netzwerk.sql`):**
+```
+Eintrag (network_profile)   Login-E-Mail (= Konto), Betrieb, Ansprechpartner, Gewerke (13), PLZ/Ort, Telefon, Webseite (freiwillig), Text
+Job (job_referral)          Absender, gesuchtes Gewerk, Was/Details, PLZ/Ort, Wann, direkt an (optional), Status offen → vergeben | zurückgezogen
+Interesse (job_interest)    „Mach ich“ eines Betriebs zu einem Job
+```
+Firmenübergreifend (kein company_id), online statt offline-first. RLS: angemeldete Betriebe sehen Verzeichnis + offene Jobs an alle; direkte/vergebene Jobs nur Beteiligte; vergeben nur an Interessenten. Öffentliches Portfolio = Sicht `network_directory` ohne E-Mail/Telefon. „Passt zu dir“ = eigenes Gewerk + gleiches PLZ-Gebiet (erste 2 Ziffern). Vergebener Job → „Als Projekt anlegen“ (Absender wird Kunde, Details als Notiz).
+
 Berichtsheft-Einträge werden NICHT doppelt erfasst: Sie entstehen aus Zeiteinträgen + Fotos der Projekte (Azubi-Zeiten) und Berufsschultagen. Prämie: Empfehlung mit Status Zusage = fällige Prämie (1.000 €).
 
 Alle Tabellen: `id (uuid)`, `company_id`, `created_at`, `updated_at`, `deleted_at` (Soft Delete).
@@ -179,3 +187,8 @@ Immer nur **eine Phase** gleichzeitig bearbeiten. Nach jeder Phase kurze Zusamme
 - Vor größeren Aufgaben erst einen kurzen Plan zeigen, dann bauen.
 - Bei Unklarheiten zu Fachlichkeit (Handwerk, Steuern, Recht) nachfragen statt raten.
 - Offene Punkte und Entscheidungen in `docs/ENTSCHEIDUNGEN.md` festhalten.
+
+## 11. Lektionen (Technik)
+
+- **Vorschau im Dropbox-Ordner (19.11.2026):** Metro bemerkt Datei-Änderungen hier verzögert und liefert alten Code. Vor jeder Browser-Prüfung nach Änderungen die Vorschau mit `--clear` neu starten, sonst prüft man den alten Stand.
+- `node_modules` und `dist` sind per Attribut vom Dropbox-Sync ausgenommen (`xattr -w com.apple.fileprovider.ignore#P 1 node_modules`), sonst blockiert der Sync git und Metro.

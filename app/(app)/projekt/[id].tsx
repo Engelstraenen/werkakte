@@ -60,6 +60,14 @@ export default function ProjektScreen() {
     <Screen>
       <Stack.Screen options={{ title: project.title }} />
       <ProjectHeader project={project} />
+      <Button
+        title={de.netzwerk.gewerkDazuholen}
+        variant="secondary"
+        icon={<Ionicons name="swap-horizontal" size={22} color={colors.primary} />}
+        onPress={() =>
+          router.push({ pathname: '/netzwerk/job-neu', params: { projectId: project.id } })
+        }
+      />
       <Chips options={tabs} value={active} onChange={setActive} />
 
       {active === 'doku' ? (

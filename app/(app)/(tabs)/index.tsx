@@ -9,6 +9,7 @@ import { AppointmentCard } from '@/features/calendar/AppointmentCard';
 import { CURRENT_MEMBER_ID } from '@/features/demo/data';
 import { appointmentsOn, memberById, openTasks } from '@/features/demo/selectors';
 import { useDemo } from '@/features/demo/store';
+import { NetworkTodayCard } from '@/features/network/TodayCard';
 import { ProjectCard } from '@/features/projects/ProjectCard';
 import { TaskList } from '@/features/today/TaskList';
 import { TimerCard } from '@/features/today/TimerCard';
@@ -41,6 +42,7 @@ export default function HeuteScreen() {
       right={<Avatar name={me.name} size={48} />}
     >
       <TimerCard />
+      <NetworkTodayCard />
 
       <Section title={`${de.heute.termine} (${today.length})`}>
         {today.length === 0 ? (
