@@ -62,7 +62,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
     "test": "jest",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "deploy:demo": "sh scripts/deploy-demo.sh"
   },
   "private": true,
   "jest": {

@@ -191,4 +191,5 @@ Immer nur **eine Phase** gleichzeitig bearbeiten. Nach jeder Phase kurze Zusamme
 ## 11. Lektionen (Technik)
 
 - **Vorschau im Dropbox-Ordner (19.11.2026):** Metro bemerkt Datei-Änderungen hier verzögert und liefert alten Code. Vor jeder Browser-Prüfung nach Änderungen die Vorschau mit `--clear` neu starten, sonst prüft man den alten Stand.
+- **Live-Demo veröffentlichen:** `npm run deploy:demo` (Build → Branch `gh-pages`, Pages-Quelle = gh-pages). Der Actions-Workflow ist pausiert, weil `deploy-pages@v4` das Artefakt nicht mehr fand (19.11.2026) und unser Token Workflows nicht ändern darf.
 - `node_modules` und `dist` sind per Attribut vom Dropbox-Sync ausgenommen (`xattr -w com.apple.fileprovider.ignore#P 1 node_modules`), sonst blockiert der Sync git und Metro.
