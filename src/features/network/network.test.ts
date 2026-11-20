@@ -8,6 +8,7 @@ import {
   validateProfile,
   websiteHost,
 } from './logic';
+import { profileColumns, toCraftsman, toReferral } from './remote';
 import { useNetwork } from './store';
 import type { Craftsman } from './types';
 
@@ -102,13 +103,13 @@ describe('Verzeichnis', () => {
 describe('Netzwerk-Speicher', () => {
   beforeEach(() => useNetwork.setState(useNetwork.getInitialState(), true));
 
-  it('eintragen, Job weitergeben, Interesse, vergeben', () => {
+  it('eintragen, Job weitergeben, Interesse, vergeben', async () => {
     const s = useNetwork.getState();
     const { id: _id, createdAt: _c, ...input } = weber;
-    const meId = s.saveProfile(input);
+    const meId = await s.saveProfile(input);
     expect(useNetwork.getState().meId).toBe(meId);
 
-    const rid = useNetwork.getState().addReferral({
+    const rid = await useNetwork.getState().addReferral({
       trade: 'elektro',
       title: 'Bad: neue Leitungen',
       details: '',
@@ -123,24 +124,24 @@ describe('Netzwerk-Speicher', () => {
     const kaya = useNetwork.getState().craftsmen.find((c) => c.id === 'h2')!;
     expect(referralsForMe(kaya, useNetwork.getState().referrals).map((r) => r.id)).toContain(rid);
 
-    useNetwork.getState().assign(rid, 'h2');
+    await useNetwork.getState().assign(rid, 'h2');
     const done = useNetwork.getState().referrals.find((r) => r.id === rid)!;
     expect(done).toMatchObject({ status: 'vergeben', takenById: 'h2' });
   });
 
-  it('Interesse an- und abmelden', () => {
+  it('Interesse an- und abmelden', async () => {
     const { id: _id, createdAt: _c, ...input } = weber;
-    const meId = useNetwork.getState().saveProfile(input);
-    useNetwork.getState().toggleInterest('r1');
+    const meId = await useNetwork.getState().saveProfile(input);
+    await useNetwork.getState().toggleInterest('r1');
     expect(useNetwork.getState().referrals.find((r) => r.id === 'r1')!.interested).toEqual([meId]);
-    useNetwork.getState().toggleInterest('r1');
+    await useNetwork.getState().toggleInterest('r1');
     expect(useNetwork.getState().referrals.find((r) => r.id === 'r1')!.interested).toEqual([]);
   });
 
-  it('Eintrag löschen zieht eigene offene Jobs zurück', () => {
+  it('Eintrag löschen zieht eigene offene Jobs zurück', async () => {
     const { id: _id, createdAt: _c, ...input } = weber;
-    useNetwork.getState().saveProfile(input);
-    const rid = useNetwork.getState().addReferral({
+    await useNetwork.getState().saveProfile(input);
+    const rid = await useNetwork.getState().addReferral({
       trade: 'maler',
       title: 'Streichen',
       details: '',
@@ -148,7 +149,7 @@ describe('Netzwerk-Speicher', () => {
       city: 'Karlsruhe',
       when: '',
     });
-    useNetwork.getState().removeProfile();
+    await useNetwork.getState().removeProfile();
     const s = useNetwork.getState();
     expect(s.meId).toBeNull();
     expect(s.craftsmen.some((c) => c.company === weber.company)).toBe(false);
@@ -166,5 +167,53 @@ describe('Netzwerk-Speicher', () => {
         when: '',
       }),
     ).toThrow();
+  });
+});
+
+describe('Supabase-Zeilen ↔ App', () => {
+  it('Profil aus der öffentlichen Sicht (ohne E-Mail/Telefon)', () => {
+    const c = toCraftsman({
+      id: 'u1',
+      company: 'Elektro Kaya',
+      trades: ['elektro'],
+      zip: '76227',
+      city: 'Durlach',
+      website: null,
+      about: null,
+      created_at: '2026-11-19T10:00:00Z',
+    });
+    expect(c).toMatchObject({ email: '', phone: '', name: '', website: undefined, about: '' });
+  });
+
+  it('Job mit „Mach ich“ aus job_interest', () => {
+    const r = toReferral(
+      {
+        id: 'j1',
+        from_profile_id: 'a',
+        trade: 'shk',
+        title: 'Bad',
+        details: '',
+        zip: '76131',
+        city: 'Karlsruhe',
+        when_text: 'KW 3',
+        to_profile_id: null,
+        project_id: null,
+        status: 'offen',
+        taken_by_profile_id: null,
+        created_at: '2026-11-19T10:00:00Z',
+      },
+      [
+        { referral_id: 'j1', profile_id: 'b' },
+        { referral_id: 'j2', profile_id: 'c' },
+      ],
+    );
+    expect(r).toMatchObject({ fromId: 'a', when: 'KW 3', interested: ['b'], toId: undefined });
+  });
+
+  it('beim Speichern keine E-Mail mitschicken (kommt aus dem Login)', () => {
+    const { id: _id, createdAt: _c, ...input } = weber;
+    const cols = profileColumns(input);
+    expect(cols).not.toHaveProperty('email');
+    expect(cols.website).toBeNull();
   });
 });

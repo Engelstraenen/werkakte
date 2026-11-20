@@ -1,6 +1,6 @@
 import { Stack, router } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Avatar } from '@/components/Avatar';
@@ -90,6 +90,13 @@ function JobsTab({ me }: { me?: Craftsman }) {
   const referrals = useNetwork((s) => s.referrals);
   if (!me) {
     const open = referrals.filter((r) => r.status === 'offen').sort(newestFirst);
+    // Live ohne Eintrag: Jobs gibt Supabase erst nach dem Eintragen heraus.
+    if (open.length === 0)
+      return (
+        <Card>
+          <AppText muted>{t.jobsNachEintrag}</AppText>
+        </Card>
+      );
     return (
       <Section title={`${t.alleJobs} (${open.length})`}>
         <JobList items={open} />
@@ -151,6 +158,7 @@ function DirectoryTab() {
 export default function NetzwerkScreen() {
   const me = useMe();
   const count = useNetwork((s) => s.craftsmen.length);
+  const loading = useNetwork((s) => s.live && !s.loaded);
   const [tab, setTab] = useState<Tab>('jobs');
   return (
     <Screen>
@@ -165,7 +173,13 @@ export default function NetzwerkScreen() {
         value={tab}
         onChange={setTab}
       />
-      {tab === 'jobs' ? <JobsTab me={me} /> : <DirectoryTab />}
+      {loading ? (
+        <ActivityIndicator size="large" accessibilityLabel={t.laedt} />
+      ) : tab === 'jobs' ? (
+        <JobsTab me={me} />
+      ) : (
+        <DirectoryTab />
+      )}
     </Screen>
   );
 }

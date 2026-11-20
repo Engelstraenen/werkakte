@@ -82,8 +82,9 @@ create table public.job_referral (
   when_text text not null default '' check (length(when_text) <= 120),
   -- Direkt an einen Betrieb; null = an alle des Gewerks.
   to_profile_id uuid references public.network_profile (id) on delete set null,
-  -- Eigene Projektakte des Absenders (ohne Fremdschlüssel: project liegt im Firmenbereich).
-  project_id uuid,
+  -- Eigene Projektakte des Absenders (ohne Fremdschlüssel: project liegt im Firmenbereich;
+  -- Text, weil Projekte bis zum Sync nur lokale IDs haben).
+  project_id text check (project_id is null or length(project_id) <= 64),
   status text not null default 'offen' check (status in ('offen', 'vergeben', 'zurueckgezogen')),
   taken_by_profile_id uuid references public.network_profile (id) on delete set null,
   created_at timestamptz not null default now(),

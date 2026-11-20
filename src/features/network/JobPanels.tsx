@@ -17,6 +17,11 @@ import type { Craftsman, Referral } from './types';
 
 const t = de.netzwerk;
 
+/** Aktion ausführen; schlägt sie fehl (z. B. kein Netz), kurzer Hinweis statt stillem Nichts. */
+const act = (task: () => Promise<unknown>) => {
+  task().catch(() => notice(t.titel, de.fehler.allgemein));
+};
+
 /** Absender: sieht, wer „Mach ich“ getippt hat, vergibt oder zieht zurück. */
 export function OwnerPanel({ referral: r }: { referral: Referral }) {
   const craftsmen = useNetwork((s) => s.craftsmen);
@@ -51,7 +56,9 @@ export function OwnerPanel({ referral: r }: { referral: Referral }) {
               <Button
                 title={`${t.vergeben}: ${c.company}`}
                 onPress={() =>
-                  confirm(t.vergeben, t.vergebenFrage, t.vergeben, () => assign(r.id, c.id))
+                  confirm(t.vergeben, t.vergebenFrage, t.vergeben, () =>
+                    act(() => assign(r.id, c.id)),
+                  )
                 }
               />
             </Card>
@@ -62,7 +69,9 @@ export function OwnerPanel({ referral: r }: { referral: Referral }) {
         title={t.zurueckziehen}
         variant="secondary"
         onPress={() =>
-          confirm(t.zurueckziehen, t.zurueckziehenFrage, t.zurueckziehen, () => withdraw(r.id))
+          confirm(t.zurueckziehen, t.zurueckziehenFrage, t.zurueckziehen, () =>
+            act(() => withdraw(r.id)),
+          )
         }
       />
     </>
@@ -119,7 +128,7 @@ export function ReceiverPanel({ referral: r, from }: { referral: Referral; from:
       <Button
         title={mine ? t.machIchZurueck : t.machIch}
         variant={mine ? 'secondary' : 'primary'}
-        onPress={() => toggleInterest(r.id)}
+        onPress={() => act(() => toggleInterest(r.id))}
       />
       <AppText variant="small" muted>
         {t.machIchHinweis}

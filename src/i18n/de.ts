@@ -722,6 +722,17 @@ export const de = {
     duWillst: 'Du willst',
     direkt: 'Direkt an dich',
     heuteKarte: 'Neue Jobs für dich im Netzwerk',
+    // Live-Netzwerk: Anmeldung per E-Mail
+    schritt1: 'Erst deine E-Mail bestätigen',
+    schritt1Text:
+      'Wir schicken dir eine E-Mail. Damit gehört der Eintrag sicher zu dir – kein Passwort nötig.',
+    mailSenden: 'E-Mail schicken',
+    mailUnterwegs: 'E-Mail ist unterwegs',
+    mailUnterwegsText:
+      'Tippe auf den Link in der E-Mail (im selben Browser) oder gib hier den Code ein. Gesendet an',
+    abmelden: 'Abmelden',
+    laedt: 'Netzwerk wird geladen …',
+    jobsNachEintrag: 'Offene Jobs siehst du, sobald du eingetragen bist.',
   },
   platzhalter: 'Hier entsteht bald etwas.',
   fehler: {

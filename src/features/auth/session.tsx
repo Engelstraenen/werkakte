@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 import { isDemoBuild } from '@/lib/demo';
-import { supabase } from '@/lib/supabase';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
 // Testmodus über Neuladen hinweg merken (nur Entwicklung).
 const DEV_KEY = 'devMode';
@@ -59,7 +59,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (isDemoBuild) return; // Live-Demo: ohne Anmeldung, nur Beispieldaten
+    // Live-Demo ohne Supabase: keine Anmeldung. Mit Supabase meldet man sich dort nur fürs Netzwerk an,
+    // die App selbst bleibt ohne Anmeldung offen (devMode).
+    if (isDemoBuild && !isSupabaseConfigured) return;
     // onAuthStateChange meldet beim Abonnieren sofort INITIAL_SESSION mit der gespeicherten Session.
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       setState({ session, loading: false });
