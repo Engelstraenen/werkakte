@@ -1,11 +1,13 @@
-import * as Linking from 'expo-linking';
 import { useState } from 'react';
+
+import { callbackUrl } from './callbackUrl';
 
 import { emailSchema, otpSchema } from './validation';
 import { de } from '@/i18n/de';
 import { supabase } from '@/lib/supabase';
 
-export function useLogin() {
+/** `next`: wohin der Magic Link nach der Anmeldung führt (z. B. zurück ins Netzwerk). */
+export function useLogin(next?: string) {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [sent, setSent] = useState(false);
@@ -27,8 +29,7 @@ export function useLogin() {
     const ok = await run(() =>
       supabase.auth.signInWithOtp({
         email: trimmed,
-        // Expo Go: exp://…/--/login-callback, eigener Build: werkakte://login-callback
-        options: { emailRedirectTo: Linking.createURL('login-callback') },
+        options: { emailRedirectTo: callbackUrl(next) },
       }),
     );
     if (ok) setSent(true);

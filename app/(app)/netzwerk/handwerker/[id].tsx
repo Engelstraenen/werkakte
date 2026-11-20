@@ -104,9 +104,11 @@ export default function HandwerkerScreen() {
                 <Button title={t.anrufen} variant="secondary" onPress={() => call(c.phone)} />
               </View>
             ) : null}
-            <View style={{ flex: 1 }}>
-              <Button title={t.mailen} variant="secondary" onPress={() => mail(c.email)} />
-            </View>
+            {c.email ? (
+              <View style={{ flex: 1 }}>
+                <Button title={t.mailen} variant="secondary" onPress={() => mail(c.email)} />
+              </View>
+            ) : null}
           </View>
         </>
       )}

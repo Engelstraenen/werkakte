@@ -1,24 +1,29 @@
 import { Stack } from 'expo-router';
 
+import { NetworkSync } from '@/features/network/NetworkSync';
+
 import { fonts, useColors } from '@/theme';
 
 /** Alle Screens nach der Anmeldung. Detail-Screens bekommen eine Kopfleiste mit Zurück-Pfeil. */
 export default function AppLayout() {
   const colors = useColors();
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.background },
-        headerTintColor: colors.primary,
-        headerTitleStyle: { color: colors.text, fontFamily: fonts.heading, fontSize: 20 },
-        headerShadowVisible: false,
-        headerBackButtonDisplayMode: 'minimal',
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    >
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="neu/[art]" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="foto/[id]" options={{ presentation: 'modal', title: '' }} />
-    </Stack>
+    <>
+      <NetworkSync />
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.primary,
+          headerTitleStyle: { color: colors.text, fontFamily: fonts.heading, fontSize: 20 },
+          headerShadowVisible: false,
+          headerBackButtonDisplayMode: 'minimal',
+          contentStyle: { backgroundColor: colors.background },
+        }}
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="neu/[art]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="foto/[id]" options={{ presentation: 'modal', title: '' }} />
+      </Stack>
+    </>
   );
 }

@@ -51,6 +51,7 @@ export default function JobNeuScreen() {
   const [zip, setZip] = useState(place?.zip ?? me?.zip ?? '');
   const [city, setCity] = useState(place?.city ?? me?.city ?? '');
   const [when, setWhen] = useState('');
+  const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<'trade' | 'title' | 'zip' | 'city', string>>>(
     {},
   );
@@ -64,7 +65,7 @@ export default function JobNeuScreen() {
     );
   }
 
-  function send() {
+  async function send() {
     const picked = trade[0];
     const next = {
       trade: picked ? undefined : t.fehlerGewerk,
@@ -74,7 +75,8 @@ export default function JobNeuScreen() {
     };
     setErrors(next);
     if (!picked || Object.values(next).some(Boolean)) return;
-    const id = addReferral({
+    setBusy(true);
+    const id = await addReferral({
       trade: picked,
       title: title.trim(),
       details: details.trim(),
@@ -83,7 +85,9 @@ export default function JobNeuScreen() {
       when: when.trim(),
       toId: target === 'direkt' && to ? to.id : undefined,
       projectId: project?.id,
-    });
+    }).catch(() => null);
+    setBusy(false);
+    if (!id) return notice(t.jobNeuTitel, de.fehler.allgemein);
     notice(t.jobNeuTitel, t.gesendet);
     router.replace(`/netzwerk/job/${id}`);
   }
@@ -139,7 +143,7 @@ export default function JobNeuScreen() {
         </View>
       </View>
       <TextField label={t.wann} placeholder={t.wannBeispiel} value={when} onChangeText={setWhen} />
-      <Button title={t.absenden} onPress={send} />
+      <Button title={t.absenden} onPress={send} loading={busy} />
     </Screen>
   );
 }

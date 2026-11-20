@@ -16,6 +16,13 @@ if (!url || !anonKey) {
   );
 }
 
+/**
+ * Echtes Supabase-Projekt eingetragen (.env). In der Live-Demo ohne .env bleibt alles lokal;
+ * mit .env läuft dort das Handwerker-Netzwerk echt (Anmeldung nur fürs Netzwerk).
+ */
+export const isSupabaseConfigured =
+  !!process.env.EXPO_PUBLIC_SUPABASE_URL && !!process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
 export const supabaseUrl = url;
 export const supabaseAnonKey = anonKey;
 
